@@ -1,4 +1,4 @@
-@import tailwindcss;
+@import 'tailwindcss';
 
 @theme {
   /* gray color */
@@ -46,25 +46,25 @@
   --font-sans: 'Pretendard', BlinkMacSystemFont, system-ui, sans-serif;
 
   /* Font Sizes */
-  --font-size-head-28: 1.75rem;
-  --font-size-head-24: 1.5rem;
-  --font-size-head-20: 1.25rem;
-  --font-size-head-18: 1.125rem;
-  --font-size-head-16: 1rem;
-  --font-size-head-14: 0.875rem;
+  --text-head-28: 1.75rem;
+  --text-head-24: 1.5rem;
+  --text-head-20: 1.25rem;
+  --text-head-18: 1.125rem;
+  --text-head-16: 1rem;
+  --text-head-14: 0.875rem;
 
-  --font-size-title-28: 1.75rem;
-  --font-size-title-24: 1.5rem;
-  --font-size-title-20: 1.25rem;
-  --font-size-title-18: 1.125rem;
-  --font-size-title-16: 1rem;
-  --font-size-title-14: 0.875rem;
+  --text-title-28: 1.75rem;
+  --text-title-24: 1.5rem;
+  --text-title-20: 1.25rem;
+  --text-title-18: 1.125rem;
+  --text-title-16: 1rem;
+  --text-title-14: 0.875rem;
 
-  --font-size-body-20: 1.25rem;
-  --font-size-body-18: 1.125rem;
-  --font-size-body-16: 1rem;
-  --font-size-body-14: 0.875rem;
-  --font-size-body-12: 0.75rem;
+  --text-body-20: 1.25rem;
+  --text-body-18: 1.125rem;
+  --text-body-16: 1rem;
+  --text-body-14: 0.875rem;
+  --text-body-12: 0.75rem;
 
   /* Font Weights */
   --font-weight-extrabold: 800;
@@ -74,11 +74,11 @@
   --font-weight-regular: 400;
 
   /* Line Heights */
-  --line-height-150: 1.5;
-  --line-height-145: 1.45;
+  --leading-1.5: 1.5;
+  --leading-1.45: 1.45;
 
   /* Letter Spacing */
-  --letter-spacing-1: 0.01em; /* 1% */
-  --letter-spacing-0: 0em; /* 0% */
-  --letter-spacing-n1: -0.01em; /* -1% */
+  --tracking-1: 0.01em; /* 1% */
+  --tracking-0: 0em; /* 0% */
+  --tracking-n1: -0.01em; /* -1% */
 }
