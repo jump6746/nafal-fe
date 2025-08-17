@@ -1,4 +1,4 @@
-import useCountdown from "../hooks/useCountdown.tsx";
+import useCountdown from '@/shared/hooks/useCountdown';
 
 function CountdownTimer({ endDate }: { endDate: string }) {
   const time = useCountdown(endDate);
