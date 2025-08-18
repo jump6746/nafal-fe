@@ -6,12 +6,14 @@ import { RouterProvider } from 'react-router/dom';
 import AppRouter from '@/app/AppRouter';
 import { queryClient } from '@/shared/queryClient';
 import '@/app/global.css';
+import { Toaster } from '@/shared/ui';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={AppRouter} />
       <ReactQueryDevtools initialIsOpen={false} />
+      <Toaster />
     </QueryClientProvider>
   </StrictMode>
 );

@@ -30,6 +30,7 @@ const apiRequest = async <
   };
 
   const performRequest = async (retryCount = 0): Promise<ResponseDTO<P>> => {
+    console.log(`API 요청: ${url} ${method}`);
     try {
       const accessToken = getAccessToken();
 
@@ -53,6 +54,8 @@ const apiRequest = async <
         if (responseData.status == 401 && retryCount == 0) {
           // Refresh 로직 필요
         }
+
+        throw responseData;
       }
 
       const responseData: ResponseDTO<P> = await response.json();
