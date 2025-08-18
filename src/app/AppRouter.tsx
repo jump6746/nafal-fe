@@ -1,10 +1,16 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { LandingPage } from '../pages/landing';
+import { Layout } from '@/shared/ui';
 
 const AppRouter = createBrowserRouter([
   {
-    element: <LandingPage />,
-    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        element: <LandingPage />,
+        path: '/',
+      },
+    ],
   },
 ]);
 
