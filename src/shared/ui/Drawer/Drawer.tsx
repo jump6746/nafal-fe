@@ -1,5 +1,4 @@
 import { Drawer as DrawerPrimitive } from 'vaul';
-
 import { cn } from '@/shared/lib';
 
 function Drawer({ ...props }: React.ComponentProps<typeof DrawerPrimitive.Root>) {
