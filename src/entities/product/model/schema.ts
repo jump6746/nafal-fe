@@ -12,48 +12,48 @@ const Decimal10_2Schema = z
   });
 
 export const ProductSchema = z.object({
-  product_id: z.number().int().positive(),
-  category_id: z.number().int().positive(), // small int
-  condition_id: z.number().int().positive(), // small int
+  productId: z.number().int().positive(),
+  categoryId: z.number().int().positive(), // small int
+  conditionId: z.number().int().positive(), // small int
   title: z.string().max(255),
-  product_name: z.string().max(255),
+  productName: z.string().max(255),
   material: z.string().max(255),
-  usage_location: z.string().max(255),
-  width_cm: Decimal10_2Schema,
-  height_cm: Decimal10_2Schema,
-  tolerance_cm: Decimal10_2Schema,
-  edition_info: z.string().max(255),
-  history_body: z.string(), // text
-  detail_info: z.string(), // text
-  created_at: z.date(),
+  usageLocation: z.string().max(255),
+  widthCm: Decimal10_2Schema,
+  heightCm: Decimal10_2Schema,
+  toleranceCm: Decimal10_2Schema,
+  editionInfo: z.string().max(255),
+  historyBody: z.string(), // text
+  detailInfo: z.string(), // text
+  createdAt: z.date(),
 });
 
 export const ProductImageSchema = z.object({
-  image_id: z.number().int().positive(),
-  product_id: z.number().int().positive(),
+  imageId: z.number().int().positive(),
+  productId: z.number().int().positive(),
   url: z.string().max(500),
   type: z.enum(['THUMBNAIL', 'GALLERY']),
   source: z.string().max(255),
-  sort_order: z.number().int().positive(), // small int
+  sortOrder: z.number().int().positive(), // small int
 });
 
 export const CategorySchema = z.object({
-  category_id: z.number().int().positive(),
+  categoryId: z.number().int().positive(),
   name: z.string().max(255),
 });
 
 export const ConditionSchema = z.object({
-  condition_id: z.number().int().positive(), // small int
+  conditionId: z.number().int().positive(), // small int
   label: z.string().max(100),
 });
 
 export const ProductTagScheam = z.object({
-  product_id: z.number().int().positive(),
-  tag_id: z.number().int().positive(), // small int
+  productId: z.number().int().positive(),
+  tagId: z.number().int().positive(), // small int
 });
 
 export const TagSchema = z.object({
-  tag_id: z.number().int().positive(), // small int
+  tagId: z.number().int().positive(), // small int
   name: z.string().max(20),
 });
 
