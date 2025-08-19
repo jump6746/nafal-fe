@@ -1,20 +1,19 @@
 import { testApi } from '@/entities/test/api';
-import { Button, TimerButton } from '@/shared/ui';
-import { toast } from 'sonner';
+import { Button, customToast, TimerButton } from '@/shared/ui';
 
 const LandingPage = () => {
   const handleTest = async () => {
     try {
-      toast('테스트 시작');
+      customToast.confirm('테스트 시작');
 
       const response = await testApi();
 
-      toast.success(response.message);
+      customToast.warning(response.message);
     } catch (error) {
       if (error instanceof Error && 'status' in error) {
-        toast.error(error.message);
+        console.error(error);
       } else {
-        toast.error('API 에러');
+        console.error('API 에러');
       }
     }
   };
