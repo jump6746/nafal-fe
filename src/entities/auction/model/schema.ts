@@ -12,45 +12,45 @@ const Decimal10_3Schema = z
   });
 
 export const AuctionSchema = z.object({
-  auction_id: z.number().int().positive(),
-  product_id: z.number().int().positive(),
-  user_id: z.number().int().positive(),
-  currency_code: z.string().max(10), // varchar 10
-  event_id: z.number().int().positive(),
-  start_price: z.number().int().positive(),
-  bid_increment: z.number().int().positive(),
-  immediately_purchase_price: z.number().int().positive(),
-  start_at: z.date(),
-  end_at: z.date(),
+  auctionId: z.number().int().positive(),
+  productId: z.number().int().positive(),
+  userId: z.number().int().positive(),
+  currencyCode: z.string().max(10), // varchar 10
+  eventId: z.number().int().positive(),
+  startPrice: z.number().int().positive(),
+  bidIncrement: z.number().int().positive(),
+  immediatelyPurchasePrice: z.number().int().positive(),
+  startAt: z.date(),
+  endAt: z.date(),
   status: z.enum(['SCHEDULED', 'OPEN', 'CLOSED', 'CANCELED']),
-  expected_effect_co2_kg: Decimal10_3Schema, // decimal(10, 3)
-  expected_effect_desc: z.string(),
-  created_at: z.date(),
+  expectedEffectCo2Kg: Decimal10_3Schema, // decimal(10, 3)
+  expectedEffectDesc: z.string(),
+  createdAt: z.date(),
 });
 
 export const EventSchema = z.object({
-  event_id: z.number().int().positive(),
+  eventId: z.number().int().positive(),
   name: z.string().max(255),
   description: z.string(),
-  created_at: z.date(),
+  createdAt: z.date(),
 });
 
 export const BidSchema = z.object({
-  bid_id: z.number().int().positive(),
-  auction_id: z.number().int().positive(),
-  user_id: z.number().int().positive(),
+  bidId: z.number().int().positive(),
+  auctionId: z.number().int().positive(),
+  userId: z.number().int().positive(),
   amount: z.number().int().positive(),
-  placed_at: z.date(),
+  placedAt: z.date(),
 });
 
 export const WinnerSchema = z.object({
-  user_id: z.number().int().positive(),
-  auction_id: z.number().int().positive(),
-  delivery_id: z.number().int().positive(), // small int
+  userId: z.number().int().positive(),
+  auctionId: z.number().int().positive(),
+  deliveryId: z.number().int().positive(), // small int
 });
 
 export const DeliveryMethodSchema = z.object({
-  delivery_id: z.number().int().positive(), // small int
+  deliveryId: z.number().int().positive(), // small int
   code: z.enum(['PICKUP', 'STANDARD', 'FREIGHT']),
   label: z.string().max(100), // varchar 100
 });
