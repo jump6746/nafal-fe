@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import { Toaster } from '@/shared/ui';
 
 interface Props {
   headerSlot?: React.ReactNode;
@@ -18,6 +19,7 @@ const Layout = (props: Props) => {
       </main>
       {props.navbarSlot}
       {props.modalSlot}
+      <Toaster />
     </div>
   );
 };
