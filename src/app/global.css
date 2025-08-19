@@ -22,6 +22,7 @@
   --color-point-400: #b5f5eb;
   --color-point-500: #a3ddd4;
   --color-point-600: #91c4bc;
+  --color-point-900: #026051;
 
   /* sub a color */
   --color-sub-a-100: #ffeeec;
@@ -44,34 +45,6 @@
 
   /* Font Family */
   --font-sans: 'Pretendard', BlinkMacSystemFont, system-ui, sans-serif;
-
-  /* Font Sizes */
-  --text-head-28: 1.75rem;
-  --text-head-24: 1.5rem;
-  --text-head-20: 1.25rem;
-  --text-head-18: 1.125rem;
-  --text-head-16: 1rem;
-  --text-head-14: 0.875rem;
-
-  --text-title-28: 1.75rem;
-  --text-title-24: 1.5rem;
-  --text-title-20: 1.25rem;
-  --text-title-18: 1.125rem;
-  --text-title-16: 1rem;
-  --text-title-14: 0.875rem;
-
-  --text-body-20: 1.25rem;
-  --text-body-18: 1.125rem;
-  --text-body-16: 1rem;
-  --text-body-14: 0.875rem;
-  --text-body-12: 0.75rem;
-
-  /* Font Weights */
-  --font-weight-extrabold: 800;
-  --font-weight-bold: 700;
-  --font-weight-semibold: 600;
-  --font-weight-medium: 500;
-  --font-weight-regular: 400;
 
   /* Line Heights */
   --leading-1.5: 1.5;
