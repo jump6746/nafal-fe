@@ -5,3 +5,11 @@ export { default as TimerButton } from './TimerButton/TimerButton';
 export { default as customToast } from './CustomToast/customToast';
 export { default as TopNavigation } from './TopNavigation/TopNavigation';
 export { default as AuctionNotice } from './AuctionNotice/AuctionNotice';
+export {
+  type CarouselApi,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from './Carousel/carousel';

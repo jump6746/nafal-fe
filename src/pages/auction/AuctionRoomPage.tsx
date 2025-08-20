@@ -1,23 +1,47 @@
 import { Button } from '@/shared/ui';
 import Tooltip from '@/shared/ui/Tooltip/Tooltip';
+import { AuctionProductCarousel } from '@/widgets/auction/ui';
+import { useEffect, useState } from 'react';
 
 const AuctionRoomPage = () => {
+  const [showOverlay, setShowOverlay] = useState<boolean>(true);
+
+  // 3초 후 자동으로 사라지게
+  useEffect(() => {
+    if (!showOverlay) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setShowOverlay(false);
+    }, 2000); // 3초
+
+    return () => clearTimeout(timer);
+  }, [showOverlay]);
+
   return (
     <>
       {/* 사진 공간  */}
-      <div className='relative aspect-[3/2] w-full'>
-        <img
-          src='/images/mockup/storycard_bg.jpg'
-          alt='스토리텔링 카드'
-          className='h-full w-full object-cover'
-        />
-        <p className='absolute top-0 px-5 py-7.5 text-sm font-semibold text-gray-800'>
-          현재는 공식 판매처에서도 구할 수 없고, 중고 시장에서도 <br />
-          잘 나오지 않는 아이템이에요. <br />
-          <br />
-          KANU 팬들은 '잊을 수 없는 팝업의 상징'으로 여기며, <br />
-          한정판 굿즈 수집가들에게는 놓칠 수 없는 보물이죠!!
-        </p>
+      <div className='relative'>
+        <AuctionProductCarousel setShowOverlay={setShowOverlay} />
+        <div
+          className={`absolute top-0 aspect-[3/2] w-full transition-opacity duration-1000 ${
+            showOverlay ? 'opacity-100' : 'pointer-events-none opacity-0'
+          }`}
+        >
+          <img
+            src='/images/mockup/storycard_bg.jpg'
+            alt='스토리텔링 카드'
+            className='h-full w-full object-cover'
+          />
+          <p className='absolute top-0 px-5 py-7.5 text-sm font-semibold text-gray-800'>
+            현재는 공식 판매처에서도 구할 수 없고, 중고 시장에서도 <br />
+            잘 나오지 않는 아이템이에요. <br />
+            <br />
+            KANU 팬들은 '잊을 수 없는 팝업의 상징'으로 여기며, <br />
+            한정판 굿즈 수집가들에게는 놓칠 수 없는 보물이죠!!
+          </p>
+        </div>
       </div>
       {/* 경매 정보 공간 */}
       <div className='flex flex-col gap-3.5 px-5 pt-11 pb-4.5'>
