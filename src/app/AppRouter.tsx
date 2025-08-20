@@ -1,16 +1,18 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { LandingPage } from '../pages/landing';
-import { Layout } from '@/shared/ui';
-import { AuctionLayout } from './layouts';
+import { AuctionLayout, MainPageLayout } from './layouts';
 import { AuctionRoomPage } from '@/pages/auction';
+<<<<<<< HEAD
+import { MainPage } from '@/pages/main';
+=======
 import { AutoBidPlace, BidPlace, DirectBuyPlace } from '@/widgets/auction/ui';
+>>>>>>> 9410425dd05e0b3065123de341b26f63cf629208
 
 const AppRouter = createBrowserRouter([
   {
-    element: <Layout />,
+    element: <MainPageLayout />,
     children: [
       {
-        element: <LandingPage />,
+        element: <MainPage />,
         path: '/',
       },
     ],
