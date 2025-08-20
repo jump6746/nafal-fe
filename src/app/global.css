@@ -61,6 +61,23 @@
   /* Breakpoints */
   --breakpoint-xs: 375px;
   --breakpoint-sm: 430px;
+
+  --gradient-blur: linear-gradient(156deg, #f4fefc 15.29%, #b6faff 102.72%);
+}
+
+.gradient-border {
+  background:
+    linear-gradient(white, white) padding-box,
+    conic-gradient(
+        from 0deg at center,
+        #ffffff 0%,
+        #91c4bc 37%,
+        #ffffff 53%,
+        #91c4bc 82%,
+        #ffffff 100%
+      )
+      border-box;
+  border: 1px solid transparent;
 }
 
 @theme inline {
