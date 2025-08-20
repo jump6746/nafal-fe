@@ -1,4 +1,5 @@
 import { testApi } from '@/entities/test/api';
+import AuctionRoom from '@/features/auction/AuctionRoom';
 import { Button, customToast, TimerButton } from '@/shared/ui';
 
 const LandingPage = () => {
@@ -32,6 +33,7 @@ const LandingPage = () => {
           console.log('끝!');
         }}
       />
+      <AuctionRoom />
     </div>
   );
 };
