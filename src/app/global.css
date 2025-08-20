@@ -58,4 +58,13 @@
   /* Breakpoints */
   --breakpoint-xs: 375px;
   --breakpoint-sm: 430px;
+
+  --gradient-blur: linear-gradient(156deg, #f4fefc 15.29%, #b6faff 102.72%);
+}
+
+.gradient-border {
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(45deg, #ffffff, #91c4bc, #ffffff, #91c4bc) border-box;
+  border: 2px solid transparent;
 }

@@ -1,6 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { LandingPage } from '../pages/landing';
 import { Layout } from '@/shared/ui';
+import { AuctionLayout } from './layouts';
+import { AuctionRoomPage } from '@/pages/auction';
 
 const AppRouter = createBrowserRouter([
   {
@@ -9,6 +11,15 @@ const AppRouter = createBrowserRouter([
       {
         element: <LandingPage />,
         path: '/',
+      },
+    ],
+  },
+  {
+    element: <AuctionLayout />,
+    children: [
+      {
+        element: <AuctionRoomPage />,
+        path: '/auction',
       },
     ],
   },
