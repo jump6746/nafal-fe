@@ -1,15 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { LandingPage } from '../pages/landing';
-import { Layout } from '@/shared/ui';
-import { AuctionLayout } from './layouts';
+import { AuctionLayout, MainPageLayout } from './layouts';
 import { AuctionRoomPage } from '@/pages/auction';
+import { MainPage } from '@/pages/main';
 
 const AppRouter = createBrowserRouter([
   {
-    element: <Layout />,
+    element: <MainPageLayout />,
     children: [
       {
-        element: <LandingPage />,
+        element: <MainPage />,
         path: '/',
       },
     ],
