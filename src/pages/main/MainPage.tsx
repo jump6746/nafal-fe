@@ -1,8 +1,17 @@
-import MainPageCarousel from '@/features/auction/MainPageCarousel';
+import MainPageCategory from '@/features/main/ui/MainPageCategory';
+import MainPageCarousel from '@/widgets/main/ui/MainPageCarousel';
 import { useState } from 'react';
 
 const MainPage = () => {
   const [section, setSection] = useState('진행중');
+  const [category, setCategory] = useState<string[]>([]);
+
+  const addCategory = (newCategory: string) => {
+    setCategory(prev => [...prev, newCategory]);
+  };
+  const removeCategory = (categoryToRemove: string) => {
+    setCategory(prev => prev.filter(cat => cat !== categoryToRemove));
+  };
 
   return (
     <div>
@@ -49,6 +58,29 @@ const MainPage = () => {
         </button>
       </nav>
       <MainPageCarousel />
+      <div className='flex flex-col gap-[18px] px-5'>
+        <MainPageCategory
+          category={category}
+          addCategory={addCategory}
+          removeCategory={removeCategory}
+        />
+        <div className='flex flex-row gap-2'>
+          {category.map(cat => (
+            <button
+              key={cat}
+              className='flex w-fit items-center gap-1 rounded-xl bg-gray-800 px-3 py-[6px] font-semibold text-white'
+              onClick={() => removeCategory(cat)}
+            >
+              {cat}
+              <img
+                src='images/Icons/close_md.svg'
+                alt='close'
+                className='h-[18px] w-[18px] brightness-0 invert'
+              />
+            </button>
+          ))}{' '}
+        </div>
+      </div>
     </div>
   );
 };
