@@ -1,10 +1,33 @@
+import { useTopNavigationStore } from '@/shared/stores';
 import { Button } from '@/shared/ui';
 import Tooltip from '@/shared/ui/Tooltip/Tooltip';
 import { AuctionProductCarousel } from '@/widgets/auction/ui';
-import { useEffect, useState } from 'react';
+import SuccessConfetti from '@/widgets/auction/ui/SuccessConfetti';
+import { useEffect, useRef, useState } from 'react';
 
 const AuctionRoomPage = () => {
   const [showOverlay, setShowOverlay] = useState<boolean>(true);
+  const setText = useTopNavigationStore(state => state.setText);
+  const [showConfetti, setShowConfetti] = useState<boolean>(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showConfetti) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setShowConfetti(false);
+    }, 5000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [showConfetti]);
+
+  useEffect(() => {
+    setText('제품');
+  }, []);
 
   // 3초 후 자동으로 사라지게
   useEffect(() => {
@@ -20,7 +43,8 @@ const AuctionRoomPage = () => {
   }, [showOverlay]);
 
   return (
-    <>
+    <div className='relative h-full w-full' ref={containerRef}>
+      {showConfetti && <SuccessConfetti container={containerRef} />}
       {/* 사진 공간  */}
       <div className='relative'>
         <AuctionProductCarousel setShowOverlay={setShowOverlay} />
@@ -181,10 +205,20 @@ const AuctionRoomPage = () => {
           </div>
         </div>
         <div className='sticky right-0 bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-white py-9'>
-          <Button className='w-full'>입찰하기</Button>
+          <Button
+            className='w-full'
+            type='button'
+            onClick={() => {
+              console.log('클릭');
+              console.log(showConfetti);
+              setShowConfetti(true);
+            }}
+          >
+            입찰하기
+          </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
