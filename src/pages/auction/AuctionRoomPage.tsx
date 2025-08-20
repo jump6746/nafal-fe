@@ -1,3 +1,4 @@
+import { Button } from '@/shared/ui';
 import Tooltip from '@/shared/ui/Tooltip/Tooltip';
 
 const AuctionRoomPage = () => {
@@ -83,7 +84,7 @@ const AuctionRoomPage = () => {
       {/* divide */}
       <div className='h-4 w-full bg-gray-200'></div>
       {/* 상품 상세 정보 */}
-      <div className='mt-1.5 flex flex-col bg-gray-50 px-5 pt-6 pb-9'>
+      <div className='mt-1.5 flex flex-col gap-4.5 bg-gray-50 px-5 pt-6'>
         {/* 등록일, 시작일, 종료일 */}
         <div className='flex flex-col text-sm font-medium text-gray-800'>
           <span>등록일 {'2025. 7. 14. 오전 12:00:00'}</span>
@@ -91,20 +92,72 @@ const AuctionRoomPage = () => {
           <span>종료일 {'2025. 8. 30. 오후 8:00:00'}</span>
         </div>
         {/* 행사 */}
-        <div className='gradient-border flex flex-col gap-3'>
-          <h3>행사</h3>
+        <div className='gradient-border flex flex-col gap-3 rounded-[12px] p-4'>
+          <h3 className='text-lg font-bold text-gray-800'>행사</h3>
           <div className='flex flex-col'>
-            <span>행사명</span>
-            <span>{"카누 팝업스토어 'KANU House'"}</span>
+            <span className='text-sm font-medium text-gray-600'>행사명</span>
+            <span className='font-semibold text-gray-900'>{"카누 팝업스토어 'KANU House'"}</span>
           </div>
           <div className='flex flex-col'>
-            <span>행사소개</span>
-            <p>
+            <span className='text-sm font-medium text-gray-600'>행사소개</span>
+            <p className='text-sm font-medium text-gray-900'>
               {
                 '2025년 여름 서울 성수동에서 진행된 카누 팝업스토어로, 브랜드 아이덴티티를 담은 한정 소품과 가구를 전시했습니다.'
               }
             </p>
           </div>
+        </div>
+        {/* 상품 */}
+        <div className='gradient-border flex flex-col gap-3 rounded-[12px] p-4'>
+          <h3 className='text-lg font-bold text-gray-800'>상품</h3>
+          <div className='flex flex-col'>
+            <span className='text-sm font-medium text-gray-600'>소개</span>
+            <p className='text-sm font-medium text-gray-900'>
+              {
+                '카누 팝업스토어 전시 공간에서 실제 사용된 텀블러입니다. 카누 브랜드 컨셉이고, 세척 완료 상태입니다.'
+              }
+            </p>
+          </div>
+          <div className='flex gap-4.5'>
+            <span className='text-sm font-semibold text-gray-900'>#{'카누'}</span>
+            <span className='text-sm font-semibold text-gray-900'>#{'텀블러'}</span>
+            <span className='text-sm font-semibold text-gray-900'>#{'원두'}</span>
+          </div>
+          <div className='flex flex-col'>
+            <span className='text-sm font-medium text-gray-600'>사이즈</span>
+            <span className='text-sm font-medium text-gray-900'>{'가로 50cm X 세로 100cm'}</span>
+          </div>
+          <div className='flex flex-col'>
+            <span className='text-sm font-medium text-gray-600'>재질</span>
+            <span className='text-sm font-medium text-gray-900'>{'스테인리스'}</span>
+          </div>
+          <div className='flex flex-col'>
+            <span className='text-sm font-medium text-gray-600'>사용위치</span>
+            <span className='text-sm font-medium text-gray-900'>{'거실'}</span>
+          </div>
+          <div className='flex flex-col'>
+            <span className='text-sm font-medium text-gray-600'>에디션정보</span>
+            <span className='text-sm font-medium text-gray-900'>{'기성품'}</span>
+          </div>
+        </div>
+        {/* 배송 */}
+        <div className='gradient-border mb-20 flex flex-col gap-3 rounded-[12px] p-4'>
+          <h3 className='text-lg font-bold text-gray-800'>배송</h3>
+          <div className='flex flex-col'>
+            <span className='text-sm font-medium text-gray-600'>배송방법</span>
+            <span className='text-sm font-medium text-gray-900'>{'일반택배 / 방문 픽업 택 1'}</span>
+          </div>
+          <div className='flex flex-col'>
+            <span className='text-sm font-medium text-gray-600'>배송비용</span>
+            <span className='text-sm font-medium text-gray-900'>{'3,500원'}</span>
+          </div>
+          <div className='flex flex-col'>
+            <span className='text-sm font-medium text-gray-600'>배송 참고사항</span>
+            <span className='text-sm font-medium text-gray-900'>{'없음'}</span>
+          </div>
+        </div>
+        <div className='sticky right-0 bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-white py-9'>
+          <Button className='w-full'>입찰하기</Button>
         </div>
       </div>
     </>
