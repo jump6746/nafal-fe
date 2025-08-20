@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { testApi } from '@/entities/test/api';
 import AuctionRoom from '@/features/auction/AuctionRoom';
 import { Button, customToast, TimerButton } from '@/shared/ui';
@@ -36,6 +37,10 @@ const LandingPage = () => {
       <AuctionRoom />
     </div>
   );
+=======
+const LandingPage = () => {
+  return <div>랜딩페이지</div>;
+>>>>>>> 9410425dd05e0b3065123de341b26f63cf629208
 };
 
 export default LandingPage;
