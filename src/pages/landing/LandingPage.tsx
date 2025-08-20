@@ -1,6 +1,5 @@
 import { testApi } from '@/entities/test/api';
 import { Button, customToast, TimerButton } from '@/shared/ui';
-import AuctionNotice from '@/shared/ui/AuctionNotice/AuctionNotice';
 
 const LandingPage = () => {
   const handleTest = async () => {
@@ -33,7 +32,6 @@ const LandingPage = () => {
           console.log('끝!');
         }}
       />
-      <AuctionNotice notice='부끄러운 나팔님이 12,000원 입찰했어요' isMine={false} />
     </div>
   );
 };
