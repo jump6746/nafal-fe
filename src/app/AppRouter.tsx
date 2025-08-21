@@ -4,6 +4,7 @@ import { AuctionRoomPage, LuckDrawPage } from '@/pages/auction';
 import { MainPage } from '@/pages/main';
 import { AutoBidPlace, BidPlace, DirectBuyPlace } from '@/widgets/auction/ui';
 import { MyPage } from '@/pages/mypage';
+import { PayPage } from '@/pages/pay';
 import { LoginPage } from '@/pages/user';
 
 const AppRouter = createBrowserRouter([
@@ -51,6 +52,10 @@ const AppRouter = createBrowserRouter([
       {
         element: <MyPage />,
         path: '/mypage',
+      },
+      {
+        element: <PayPage />,
+        path: '/pay',
       },
     ],
   },

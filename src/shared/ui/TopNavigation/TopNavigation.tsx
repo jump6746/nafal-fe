@@ -9,7 +9,9 @@ const TopNavigation = ({ type, title }: TopNavigationProps) => {
   return (
     <nav className='flex w-full items-center justify-between'>
       <div className='flex h-12 w-12 items-center justify-center'>
-        {type === 'text' && <img src='images/Icons/caret_left_lg.svg' alt='back' />}
+        {type === 'text' && (
+          <img src='images/Icons/caret_left_lg.svg' alt='back' onClick={handleBack} />
+        )}
       </div>
       <div>
         {' '}
