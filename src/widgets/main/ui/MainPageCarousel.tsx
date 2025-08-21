@@ -74,7 +74,6 @@ const MainPageCarousel = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
       </Carousel>
 
       {/* 캐러샐 인덱스 도트 */}
