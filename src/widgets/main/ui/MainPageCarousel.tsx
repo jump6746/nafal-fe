@@ -3,11 +3,10 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
   CarouselPrevious,
   type CarouselApi,
 } from '@/shared/ui/Carousel/carousel';
-import CountdownTimer from './CountdownTimer';
+import CountdownTimer from '../../../features/auction/CountdownTimer';
 
 const Dummy = [
   {
@@ -76,7 +75,6 @@ const MainPageCarousel = () => {
           ))}
         </CarouselContent>
         <CarouselPrevious />
-        <CarouselNext />
       </Carousel>
 
       {/* 캐러샐 인덱스 도트 */}
