@@ -4,6 +4,8 @@ import {
   DrawerHeader,
   DrawerTrigger,
   DrawerPortal,
+  DrawerTitle,
+  DrawerDescription,
 } from '@/shared/ui/Drawer/Drawer';
 
 interface EventFilterProps {
@@ -39,9 +41,12 @@ const EventFilter = ({ event, addEvent, removeEvent }: EventFilterProps) => {
         </button>
       </DrawerTrigger>
       <DrawerPortal>
-        <DrawerContent className='!fixed !right-0 !bottom-0 !left-0 !mx-auto !w-full !max-w-[450px] !min-w-[320px] data-[vaul-drawer-direction=bottom]:!h-[40vh] [&>div:first-child]:!hidden'>
+        <DrawerContent className='!fixed !right-0 !bottom-0 !left-0 !mx-auto !w-full !max-w-[450px] !min-w-[320px] data-[vaul-drawer-direction=bottom]:!h-[45vh] [&>div:first-child]:!hidden'>
           <DrawerHeader>
-            <span className='font-semibold text-gray-800'>행사명</span>
+            <DrawerTitle>
+              <span className='font-semibold text-gray-800'>행사명</span>
+            </DrawerTitle>
+            <DrawerDescription>관심있는 행사를 골라보세요.</DrawerDescription>
           </DrawerHeader>
           <div className='flex h-full max-h-[calc(40vh-60px)] flex-col gap-4 p-4'>
             <div className='flex flex-col gap-2 overflow-y-auto px-1'>

@@ -5,6 +5,8 @@ import {
   DrawerHeader,
   DrawerTrigger,
   DrawerPortal,
+  DrawerTitle,
+  DrawerDescription,
 } from '@/shared/ui/Drawer/Drawer';
 import { useContainerSize } from '@/shared/hooks';
 
@@ -32,6 +34,7 @@ const CategoryFilter = ({
   removeCategory,
 }: CategoryFilterProps) => {
   const [selectedMainCategory, setSelectedMainCategory] = useState<string>('');
+  const [isOpen, setIsOpen] = useState(false);
   const size = useContainerSize(container);
 
   const handleMainCategoryClick = (mainCategory: string) => {
@@ -57,17 +60,34 @@ const CategoryFilter = ({
   };
 
   return (
-    <Drawer>
+    <Drawer open={isOpen} onOpenChange={setIsOpen} modal={true}>
       <DrawerTrigger asChild>
-        <button className='flex w-fit shrink-0 items-center gap-[2px] rounded-full bg-gray-100 px-3 py-[6px] whitespace-nowrap'>
+        <button
+          className='flex w-fit shrink-0 items-center gap-[2px] rounded-full bg-gray-100 px-3 py-[6px] whitespace-nowrap'
+          onBlur={() => {
+            // 드로어가 열려있지 않을 때만 포커스 해제
+            if (!isOpen) {
+              (document.activeElement as HTMLElement)?.blur();
+            }
+          }}
+        >
           카테고리
           <img src='images/Icons/caret_down_sm.svg' alt='caret_down' className='h-6 w-6' />
         </button>
       </DrawerTrigger>
       <DrawerPortal>
-        <DrawerContent className='!fixed !right-0 !bottom-0 !left-0 !mx-auto !w-full !max-w-[450px] !min-w-[320px] data-[vaul-drawer-direction=bottom]:!h-[40vh] [&>div:first-child]:!hidden'>
+        <DrawerContent
+          className='!fixed !right-0 !bottom-0 !left-0 !mx-auto !w-full !max-w-[450px] !min-w-[320px] data-[vaul-drawer-direction=bottom]:!h-[45vh] [&>div:first-child]:!hidden'
+          onOpenAutoFocus={e => {
+            // 첫 번째 포커스 가능한 요소로 포커스 이동 방지하고 컨테이너 자체에 포커스
+            e.preventDefault();
+          }}
+        >
           <DrawerHeader>
-            <span className='font-semibold text-gray-800'>카테고리</span>
+            <DrawerTitle>
+              <span className='font-semibold text-gray-800'>카테고리</span>
+            </DrawerTitle>
+            <DrawerDescription>상품의 카테고리를 선택하여 필터링하세요.</DrawerDescription>
           </DrawerHeader>
           <div className='flex h-full max-h-[calc(40vh-60px)] flex-row gap-4 p-4'>
             {/* 대분류 */}
