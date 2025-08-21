@@ -3,7 +3,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselPrevious,
   type CarouselApi,
 } from '@/shared/ui/Carousel/carousel';
 import CountdownTimer from '../../../features/auction/CountdownTimer';
