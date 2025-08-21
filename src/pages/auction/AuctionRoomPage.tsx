@@ -1,7 +1,6 @@
-import { AuctionRoom } from '@/features/auction';
 import { useTopNavigationStore } from '@/shared/stores';
 import Tooltip from '@/shared/ui/Tooltip/Tooltip';
-import { AuctionProductCarousel } from '@/widgets/auction/ui';
+import { AuctionProductCarousel, AuctionRoom } from '@/widgets/auction/ui';
 import SuccessConfetti from '@/widgets/auction/ui/SuccessConfetti';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
