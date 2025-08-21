@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export interface TopNavigationProps {
   type: 'logo' | 'text';
   title?: string;
@@ -19,9 +21,13 @@ const TopNavigation = ({ type, title }: TopNavigationProps) => {
       </div>
       <div className='flex h-12 w-12 items-center justify-center'>
         {type === 'text' ? (
-          <img src='images/Icons/home.svg' alt='home' />
+          <Link to='/'>
+            <img src='images/Icons/home.svg' alt='home' />
+          </Link>
         ) : (
-          <img src='images/Icons/user.svg' alt='mypage' />
+          <Link to='/mypage'>
+            <img src='images/Icons/user.svg' alt='mypage' />
+          </Link>
         )}
       </div>
     </nav>
