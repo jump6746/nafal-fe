@@ -1,11 +1,21 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { AuctionLayout, MainPageLayout } from './layouts';
+import { AuctionLayout, DefaultLayout, MainPageLayout } from './layouts';
 import { AuctionRoomPage, LuckDrawPage } from '@/pages/auction';
 import { MainPage } from '@/pages/main';
 import { AutoBidPlace, BidPlace, DirectBuyPlace } from '@/widgets/auction/ui';
 import { MyPage } from '@/pages/mypage';
+import { LoginPage } from '@/pages/user';
 
 const AppRouter = createBrowserRouter([
+  {
+    element: <DefaultLayout />,
+    children: [
+      {
+        element: <LoginPage />,
+        path: '/login',
+      },
+    ],
+  },
   {
     element: <MainPageLayout />,
     children: [
