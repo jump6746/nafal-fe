@@ -1,5 +1,5 @@
 const LandingPage = () => {
-  return <div>랜딩페이지</div>;
+  return <div className='flex h-full flex-col items-center justify-center gap-5'></div>;
 };
 
 export default LandingPage;
