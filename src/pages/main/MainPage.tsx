@@ -17,6 +17,9 @@ const MainPage = () => {
   const [event, setEvent] = useState<string[]>([]);
   const [sort, setSort] = useState<string>('신규');
 
+  const currentSortOptions =
+    section === '진행중' ? ['신규', '마감 임박', '인기순'] : ['신규', '오픈 임박'];
+
   const addCategory = (newCategory: string) => {
     setCategory(prev => [...prev, newCategory]);
   };
@@ -54,7 +57,7 @@ const MainPage = () => {
 
   return (
     <div>
-      <MainPageNav section={section} setSection={setSection} />
+      <MainPageNav section={section} setSection={setSection} updateSort={updateSort} />
       <MainPageCarousel />
       <div className='flex flex-col gap-[18px] px-5' ref={containerRef}>
         <MainPageCategory
@@ -86,16 +89,22 @@ const MainPage = () => {
           updateMaxPrice={updateMaxPrice}
         />
       </div>
-      <div className='flex justify-end px-5'>
-        <SortCategory sort={sort} updateSort={updateSort} />
-      </div>
+      {(section === '진행중' || section === '예정') && (
+        <div className='flex justify-end px-5'>
+          <SortCategory sort={sort} sortOptions={currentSortOptions} updateSort={updateSort} />
+        </div>
+      )}
       <section className='flex flex-col gap-2 px-5'>
         <h2 className='text-2xl font-extrabold text-gray-800'>
-          {sort === '신규'
-            ? '따끈따끈한 이 제품 어때요?'
-            : sort === '마감 임박'
-              ? '빠른 자만이 얻는다'
-              : '제일 인기 있는 것만 모았어요'}
+          {section === '종료'
+            ? '지금은 종료된 경매에요'
+            : sort === '신규'
+              ? '따끈따끈한 이 제품 어때요?'
+              : sort === '마감 임박'
+                ? '빠른 자만이 얻는다'
+                : sort === '오픈 임박'
+                  ? '곧 만나요'
+                  : '제일 인기 있는 것만 모았어요'}
         </h2>
         <AuctionList
           data={sort === '신규' ? newDummy : sort === '마감 임박' ? closingDummy : popularDummy}

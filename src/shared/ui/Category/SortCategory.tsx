@@ -6,21 +6,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover/pop
 interface SortCategoryProps {
   updateSort: (sort: string) => void;
   sort: string;
+  sortOptions: string[];
 }
 
-const SortList = [
-  {
-    value: '신규',
-  },
-  {
-    value: '마감 임박',
-  },
-  {
-    value: '인기',
-  },
-];
-
-const SortCategory = ({ sort, updateSort }: SortCategoryProps) => {
+const SortCategory = ({ sort, updateSort, sortOptions }: SortCategoryProps) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -40,21 +29,21 @@ const SortCategory = ({ sort, updateSort }: SortCategoryProps) => {
         <Command>
           <CommandList>
             <CommandGroup>
-              {SortList.map(Sort => (
+              {sortOptions.map(Sort => (
                 <CommandItem
-                  key={Sort.value}
-                  value={Sort.value}
+                  key={Sort}
+                  value={Sort}
                   onSelect={currentValue => {
                     updateSort(currentValue);
                     setOpen(false);
                   }}
                   className={`py-3 text-left text-base font-normal data-[selected=true]:bg-transparent ${
-                    sort === Sort.value
+                    sort === Sort
                       ? 'text-point-500 data-[selected=true]:text-point-500 font-medium'
                       : 'font-normal text-gray-900 data-[selected=true]:text-gray-900'
                   } `}
                 >
-                  {Sort.value}
+                  {Sort}
                 </CommandItem>
               ))}
             </CommandGroup>
