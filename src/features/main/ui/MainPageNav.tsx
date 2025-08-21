@@ -1,9 +1,10 @@
 interface MainPageNavProps {
   section: string;
   setSection: (section: string) => void;
+  updateSort: (sort: string) => void;
 }
 
-const MainPageNav = ({ section, setSection }: MainPageNavProps) => {
+const MainPageNav = ({ section, setSection, updateSort }: MainPageNavProps) => {
   const sections = ['진행중', '예정', '종료'];
 
   return (
@@ -22,7 +23,10 @@ const MainPageNav = ({ section, setSection }: MainPageNavProps) => {
               ? 'border-b-gray-900 text-gray-900'
               : 'border-b-transparent text-gray-400'
           }`}
-          onClick={() => setSection(sectionName)}
+          onClick={() => {
+            setSection(sectionName);
+            updateSort('신규');
+          }}
         >
           {sectionName}
         </button>
