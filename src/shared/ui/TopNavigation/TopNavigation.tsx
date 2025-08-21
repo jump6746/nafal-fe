@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export interface TopNavigationProps {
   type: 'logo' | 'text';
@@ -6,18 +6,6 @@ export interface TopNavigationProps {
 }
 
 const TopNavigation = ({ type, title }: TopNavigationProps) => {
-  const navigate = useNavigate();
-
-  const handleBack = () => {
-    navigate(-1);
-  };
-  const handleHome = () => {
-    navigate('/');
-  };
-  const handleMypage = () => {
-    navigate('/mypage');
-  };
-
   return (
     <nav className='flex w-full items-center justify-between'>
       <div className='flex h-12 w-12 items-center justify-center'>
@@ -35,9 +23,13 @@ const TopNavigation = ({ type, title }: TopNavigationProps) => {
       </div>
       <div className='flex h-12 w-12 items-center justify-center'>
         {type === 'text' ? (
-          <img src='images/Icons/home.svg' alt='home' onClick={handleHome} />
+          <Link to='/'>
+            <img src='images/Icons/home.svg' alt='home' />
+          </Link>
         ) : (
-          <img src='images/Icons/user.svg' alt='mypage' onClick={handleMypage} />
+          <Link to='/mypage'>
+            <img src='images/Icons/user.svg' alt='mypage' />
+          </Link>
         )}
       </div>
     </nav>

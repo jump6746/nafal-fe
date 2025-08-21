@@ -15,7 +15,7 @@ interface AuctionListCardProps {
 }
 
 const AuctionListCard = ({
-  productId,
+  // productId,
   immediatelyPurchasePrice,
   currentPrice,
   productName,
@@ -29,9 +29,10 @@ const AuctionListCard = ({
 
   return (
     <div
-      className='flex h-fit w-full flex-col gap-[6px] bg-white'
+      className='flex h-fit w-full cursor-pointer flex-col gap-[6px] bg-white'
       onClick={() => {
-        navigate(`/auction/${productId}`);
+        // navigate(`/auction/${productId}`);
+        navigate(`/auction`);
       }}
     >
       {isImminent && (
