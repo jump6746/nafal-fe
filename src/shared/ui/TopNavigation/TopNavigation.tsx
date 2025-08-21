@@ -1,13 +1,29 @@
+import { useNavigate } from 'react-router-dom';
+
 export interface TopNavigationProps {
   type: 'logo' | 'text';
   title?: string;
 }
 
 const TopNavigation = ({ type, title }: TopNavigationProps) => {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+  const handleHome = () => {
+    navigate('/');
+  };
+  const handleMypage = () => {
+    navigate('/mypage');
+  };
+
   return (
     <nav className='flex w-full items-center justify-between'>
       <div className='flex h-12 w-12 items-center justify-center'>
-        {type === 'text' && <img src='images/Icons/caret_left_lg.svg' alt='back' />}
+        {type === 'text' && (
+          <img src='images/Icons/caret_left_lg.svg' alt='back' onClick={handleBack} />
+        )}
       </div>
       <div>
         {' '}
@@ -19,9 +35,9 @@ const TopNavigation = ({ type, title }: TopNavigationProps) => {
       </div>
       <div className='flex h-12 w-12 items-center justify-center'>
         {type === 'text' ? (
-          <img src='images/Icons/home.svg' alt='home' />
+          <img src='images/Icons/home.svg' alt='home' onClick={handleHome} />
         ) : (
-          <img src='images/Icons/user.svg' alt='mypage' />
+          <img src='images/Icons/user.svg' alt='mypage' onClick={handleMypage} />
         )}
       </div>
     </nav>

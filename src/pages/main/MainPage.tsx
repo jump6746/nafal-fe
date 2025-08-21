@@ -3,8 +3,8 @@ import MainPageNav from '@/features/main/ui/MainPageNav';
 import MainPageCategory from '@/widgets/main/ui/MainPageCategory';
 import MainPageCarousel from '@/widgets/main/ui/MainPageCarousel';
 import { FilterTags } from '@/shared/ui';
-import SortCategory from '@/shared/ui/Category/SortCategory';
-import AuctionList from '@/widgets/auction/AuctionList';
+import SortCategory from '@/features/main/ui/SortCategory';
+import AuctionList from '@/widgets/auction/ui/AuctionList';
 import { popularDummy, newDummy, closingDummy } from '@/entities/auction/mockup/AuctionListMock';
 
 const MainPage = () => {
