@@ -85,11 +85,23 @@ const MyPage = () => {
         </div>
       </section>
       {/* 하단 메뉴 */}
-      <section className='flex flex-col px-5'>
-        <div className='flex items-center justify-between'></div>
-        <div className='flex items-center justify-between'></div>
-        <div className='flex items-center justify-between'></div>
-        <div className='flex items-center justify-between'></div>
+      <section className='flex flex-col gap-6 px-5 pt-10 pb-8 text-xl font-semibold text-gray-800'>
+        <div className='flex cursor-pointer items-center justify-between'>
+          <span>럭키드로우 당첨 내역</span>
+          <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+        </div>
+        <div className='flex cursor-pointer items-center justify-between'>
+          <span>배송 내역</span>
+          <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+        </div>
+        <div className='flex cursor-pointer items-center justify-between'>
+          <span>배송지 관리</span>
+          <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+        </div>
+        <div className='flex cursor-pointer items-center justify-between'>
+          <span>결제수단 관리</span>
+          <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+        </div>
       </section>
     </div>
   );
