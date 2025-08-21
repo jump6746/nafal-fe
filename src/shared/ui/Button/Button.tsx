@@ -13,6 +13,7 @@ const buttonVariants = cva(
         default: 'bg-point-400 hover:bg-point-500',
         white: 'bg-white hover:bg-point-200',
         light: 'bg-point-200 hover:bg-point-400',
+        warning: 'bg-sub-a-100 hover:bg-sub-a-300',
       },
       size: {
         default: 'px-4 py-4 text-xl leading-1.5',
