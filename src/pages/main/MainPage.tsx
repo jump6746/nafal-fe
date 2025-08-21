@@ -4,6 +4,8 @@ import MainPageCategory from '@/widgets/main/ui/MainPageCategory';
 import MainPageCarousel from '@/widgets/main/ui/MainPageCarousel';
 import { FilterTags } from '@/shared/ui';
 import SortCategory from '@/shared/ui/Category/SortCategory';
+import AuctionList from '@/widgets/auction/AuctionList';
+import { popularDummy, newDummy, closingDummy } from '@/entities/auction/mockup/AuctionListMock';
 
 const MainPage = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -84,9 +86,21 @@ const MainPage = () => {
           updateMaxPrice={updateMaxPrice}
         />
       </div>
-      <div className='flex justify-end px-5 pb-[18px]'>
+      <div className='flex justify-end px-5'>
         <SortCategory sort={sort} updateSort={updateSort} />
       </div>
+      <section className='flex flex-col gap-2 px-5'>
+        <h2 className='text-2xl font-extrabold text-gray-800'>
+          {sort === '신규'
+            ? '따끈따끈한 이 제품 어때요?'
+            : sort === '마감 임박'
+              ? '빠른 자만이 얻는다'
+              : '제일 인기 있는 것만 모았어요'}
+        </h2>
+        <AuctionList
+          data={sort === '신규' ? newDummy : sort === '마감 임박' ? closingDummy : popularDummy}
+        />
+      </section>
     </div>
   );
 };
