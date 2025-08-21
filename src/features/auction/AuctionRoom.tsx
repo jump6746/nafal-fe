@@ -9,19 +9,21 @@ import {
 import AuctionChatWindow from '@/entities/auction/ui/AuctionChatWindow';
 import customToast from '@/shared/ui/CustomToast/customToast';
 
-const handleBidClick = () => {
-  customToast.confirm('10,000원 입찰이 완료되었습니다!');
-};
-
-const handleAutoBidClick = () => {
-  customToast.warning('잔액이 부족합니다.');
-};
-
 const AuctionRoom = () => {
+  const handleBidClick = () => {
+    customToast.confirm('10,000원 입찰이 완료되었습니다!');
+  };
+
+  const handleAutoBidClick = () => {
+    customToast.warning('잔액이 부족합니다.');
+  };
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant='default'>ㄷㄷ</Button>
+        <Button variant='default' className='w-full'>
+          입찰하기
+        </Button>
       </DrawerTrigger>
       <DrawerContent
         className='!fixed !right-0 !bottom-0 !left-0 !z-[9999] !mx-auto !w-full !max-w-[450px] !min-w-[320px] data-[vaul-drawer-direction=bottom]:!h-[72vh]'

@@ -65,6 +65,10 @@
   --gradient-blur: linear-gradient(156deg, #f4fefc 15.29%, #b6faff 102.72%);
 }
 
+.gradient-bg {
+  background: linear-gradient(156deg, #f4fefc 15.29%, #b6faff 102.72%);
+}
+
 .gradient-border {
   background:
     linear-gradient(white, white) padding-box,
