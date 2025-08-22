@@ -131,16 +131,18 @@ const AddressSearch = ({ initialAddress, onAddressChange }: AddressSearchProps) 
         <div className='flex flex-col gap-2'>
           <label className='px-1 text-sm font-medium text-gray-900'>우편번호</label>
           <div className='flex gap-2'>
-            <TextField
-              value={address.zipcode}
-              readOnly
-              placeholder='우편번호'
-              className='h-12 flex-1 border-gray-300 bg-gray-50 text-base'
-            />
+            <div className='flex-1'>
+              <TextField
+                value={address.zipcode}
+                readOnly
+                placeholder='우편번호'
+                className='h-12 w-full border-gray-300 bg-gray-50 text-base'
+              />
+            </div>
             <Button
               variant='default'
               onClick={handleAddressSearch}
-              className='h-12 w-full px-[10px] text-xl font-semibold text-[#026051]'
+              className='h-12 px-[10px] text-xl font-semibold text-[#026051]'
             >
               주소검색
             </Button>
