@@ -6,6 +6,7 @@ import { AutoBidPlace, BidPlace, DirectBuyPlace } from '@/widgets/auction/ui';
 import { MyPage } from '@/pages/mypage';
 import { PayPage } from '@/pages/pay';
 import { LoginPage } from '@/pages/user';
+import PaidSuccess from '@/pages/pay/PaidSuccess';
 
 const AppRouter = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ const AppRouter = createBrowserRouter([
       {
         element: <PayPage />,
         path: '/pay',
+      },
+      {
+        element: <PaidSuccess />,
+        path: '/pay/success',
       },
     ],
   },
