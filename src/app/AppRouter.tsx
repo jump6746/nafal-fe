@@ -3,7 +3,7 @@ import { AuctionLayout, DefaultLayout, MainPageLayout } from './layouts';
 import { AuctionRoomPage, LuckDrawPage } from '@/pages/auction';
 import { MainPage } from '@/pages/main';
 import { AutoBidPlace, BidPlace, DirectBuyPlace } from '@/widgets/auction/ui';
-import { MyPage } from '@/pages/mypage';
+import { MyPage, PaymentManagePage } from '@/pages/mypage';
 import { PayPage } from '@/pages/pay';
 import { LoginPage } from '@/pages/user';
 import PaidSuccess from '@/pages/pay/PaidSuccess';
@@ -62,6 +62,10 @@ const AppRouter = createBrowserRouter([
       {
         element: <PaidSuccess />,
         path: '/pay/success',
+      },
+      {
+        element: <PaymentManagePage />,
+        path: '/mypage/payment',
       },
       {
         element: <Test />,
