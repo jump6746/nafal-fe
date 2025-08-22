@@ -7,6 +7,7 @@ interface CardPaymentProps {
   variant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet';
   trigger?: React.ReactNode;
   Loadertime?: number;
+  shouldFail?: boolean;
 }
 
 const CardPaymentHeader = (variant: CardPaymentProps['variant']) => {
@@ -40,7 +41,7 @@ const CardPaymentHeader = (variant: CardPaymentProps['variant']) => {
   }
 };
 
-const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
+const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showCardNotYetModal, setShowCardNotYetModal] = useState(false);
   const [showPassModal, setShowPassModal] = useState(false);
@@ -49,6 +50,7 @@ const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
   const [showCardSuccessMessage, setShowCardSuccessMessage] = useState(false);
   const [accountCheckPercent, setAccountCheckPercent] = useState(0);
   const [showAccountCheckSuccess, setShowAccountCheckSuccess] = useState(false);
+  const [showAccountCheckFailure, setShowAccountCheckFailure] = useState(false);
   const progressTimerRef = useRef<number | null>(null);
   const percentRef = useRef(0);
   const header = CardPaymentHeader(variant);
@@ -97,6 +99,7 @@ const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
     setAccountCheckPercent(0);
     percentRef.current = 0;
     setShowAccountCheckSuccess(false);
+    setShowAccountCheckFailure(false);
 
     const totalDuration = typeof Loadertime === 'number' ? Math.max(1200, Loadertime) : 3200;
     const startTs = Date.now();
@@ -137,12 +140,16 @@ const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
         progressTimerRef.current = window.setTimeout(() => {
           setAccountCheckPercent(100);
           percentRef.current = 100;
-          setShowAccountCheckSuccess(true);
-          // 성공 모달 2.2초 후 닫힘
-          window.setTimeout(() => {
-            setShowAccountCheckSuccess(false);
-            setIsOpen(false);
-          }, 2200);
+          if (shouldFail) {
+            setShowAccountCheckFailure(true);
+          } else {
+            setShowAccountCheckSuccess(true);
+            // 성공 모달 2.2초 후 닫힘
+            window.setTimeout(() => {
+              setShowAccountCheckSuccess(false);
+              setIsOpen(false);
+            }, 2200);
+          }
         }, delay);
         return;
       }
@@ -161,7 +168,7 @@ const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
         progressTimerRef.current = null;
       }
     };
-  }, [isOpen, variant, Loadertime]);
+  }, [isOpen, variant, Loadertime, shouldFail]);
 
   if (!isOpen) {
     return <div onClick={() => setIsOpen(true)}>{trigger}</div>;
@@ -195,9 +202,8 @@ const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
                   />
                 </svg>
               </button>
-              <div className='py-[10px]'></div>
               {/* Content */}
-              <div className='z-[-1px] flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
+              <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
                 <div className='text-center'>
                   <div className='mb-4 text-6xl'>✅</div>
                   <p className='mb-2 text-2xl font-bold text-gray-900'>본인인증이 완료되었습니다</p>
@@ -235,9 +241,8 @@ const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
                   />
                 </svg>
               </button>
-              <div className='py-[10px]'></div>
               {/* Content */}
-              <div className='z-[-1px] flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
+              <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
                 <div className='text-center'>
                   <div className='mb-4 text-6xl'>❌</div>
                   <p className='mb-2 text-2xl font-bold text-gray-900'>본인인증이 취소되었습니다</p>
@@ -279,10 +284,73 @@ const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
               <div className='flex flex-col text-xl font-semibold text-gray-800'>
                 <h2>조회에 성공했어요!</h2>
               </div>
-              <div className='py-[10px]'></div>
               {/* Content */}
-              <div className='z-[-1px] flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
+              <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
                 <img src='/images/BackGround/card.webp' alt='card' className='mt-6 w-full px-8' />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 가용 입찰 금액 점검(계정 점검) 실패 메시지
+  if (showAccountCheckFailure) {
+    return (
+      <div className='fixed inset-0 z-[9999] bg-black/50'>
+        <div className='absolute right-0 bottom-0 left-0 mx-auto w-full max-w-[450px] min-w-[320px]'>
+          <div className='h-[46vh] w-full translate-y-0 transform rounded-t-2xl bg-white px-5 py-9 transition-transform duration-300 ease-out'>
+            <div className='relative mx-auto flex h-full w-full flex-col'>
+              <button
+                onClick={() => {
+                  setShowAccountCheckFailure(false);
+                  setIsOpen(false);
+                }}
+                className='absolute right-0 rounded-full p-2 hover:bg-gray-100'
+                title='닫기'
+              >
+                <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M6 18L18 6M6 6l12 12'
+                  />
+                </svg>
+              </button>
+              {/* Header */}
+              <div className='flex flex-col text-xl font-semibold text-gray-800'>
+                <h2 className='text-sub-a-500'>점검에 실패했어요</h2>
+                <div className='flex flex-row gap-2'>
+                  <h3>잔액이 부족하거나, 사용하지 않는 카드예요</h3>
+                </div>
+                <div className='mt mt-[10px] flex flex-row items-center gap-2'>
+                  <div className='rounded-lg bg-gray-800 px-2 py-1 text-sm font-semibold text-white'>
+                    대표카드
+                  </div>
+                  <p className='text-xs font-medium text-gray-800'>현대카드 4056</p>
+                </div>
+              </div>
+              {/* Content */}
+              <div className='relative flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
+                <img
+                  src='/images/BackGround/card.webp'
+                  alt='card'
+                  className='absolute inset-0 z-0 mt-4 w-full px-14'
+                />
+                <div className='relative z-10 mt-auto w-full'>
+                  <Button
+                    variant='default'
+                    className='w-full'
+                    onClick={() => {
+                      setShowAccountCheckFailure(false);
+                      setIsOpen(false);
+                    }}
+                  >
+                    확인
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -315,9 +383,8 @@ const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
                   />
                 </svg>
               </button>
-              <div className='py-[10px]'></div>
               {/* Content */}
-              <div className='z-[-1px] flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
+              <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
                 <div className='text-center'>
                   <div className='mb-4 text-6xl'>✅</div>
                   <p className='mb-2 text-2xl font-bold text-gray-900'>
@@ -454,9 +521,8 @@ const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
                 </div>
               )}
             </div>
-            <div className='py-[10px]'></div>
             {/* Content */}
-            <div className='z-[-1px] flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
+            <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
               {variant === 'CardNotYet' && (
                 <img
                   src='/images/BackGround/UnknownLuckydraw.jpg'
@@ -491,16 +557,16 @@ const CardPayment = ({ variant, trigger, Loadertime }: CardPaymentProps) => {
                     <path
                       d='M9 8C9 9.65685 10.3431 11 12 11C13.6569 11 15 9.65685 15 8C15 6.34315 13.6569 5 12 5C10.3431 5 9 6.34315 9 8Z'
                       stroke='currentColor'
-                      stroke-width='2'
-                      stroke-linecap='round'
-                      stroke-linejoin='round'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
                     />
                     <path
                       d='M12 14C14.7614 14 17 16.2386 17 19H7C7 16.2386 9.23858 14 12 14Z'
                       stroke='currentColor'
-                      stroke-width='2'
-                      stroke-linecap='round'
-                      stroke-linejoin='round'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
                     />
                   </svg>
                 </div>

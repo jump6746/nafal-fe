@@ -8,6 +8,11 @@ const Test = () => {
       <CardPayment variant='AccountCheck' trigger={<Button>가용 입찰 금액 점검</Button>} />
       <CardPayment variant='CardPayment' trigger={<Button>결제 진행중</Button>} />
       <CardPayment variant='CertificationNotYet' trigger={<Button>본인인증 하기</Button>} />
+      <CardPayment
+        variant='AccountCheck'
+        shouldFail={true}
+        trigger={<Button>가용 입찰 금액 점검 실패</Button>}
+      />
     </div>
   );
 };
