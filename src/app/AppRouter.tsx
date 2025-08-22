@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { AuctionLayout, DefaultLayout, MainPageLayout } from './layouts';
-import { AuctionRoomPage, LuckDrawPage } from '@/pages/auction';
+import { AuctionRoomPage, CreateAuctionPage, LuckDrawPage } from '@/pages/auction';
 import { MainPage } from '@/pages/main';
 import { AutoBidPlace, BidPlace, DirectBuyPlace } from '@/widgets/auction/ui';
 import { MyPage, MyPageAdmin } from '@/pages/mypage';
@@ -55,6 +55,10 @@ const AppRouter = createBrowserRouter([
       {
         element: <MyPageAdmin />,
         path: '/admin/mypage',
+      },
+      {
+        element: <CreateAuctionPage />,
+        path: '/auction/create',
       },
     ],
   },
