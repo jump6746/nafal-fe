@@ -30,7 +30,7 @@ const LandingPage = () => {
     }
 
     toast('WebSocket 연결 시도...');
-    connect('wss://echo.websocket.org/'); // 테스트용 WebSocket 서버
+    connect('https://api.nafal.site/ws'); // 테스트용 WebSocket 서버
   };
 
   return (

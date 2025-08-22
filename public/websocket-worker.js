@@ -34,6 +34,18 @@ self.onconnect = function (event) {
         sendMessage(data.message, port);
         break;
 
+      case 'subscribe':
+        subscribeToChannel(data.channel, port);
+        break;
+
+      case 'unsubscribe':
+        unsubscribeFromChannel(data.channel, port);
+        break;
+
+      case 'getSubscriptions':
+        getSubscriptions(port);
+        break;
+
       case 'status':
         sendStatus(port);
         break;
@@ -182,6 +194,189 @@ function disconnectWebSocket(requestingPort) {
   });
 }
 
+// 채널 구독
+function subscribeToChannel(channel, requestingPort) {
+  console.log(`📺 채널 구독 요청: ${channel}`);
+
+  if (!channel) {
+    requestingPort.postMessage({
+      type: 'error',
+      data: { message: '채널명이 필요합니다.' },
+    });
+    return;
+  }
+
+  // 채널별 리스너 맵에 포트 추가
+  if (!channelListeners.has(channel)) {
+    channelListeners.set(channel, new Set());
+  }
+  channelListeners.get(channel).add(requestingPort);
+
+  // 전역 구독 채널에 추가
+  const wasSubscribed = subscribedChannels.has(channel);
+  subscribedChannels.add(channel);
+
+  console.log(`✅ 채널 "${channel}" 구독 완료`);
+  console.log(`📊 해당 채널 리스너 수: ${channelListeners.get(channel).size}`);
+
+  // WebSocket이 연결되어 있으면 서버에 구독 메시지 전송
+  if (websocket && websocket.readyState === WebSocket.OPEN && !wasSubscribed) {
+    const subscribeMessage = {
+      type: 'subscribe',
+      channel: channel,
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      websocket.send(JSON.stringify(subscribeMessage));
+      console.log(`📤 서버에 구독 메시지 전송: ${channel}`);
+    } catch (error) {
+      console.error('❌ 구독 메시지 전송 실패:', error);
+    }
+  }
+
+  // 요청한 포트에 구독 완료 알림
+  requestingPort.postMessage({
+    type: 'subscribed',
+    data: {
+      channel: channel,
+      totalSubscriptions: subscribedChannels.size,
+      channelListeners: channelListeners.get(channel).size,
+    },
+  });
+
+  // 다른 포트들에도 구독 상태 업데이트 알림
+  broadcastToOthers(requestingPort, {
+    type: 'subscriptionUpdate',
+    data: {
+      action: 'subscribed',
+      channel: channel,
+      totalSubscriptions: subscribedChannels.size,
+    },
+  });
+}
+
+// 채널 구독 해제
+function unsubscribeFromChannel(channel, requestingPort) {
+  console.log(`📺 채널 구독 해제 요청: ${channel}`);
+
+  if (!channel) {
+    requestingPort.postMessage({
+      type: 'error',
+      data: { message: '채널명이 필요합니다.' },
+    });
+    return;
+  }
+
+  // 해당 포트를 채널 리스너에서 제거
+  if (channelListeners.has(channel)) {
+    const listeners = channelListeners.get(channel);
+    listeners.delete(requestingPort);
+
+    // 해당 채널에 더 이상 리스너가 없으면 전역에서도 제거
+    if (listeners.size === 0) {
+      channelListeners.delete(channel);
+      subscribedChannels.delete(channel);
+
+      // WebSocket이 연결되어 있으면 서버에 구독 해제 메시지 전송
+      if (websocket && websocket.readyState === WebSocket.OPEN) {
+        const unsubscribeMessage = {
+          type: 'unsubscribe',
+          channel: channel,
+          timestamp: new Date().toISOString(),
+        };
+
+        try {
+          websocket.send(JSON.stringify(unsubscribeMessage));
+          console.log(`📤 서버에 구독 해제 메시지 전송: ${channel}`);
+        } catch (error) {
+          console.error('❌ 구독 해제 메시지 전송 실패:', error);
+        }
+      }
+    }
+  }
+
+  console.log(`✅ 채널 "${channel}" 구독 해제 완료`);
+
+  requestingPort.postMessage({
+    type: 'unsubscribed',
+    data: {
+      channel: channel,
+      totalSubscriptions: subscribedChannels.size,
+    },
+  });
+
+  // 다른 포트들에도 구독 해제 상태 업데이트 알림
+  broadcastToOthers(requestingPort, {
+    type: 'subscriptionUpdate',
+    data: {
+      action: 'unsubscribed',
+      channel: channel,
+      totalSubscriptions: subscribedChannels.size,
+    },
+  });
+}
+
+// 포트의 모든 채널 구독 해제 (포트 종료시)
+function unsubscribePortFromAllChannels(port) {
+  console.log('🧹 포트의 모든 채널 구독 해제');
+
+  const channelsToCleanup = [];
+
+  channelListeners.forEach((listeners, channel) => {
+    if (listeners.has(port)) {
+      listeners.delete(port);
+      if (listeners.size === 0) {
+        channelsToCleanup.push(channel);
+      }
+    }
+  });
+
+  // 리스너가 없는 채널들 정리
+  channelsToCleanup.forEach(channel => {
+    channelListeners.delete(channel);
+    subscribedChannels.delete(channel);
+
+    // 서버에 구독 해제 알림
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+      const unsubscribeMessage = {
+        type: 'unsubscribe',
+        channel: channel,
+        timestamp: new Date().toISOString(),
+      };
+
+      try {
+        websocket.send(JSON.stringify(unsubscribeMessage));
+        console.log(`📤 자동 구독 해제: ${channel}`);
+      } catch (error) {
+        console.error('❌ 자동 구독 해제 실패:', error);
+      }
+    }
+  });
+
+  console.log(`✅ ${channelsToCleanup.length}개 채널 정리 완료`);
+}
+
+// 구독 현황 조회
+function getSubscriptions(requestingPort) {
+  const subscriptionData = {
+    subscribedChannels: Array.from(subscribedChannels),
+    channelDetails: {},
+  };
+
+  channelListeners.forEach((listeners, channel) => {
+    subscriptionData.channelDetails[channel] = {
+      listenerCount: listeners.size,
+      isListening: listeners.has(requestingPort),
+    };
+  });
+
+  requestingPort.postMessage({
+    type: 'subscriptions',
+    data: subscriptionData,
+  });
+}
+
 // 메시지 전송
 function sendMessage(message, requestingPort) {
   if (!websocket || websocket.readyState !== WebSocket.OPEN) {
@@ -235,6 +430,19 @@ function broadcastToAll(message) {
     }
   });
 }
+
+// function broadcastToOthers(excludePort, message) {
+//   connectedPorts.forEach(port => {
+//     if (port !== excludePort) {
+//       try {
+//         port.postMessage(message);
+//       } catch (error) {
+//         console.error('포트 메시지 전송 실패:', error);
+//         connectedPorts.delete(port);
+//       }
+//     }
+//   });
+// }
 
 // WebSocket 정리
 function cleanup() {
