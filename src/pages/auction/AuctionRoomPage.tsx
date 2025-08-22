@@ -1,9 +1,9 @@
 import { useTopNavigationStore } from '@/shared/stores';
-import { Button } from '@/shared/ui';
 import Tooltip from '@/shared/ui/Tooltip/Tooltip';
-import { AuctionProductCarousel } from '@/widgets/auction/ui';
+import { AuctionProductCarousel, AuctionRoom } from '@/widgets/auction/ui';
 import SuccessConfetti from '@/widgets/auction/ui/SuccessConfetti';
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const AuctionRoomPage = () => {
   const [showOverlay, setShowOverlay] = useState<boolean>(true);
@@ -84,10 +84,10 @@ const AuctionRoomPage = () => {
             <div className='absolute -top-3 -translate-x-6/10 -translate-y-full opacity-0 group-hover:opacity-100'>
               <Tooltip Tooltip='럭키드로우 현황을 확인해보세요!' />
             </div>
-            <button type='button' className='flex cursor-pointer items-center gap-1.5'>
+            <Link to='/luckydraw' className='flex cursor-pointer items-center gap-1.5'>
               <img src='/images/Icons/solar_ticket-bold.svg' alt='티켓' />
               <span className='text-sub-b-400 font-semibold'>{10}개</span>
-            </button>
+            </Link>
           </div>
         </div>
         <div className='flex flex-col gap-1.5'>
@@ -205,17 +205,7 @@ const AuctionRoomPage = () => {
           </div>
         </div>
         <div className='sticky right-0 bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-white py-9'>
-          <Button
-            className='w-full'
-            type='button'
-            onClick={() => {
-              console.log('클릭');
-              console.log(showConfetti);
-              setShowConfetti(true);
-            }}
-          >
-            입찰하기
-          </Button>
+          <AuctionRoom />
         </div>
       </div>
     </div>

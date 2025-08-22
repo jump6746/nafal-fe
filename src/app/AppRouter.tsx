@@ -1,16 +1,29 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { LandingPage } from '../pages/landing';
-import { Layout } from '@/shared/ui';
-import { AuctionLayout } from './layouts';
-import { AuctionRoomPage } from '@/pages/auction';
+import { AuctionLayout, DefaultLayout, MainPageLayout } from './layouts';
+import { AuctionRoomPage, LuckDrawPage } from '@/pages/auction';
+import { MainPage } from '@/pages/main';
 import { AutoBidPlace, BidPlace, DirectBuyPlace } from '@/widgets/auction/ui';
+import { MyPage } from '@/pages/mypage';
+import { PayPage } from '@/pages/pay';
+import { LoginPage } from '@/pages/user';
+import PaidSuccess from '@/pages/pay/PaidSuccess';
+import Test from '@/pages/test';
 
 const AppRouter = createBrowserRouter([
   {
-    element: <Layout />,
+    element: <DefaultLayout />,
     children: [
       {
-        element: <LandingPage />,
+        element: <LoginPage />,
+        path: '/login',
+      },
+    ],
+  },
+  {
+    element: <MainPageLayout />,
+    children: [
+      {
+        element: <MainPage />,
         path: '/',
       },
     ],
@@ -33,6 +46,26 @@ const AppRouter = createBrowserRouter([
       {
         element: <DirectBuyPlace />,
         path: '/directbuy',
+      },
+      {
+        element: <LuckDrawPage />,
+        path: '/luckydraw',
+      },
+      {
+        element: <MyPage />,
+        path: '/mypage',
+      },
+      {
+        element: <PayPage />,
+        path: '/pay',
+      },
+      {
+        element: <PaidSuccess />,
+        path: '/pay/success',
+      },
+      {
+        element: <Test />,
+        path: '/test',
       },
     ],
   },
