@@ -1,15 +1,14 @@
 import AddressSearch from '@/widgets/pay/ui/AddressSearch';
 import { useTopNavigationStore } from '@/shared/stores';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import type { DeliveryAddress } from '@/features/pay/type/address';
 import OrderProduct from '@/widgets/pay/ui/OrderProduct';
 import PaymentMethod from '@/widgets/pay/ui/PaymentMethod';
+import CardPayment from '@/widgets/pay/ui/CardPayment';
 import { Button } from '@/shared/ui/Button/Button';
 
 const PayPage = () => {
   const setText = useTopNavigationStore(state => state.setText);
-  const navigate = useNavigate();
   const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddress>({
     recipientName: '',
     recipientPhone: '',
@@ -41,12 +40,6 @@ const PayPage = () => {
     setPaymentMethod(newPaymentMethod);
   };
 
-  const handlePayment = () => {
-    navigate('/pay/success', {
-      state: orderProductData,
-    });
-  };
-
   return (
     <div className='flex h-fit w-full flex-col gap-5 px-5 pt-9 pb-12'>
       <OrderProduct
@@ -61,13 +54,18 @@ const PayPage = () => {
         onPaymentMethodChange={handlePaymentMethodChange}
         paymentAmount={10000}
       />
-      <Button
-        variant='default'
-        className='text-point-900 mt-[100px] h-15 w-full text-xl font-semibold'
-        onClick={handlePayment}
-      >
-        10,000원 결제하기
-      </Button>
+      <CardPayment
+        variant='CardNotYet'
+        trigger={
+          <Button
+            variant='default'
+            className='text-point-900 mt-[100px] h-15 w-full text-xl font-semibold'
+          >
+            10,000원 결제하기
+          </Button>
+        }
+        Loadertime={1000}
+      />
     </div>
   );
 };
