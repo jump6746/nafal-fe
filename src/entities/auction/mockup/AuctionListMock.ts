@@ -1,3 +1,5 @@
+import type { AuctionListItem } from '../type/types';
+
 // 인기
 export const popularDummy = [
   {
@@ -273,3 +275,59 @@ export const closingDummy = [
     bidCnt: 14,
   },
 ];
+
+// Mock API 함수
+export const getMockAuctionListAPI = async (param: {
+  status: 'OPEN' | 'CLOSED' | 'SCHEDULED';
+  view?: 'DEFAULT' | 'NEW' | 'POPULAR' | 'OPENING_SOON';
+  keyword?: string;
+  page?: number;
+  size?: number;
+}): Promise<{ data: AuctionListItem[]; success: boolean; message: string }> => {
+  // 로딩 시뮬레이션
+  await new Promise(resolve => setTimeout(resolve, 1500));
+
+  let mockData: typeof popularDummy = [];
+
+  // status와 view에 따라 데이터 선택
+  if (param.status === 'OPEN') {
+    if (param.view === 'NEW') {
+      mockData = newDummy;
+    } else if (param.view === 'POPULAR') {
+      mockData = popularDummy;
+    } else if (param.view === 'OPENING_SOON') {
+      mockData = closingDummy;
+    } else {
+      mockData = [...popularDummy, ...newDummy];
+    }
+  } else if (param.status === 'SCHEDULED') {
+    mockData = newDummy.slice(0, 4); // 예정 상품은 일부만
+  } else if (param.status === 'CLOSED') {
+    mockData = closingDummy;
+  }
+
+  // AuctionListItem 형태로 변환
+  const transformedData = mockData.map(item => ({
+    auctionId: item.productId + 1000,
+    productId: item.productId,
+    userId: 1,
+    sellerName: item.sellerName,
+    productName: item.productName,
+    currentPrice: item.currentPrice,
+    currencyCode: 'KRW',
+    bidCnt: item.bidCnt,
+    eventId: 1,
+    startPrice: item.currentPrice - 10000,
+    bidIncrement: 5000,
+    immediatelyPurchasePrice: item.immediatelyPurchasePrice,
+    startAt: '2025-01-01T00:00:00Z',
+    endAt: item.endAt,
+    imgUrl: item.url,
+  }));
+
+  return {
+    data: transformedData,
+    success: true,
+    message: 'Success',
+  };
+};
