@@ -22,11 +22,17 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  userId: number;
+  accessToken: string;
+}
+
+export interface GetUserResponse {
+  id: number;
   username: string;
   nickname: string;
+  role: 'COMMON' | 'SELLER' | 'ADMIN';
+  shortLogoKey: string;
+  longLogoKey: string;
+  identityVerified: boolean;
   cardRegistered: boolean;
-  balance: number | null;
-  identityVerifeid: boolean;
-  accessToken: string;
+  balance: number;
 }
