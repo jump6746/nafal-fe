@@ -63,7 +63,7 @@ const CategoryFilter = ({
     <Drawer open={isOpen} onOpenChange={setIsOpen} modal={true}>
       <DrawerTrigger asChild>
         <button
-          className='flex w-fit shrink-0 items-center gap-[2px] rounded-full bg-gray-100 px-3 py-[6px] whitespace-nowrap'
+          className='flex w-fit shrink-0 cursor-pointer items-center gap-[2px] rounded-full bg-gray-100 px-3 py-[6px] whitespace-nowrap'
           onBlur={() => {
             // 드로어가 열려있지 않을 때만 포커스 해제
             if (!isOpen) {
@@ -72,7 +72,7 @@ const CategoryFilter = ({
           }}
         >
           카테고리
-          <img src='images/Icons/caret_down_sm.svg' alt='caret_down' className='h-6 w-6' />
+          <img src='/images/Icons/caret_down_sm.svg' alt='caret_down' className='h-6 w-6' />
         </button>
       </DrawerTrigger>
       <DrawerPortal>
