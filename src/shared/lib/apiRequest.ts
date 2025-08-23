@@ -27,7 +27,9 @@ const apiRequest = async <
   const body = data ? JSON.stringify(data) : null;
 
   const getAccessToken = () => {
-    return sessionStorage.getItem('nefal-access') || null;
+    const session = JSON.parse(sessionStorage.getItem('nefal-access') || '{}');
+
+    return session.accessToken || null;
   };
 
   const performRequest = async (retryCount = 0): Promise<ResponseDTO<P>> => {
