@@ -13,13 +13,13 @@ export type Bid = z.infer<typeof BidSchema>;
 export type Winner = z.infer<typeof WinnerSchema>;
 export type DeliveryMethod = z.infer<typeof DeliveryMethodSchema>;
 
-export interface AuctionList {
+export interface AuctionListItem {
   auctionId: number;
   productId: number;
   userId: number;
   sellerName: string;
   productName: string;
-  currentPrice: string;
+  currentPrice: number;
   currencyCode: string;
   bidCnt: number;
   eventId: number;

@@ -1,22 +1,12 @@
 import AuctionListCard from '@/features/auction/AuctionListCard';
+import type { AuctionListItem } from '@/entities/auction/type/types';
 
-interface AuctionItem {
-  productId: number;
-  immediatelyPurchasePrice: number;
-  currentPrice: number;
-  productName: string;
-  url: string;
-  endAt: string;
-  sellerName: string;
+export interface AuctionListProps {
+  data: AuctionListItem[];
   isImminent: boolean;
-  bidCnt: number;
 }
 
-interface AuctionListProps {
-  data: AuctionItem[];
-}
-
-const AuctionList = ({ data }: AuctionListProps) => {
+const AuctionList = ({ data, isImminent }: AuctionListProps) => {
   return (
     <div className='grid grid-cols-2 gap-x-[16px] gap-y-[28px]'>
       {data.map(item => (
@@ -26,10 +16,10 @@ const AuctionList = ({ data }: AuctionListProps) => {
           immediatelyPurchasePrice={item.immediatelyPurchasePrice}
           currentPrice={item.currentPrice}
           productName={item.productName}
-          url={item.url}
+          url={item.imgUrl}
           endAt={item.endAt}
           sellerName={item.sellerName}
-          isImminent={item.isImminent}
+          isImminent={isImminent}
           bidCnt={item.bidCnt}
         />
       ))}
