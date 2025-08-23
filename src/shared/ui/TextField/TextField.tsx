@@ -5,6 +5,7 @@ interface TextFieldsProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   variant?: 'default' | 'error';
   errorMessage?: string;
+  suffix?: string;
 }
 
 const textFieldsVariants = cva(
@@ -25,16 +26,28 @@ const TextField = ({
   placeholder,
   variant = 'default',
   errorMessage,
+  suffix,
   ...props
 }: TextFieldsProps) => {
   return (
     <div className='flex flex-col gap-[1px]'>
-      <input
-        type='text'
-        placeholder={placeholder}
-        className={cn(textFieldsVariants({ variant }), className)}
-        {...props}
-      />
+      <div className='relative'>
+        <input
+          type='text'
+          placeholder={placeholder}
+          className={cn(
+            textFieldsVariants({ variant }),
+            suffix && 'pr-12', // suffix가 있을 때 오른쪽 패딩 증가
+            className
+          )}
+          {...props}
+        />
+        {suffix && (
+          <span className='pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-2xl font-semibold'>
+            {suffix}
+          </span>
+        )}
+      </div>
       {errorMessage && (
         <span className='text-sub-a-500 text-body-14 mx-3 font-medium'>{errorMessage}</span>
       )}
