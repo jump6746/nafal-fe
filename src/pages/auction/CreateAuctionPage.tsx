@@ -1,203 +1,202 @@
-import { CategoryFilter } from '@/features/main/ui';
-import { Button, StatusDropDown, TextField } from '@/shared/ui';
-import { useRef, useState } from 'react';
+import type { CreateAuctionRequest } from '@/entities/auction/type';
+import { useTopNavigationStore } from '@/shared/stores';
+import {
+  CreateAuctionStep1,
+  CreateAuctionStep2,
+  CreateAuctionStep3,
+  CreateAuctionStep4,
+  CreateAuctionStep5,
+  CreateAuctionStep6,
+  CreateAuctionStep7,
+} from '@/widgets/createAuction/ui';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CreateAuctionPage = () => {
-  const [pos, setPos] = useState<string | undefined>(undefined);
-  const [tag, setTag] = useState<string | undefined>(undefined);
+  const navigate = useNavigate();
+
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [formData, setFormData] = useState<CreateAuctionRequest>({
+    productCoreInfo: {
+      title: '',
+      condition: '',
+      categories: [],
+      expectedEffect: '',
+      imageKeys: [],
+    },
+    productAttributes: {
+      detailInfo: '',
+      tags: [],
+      width: 0,
+      height: 0,
+    },
+    productAdditionalInfo: {
+      material: '',
+      usageLocation: '',
+      editionInfo: '',
+    },
+    storyDetails: {
+      content: '',
+      imageKey: '',
+    },
+    auctionSettings: {
+      startPrice: 0,
+      bidIncrement: 0,
+      immediatelyPurchasePrice: 0,
+      startAt: new Date(),
+      endAt: new Date(),
+    },
+    eventDetails: {
+      name: '',
+      description: '',
+    },
+    deliveryDetails: {
+      method: '',
+      cost: 0,
+      note: '',
+    },
+  });
+
   const containerRef = useRef<HTMLDivElement>(null);
-  const [category, setCategory] = useState<string[]>([]);
-  const addCategory = (newCategory: string) => {
-    setCategory(prev => [...prev, newCategory]);
+
+  const setOnClick = useTopNavigationStore(state => state.setOnClick);
+  const clearOnClick = useTopNavigationStore(state => state.clearOnClick);
+
+  const TOTAL_STEPS = 7;
+
+  // 헬퍼 함수들 - 각 섹션별 업데이트를 쉽게 만들어줌
+  const updateProductCoreInfo = useCallback(
+    (updates: Partial<CreateAuctionRequest['productCoreInfo']>) => {
+      setFormData(prev => ({
+        ...prev,
+        productCoreInfo: { ...prev.productCoreInfo, ...updates },
+      }));
+    },
+    []
+  );
+
+  const updateProductAttributes = useCallback(
+    (updates: Partial<CreateAuctionRequest['productAttributes']>) => {
+      setFormData(prev => ({
+        ...prev,
+        productAttributes: { ...prev.productAttributes, ...updates },
+      }));
+    },
+    []
+  );
+
+  const updateProductAdditionalInfo = useCallback(
+    (updates: Partial<CreateAuctionRequest['productAdditionalInfo']>) => {
+      setFormData(prev => ({
+        ...prev,
+        productAdditionalInfo: { ...prev.productAdditionalInfo, ...updates },
+      }));
+    },
+    []
+  );
+
+  const updateStoryDetails = useCallback(
+    (updates: Partial<CreateAuctionRequest['storyDetails']>) => {
+      setFormData(prev => ({
+        ...prev,
+        storyDetails: { ...prev.storyDetails, ...updates },
+      }));
+    },
+    []
+  );
+
+  const updateAuctionSettings = useCallback(
+    (updates: Partial<CreateAuctionRequest['auctionSettings']>) => {
+      setFormData(prev => ({
+        ...prev,
+        auctionSettings: { ...prev.auctionSettings, ...updates },
+      }));
+    },
+    []
+  );
+
+  const updateEventDetails = useCallback(
+    (updates: Partial<CreateAuctionRequest['eventDetails']>) => {
+      setFormData(prev => ({
+        ...prev,
+        eventDetails: { ...prev.eventDetails, ...updates },
+      }));
+    },
+    []
+  );
+
+  const updateDeliveryDetails = useCallback(
+    (updates: Partial<CreateAuctionRequest['deliveryDetails']>) => {
+      setFormData(prev => ({
+        ...prev,
+        deliveryDetails: { ...prev.deliveryDetails, ...updates },
+      }));
+    },
+    []
+  );
+
+  const nextStep = () => {
+    if (currentStep < TOTAL_STEPS) {
+      setCurrentStep(prev => prev + 1);
+    }
   };
-  const removeCategory = (categoryToRemove: string) => {
-    setCategory(prev => prev.filter(cat => cat !== categoryToRemove));
+
+  const prevStep = useCallback(() => {
+    if (currentStep > 1) {
+      setCurrentStep(prev => prev - 1);
+    } else {
+      navigate(-1);
+    }
+  }, [currentStep, navigate]);
+
+  useEffect(() => {
+    setOnClick(() => {
+      prevStep();
+    });
+
+    return () => {
+      clearOnClick();
+    };
+  }, [currentStep, setOnClick, prevStep, clearOnClick]);
+
+  const renderStep = () => {
+    const commonProps = {
+      setFormData,
+      onNext: nextStep,
+      onPrev: prevStep,
+    };
+
+    switch (currentStep) {
+      case 1:
+        return (
+          <CreateAuctionStep1
+            setFormData={setFormData}
+            onNext={nextStep}
+            containerRef={containerRef}
+          />
+        );
+      case 2:
+        return <CreateAuctionStep2 {...commonProps} />;
+      case 3:
+        return <CreateAuctionStep3 {...commonProps} />;
+      case 4:
+        return <CreateAuctionStep4 {...commonProps} />;
+      case 5:
+        return <CreateAuctionStep5 {...commonProps} />;
+      case 6:
+        return <CreateAuctionStep6 {...commonProps} />;
+      case 7:
+        return <CreateAuctionStep7 {...commonProps} />;
+    }
   };
+
   return (
-    <div className='h-full w-full' ref={containerRef}>
-      {/* 1단계 */}
-      <section className='flex h-full w-full flex-col gap-4 px-5 pt-12 pb-9'>
-        <h2 className='text-xl font-extrabold text-gray-900'>제목</h2>
-        <TextField placeholder='상품명을 입력하세요.' />
-        <StatusDropDown pos={pos} setPos={setPos} />
-        <CategoryFilter
-          container={containerRef}
-          category={category}
-          addCategory={addCategory}
-          removeCategory={removeCategory}
-        />
-        <label htmlFor='' className='font-semibold text-gray-900'>
-          기대효과
-        </label>
-        <TextField placeholder='기대효과를 입력하세요.' />
-        {/* 사진 미리보기 공간 */}
-        <div className='aspect-[335/180] w-full rounded-xl bg-gray-200'></div>
-        <label htmlFor='file' className='mt-auto flex cursor-pointer gap-3'>
-          <img src='/images/Icons/add_photo.svg' alt='사진 추가' />
-          <span className='font-semibold text-gray-900'>사진 올리기</span>
-        </label>
-        <input hidden id='file' type='file' className='' />
-        <Button>다음</Button>
-      </section>
-      {/* 2단계 */}
-      <section className='flex h-full w-full flex-col gap-4 bg-red-50 px-5 pt-12 pb-9'>
-        <div className='flex flex-col'>
-          <h2 className='text-[1.75rem] font-extrabold text-gray-900'>스토리카드</h2>
-          <span className='text-sub-a-400 text-xs font-medium'>
-            카드 배경 이미지를 꼭 첨부해주세요.
-          </span>
+    <div className='relative h-full w-full overflow-hidden' ref={containerRef}>
+      <div className='h-full'>
+        <div key={currentStep} className={`h-full w-full`}>
+          {renderStep()}
         </div>
-        <label htmlFor='story' className='font-semibold text-gray-900'>
-          스토리 내용
-        </label>
-        <textarea
-          name='story'
-          id='story'
-          placeholder='내용을 입력하세요'
-          className='aspect-[335/130] w-full rounded-md bg-gray-50 px-6 py-3.5'
-        ></textarea>
-        {/* 사진 미리보기 공간 */}
-        <div className='aspect-[335/180] w-full rounded-xl bg-gray-200'></div>
-        <label htmlFor='file' className='mt-auto flex cursor-pointer gap-3'>
-          <img src='/images/Icons/add_photo.svg' alt='사진 추가' />
-          <span className=''>사진 올리기</span>
-        </label>
-        <input hidden id='file' type='file' className='' />
-        <Button>다음</Button>
-      </section>
-      {/* 3단계 */}
-      <section className='flex h-full w-full flex-col gap-4.5 bg-green-50 pt-12 pb-9'>
-        <div className='flex w-full flex-col gap-4.5 px-5'>
-          <div className='relative flex flex-col gap-1'>
-            <label htmlFor='currentPrice' className='font-semibold text-gray-900'>
-              현재가
-            </label>
-            <TextField id='currentPrice' variant='default' className='w-full' suffix='원' />
-          </div>
-          <div className='relative flex flex-col gap-1'>
-            <label htmlFor='bidGap' className='font-semibold text-gray-900'>
-              입찰단위
-            </label>
-            <TextField id='bidGap' variant='default' className='w-full' suffix='원' />
-          </div>
-        </div>
-        <div className='h-3 w-full bg-gray-200'></div>
-        <div className='flex w-full flex-col gap-4.5 px-5'>
-          <div className='flex flex-col gap-1'>
-            <label htmlFor='' className='font-semibold text-gray-900'>
-              종료 일자
-            </label>
-            <TextField placeholder='YYYY.MM.DD' />
-          </div>
-          <div className='flex flex-col gap-1'>
-            <label htmlFor='' className='font-semibold text-gray-900'>
-              종료 시간
-            </label>
-            <div className='flex gap-5.5'>
-              <TextField className='w-20' placeholder='몇 시' />
-              <TextField className='w-20' placeholder='몇 분' />
-            </div>
-          </div>
-        </div>
-        <div className='mt-auto w-full px-5'>
-          <Button className='w-full'>다음</Button>
-        </div>
-      </section>
-      {/* 4단계 */}
-      <section className='flex h-full w-full flex-col gap-4.5 bg-red-50 px-5 pt-12 pb-9'>
-        <h2 className='text-[1.75rem] font-extrabold text-gray-900'>행사</h2>
-        <div className='w-full'>
-          <label htmlFor='' className='font-semibold text-gray-900'>
-            행사명
-          </label>
-          <TextField placeholder='행사명을 입력하세요.' />
-        </div>
-        <label htmlFor='eventDescript' className='font-semibold text-gray-900'>
-          행사소개
-        </label>
-        <textarea
-          name='eventDescript'
-          id='eventDescript'
-          placeholder='내용을 입력하세요'
-          className='aspect-[335/130] w-full rounded-md bg-gray-50 px-6 py-3.5'
-        ></textarea>
-        <Button className='mt-auto w-full'>다음</Button>
-      </section>
-      {/* 5단계 */}
-      <section className='flex h-full w-full flex-col gap-4.5 bg-blue-50 px-5 pt-12 pb-9'>
-        <h2 className='text-[1.75rem] font-extrabold text-gray-900'>상품</h2>
-        <label htmlFor='descript' className='font-semibold text-gray-900'>
-          소개
-        </label>
-        <textarea
-          name='descript'
-          id='descript'
-          placeholder='내용을 입력하세요 (25자 이내)'
-          className='aspect-[335/130] w-full rounded-md bg-gray-50 px-6 py-3.5'
-        ></textarea>
-        <StatusDropDown pos={tag} setPos={setTag} />
-        <div className='flex gap-5.5'>
-          <div className='relative flex w-30 flex-col gap-1.5'>
-            <label htmlFor='' className='font-semibold text-gray-900'>
-              가로 사이즈
-            </label>
-            <TextField className='w-full' suffix='cm' />
-          </div>
-          <div className='relative flex w-30 flex-col gap-1.5'>
-            <label htmlFor='' className='font-semibold text-gray-900'>
-              세로 사이즈
-            </label>
-            <TextField className='w-full' suffix='cm' />
-          </div>
-        </div>
-        <Button className='mt-auto w-full'>다음</Button>
-      </section>
-      {/* 6단계 */}
-      <section className='flex h-full w-full flex-col gap-4.5 bg-green-50 px-5 pt-12 pb-9'>
-        <h2 className='text-[1.75rem] font-extrabold text-gray-900'>상품</h2>
-        <div className='w-full'>
-          <label htmlFor='' className='font-semibold text-gray-900'>
-            재질
-          </label>
-          <TextField placeholder='재질을 입력하세요.' />
-        </div>
-        <div className='w-full'>
-          <label htmlFor='' className='font-semibold text-gray-900'>
-            사용위치
-          </label>
-          <TextField placeholder='사용위치를 입력하세요.' />
-        </div>
-        <div className='w-full'>
-          <label htmlFor='' className='font-semibold text-gray-900'>
-            에디션정보
-          </label>
-          <TextField placeholder='에디션정보를 입력하세요.' />
-        </div>
-        <Button className='mt-auto w-full'>다음</Button>
-      </section>
-      {/* 7단계 */}
-      <section className='flex h-full w-full flex-col gap-4.5 px-5 pt-12 pb-9'>
-        <h2 className='text-[1.75rem] font-extrabold text-gray-900'>배송</h2>
-        <div className='w-full'>
-          <label htmlFor='' className='font-semibold text-gray-900'>
-            배송방법
-          </label>
-          <TextField placeholder='배송방법을 입력하세요.' />
-        </div>
-        <div className='relative w-full'>
-          <label htmlFor='' className='font-semibold text-gray-900'>
-            배송비용
-          </label>
-          <TextField className='w-full' suffix='원' />
-        </div>
-        <div className='w-full'>
-          <label htmlFor='' className='font-semibold text-gray-900'>
-            배송 참고사항
-          </label>
-          <TextField placeholder='배송 참고사항을 입력하세요.' />
-        </div>
-        <Button className='mt-auto w-full'>다음</Button>
-      </section>
+      </div>
     </div>
   );
 };

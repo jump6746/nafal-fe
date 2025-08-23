@@ -84,3 +84,66 @@ export interface AuctionDetailResponse {
   data: AuctionDetail;
   timestamp: string;
 }
+
+// 제품 핵심 정보
+interface ProductCoreInfo {
+  title: string;
+  condition: string;
+  categories: string[];
+  expectedEffect: string;
+  imageKeys: string[];
+}
+
+// 제품 속성
+interface ProductAttributes {
+  detailInfo: string;
+  tags: string[];
+  width: number;
+  height: number;
+}
+
+// 제품 추가 정보
+interface ProductAdditionalInfo {
+  material: string;
+  usageLocation: string;
+  editionInfo: string;
+}
+
+// 스토리 상세
+interface StoryDetails {
+  content: string;
+  imageKey: string;
+}
+
+// 경매 설정
+interface AuctionSettings {
+  startPrice: number;
+  bidIncrement: number;
+  immediatelyPurchasePrice: number;
+  startAt: Date;
+  endAt: Date;
+}
+
+// 이벤트 상세
+interface EventDetails {
+  name: string;
+  description: string;
+}
+
+// 배송 상세
+interface DeliveryDetails {
+  method: string;
+  cost: number;
+  note: string;
+}
+
+// 메인 제품 인터페이스
+export interface CreateAuctionRequest {
+  productCoreInfo: ProductCoreInfo;
+  productAttributes: ProductAttributes;
+  productAdditionalInfo: ProductAdditionalInfo;
+  storyDetails: StoryDetails;
+  auctionSettings: AuctionSettings;
+  eventDetails: EventDetails;
+  deliveryDetails: DeliveryDetails;
+}

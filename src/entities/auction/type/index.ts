@@ -6,4 +6,5 @@ export type {
   DeliveryMethod,
   AuctionDetail,
   AuctionDetailResponse,
+  CreateAuctionRequest,
 } from './types';
