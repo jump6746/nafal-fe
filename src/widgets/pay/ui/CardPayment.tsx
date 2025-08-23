@@ -4,7 +4,12 @@ import PASS from '@/features/auth/PASS';
 import CardRegistration from '@/features/auth/CardRegistration';
 
 interface CardPaymentProps {
-  variant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet';
+  variant:
+    | 'CardNotYet'
+    | 'AccountCheck'
+    | 'CardPayment'
+    | 'CertificationNotYet'
+    | 'AccountCheckFail';
   trigger?: React.ReactNode;
   Loadertime?: number;
   shouldFail?: boolean;
@@ -27,7 +32,7 @@ const CardPaymentHeader = (variant: CardPaymentProps['variant']) => {
   }
   if (variant === 'CardPayment') {
     return {
-      Maintitle: '결제가 진행중입니다.',
+      Maintitle: '입찰이 진행중입니다.',
       Subtitle: '',
       Buttontext: '',
     };
@@ -55,6 +60,7 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
   const percentRef = useRef(0);
   const header = CardPaymentHeader(variant);
 
+  console.log(shouldFail);
   // PASS 모달 닫기 함수
   const handleClosePassModal = () => {
     setShowPassModal(false);

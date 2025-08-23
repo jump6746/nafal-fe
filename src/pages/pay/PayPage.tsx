@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import type { DeliveryAddress } from '@/features/pay/type/address';
 import OrderProduct from '@/widgets/pay/ui/OrderProduct';
 import PaymentMethod from '@/widgets/pay/ui/PaymentMethod';
-import CardPayment from '@/widgets/pay/ui/CardPayment';
 import { Button } from '@/shared/ui/Button/Button';
 
 const PayPage = () => {
@@ -54,18 +53,12 @@ const PayPage = () => {
         onPaymentMethodChange={handlePaymentMethodChange}
         paymentAmount={10000}
       />
-      <CardPayment
-        variant='CardNotYet'
-        trigger={
-          <Button
-            variant='default'
-            className='text-point-900 mt-[100px] h-15 w-full text-xl font-semibold'
-          >
-            10,000원 결제하기
-          </Button>
-        }
-        Loadertime={1000}
-      />
+      <Button
+        variant='default'
+        className='text-point-900 mt-[100px] h-15 w-full text-xl font-semibold'
+      >
+        10,000원 결제하기
+      </Button>
     </div>
   );
 };

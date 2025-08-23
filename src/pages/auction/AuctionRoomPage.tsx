@@ -6,14 +6,23 @@ import { AuctionProductCarousel, AuctionRoom } from '@/widgets/auction/ui';
 import SuccessConfetti from '@/widgets/auction/ui/SuccessConfetti';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { formatKoreanDate } from '@/shared/lib/formatKoreanDate';
+import AuthCheck from '@/shared/lib/Authcheck';
+import customToast from '@/shared/ui/CustomToast/customToast';
 
 const AuctionRoomPage = () => {
+  const navigate = useNavigate();
   const [showOverlay, setShowOverlay] = useState<boolean>(true);
   const setText = useTopNavigationStore(state => state.setText);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [shouldFail, setShouldFail] = useState<boolean>(false);
+
+  // CardPayment 관련 상태
+  const [paymentVariant, setPaymentVariant] = useState<
+    'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet'
+  >('CardPayment');
 
   useEffect(() => {
     if (!showConfetti) {
@@ -31,7 +40,7 @@ const AuctionRoomPage = () => {
 
   useEffect(() => {
     setText('제품');
-  }, []);
+  }, [setText]);
 
   // 3초 후 자동으로 사라지게
   useEffect(() => {
@@ -51,6 +60,53 @@ const AuctionRoomPage = () => {
     queryKey: ['auctionDetail', productId],
     queryFn: () => getAuctionDetailAPI(productId ?? '1'),
   });
+
+  // 입찰 처리 함수
+  const handlePay = () => {
+    const authResult = AuthCheck();
+
+    if (!authResult.success) {
+      // 인증 실패시 로그인 페이지로 이동
+      customToast.warning('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
+    const accessToken = authResult.data;
+
+    let variant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet' =
+      'CardPayment';
+
+    // 1. identityVerified가 없으면 CertificationNotYet
+    if (!accessToken.identityVerified) {
+      variant = 'CertificationNotYet';
+    }
+    // 2. cardRegistered가 없으면 CardNotYet
+    else if (!accessToken.cardRegistered) {
+      variant = 'CardNotYet';
+    }
+    // 3. balance가 null이거나 부족하면 AccountCheck 여기에 경매 가격 실시간 처리해야함함
+    else if (accessToken.balance === null || accessToken.balance <= 0) {
+      variant = 'AccountCheck';
+      setShouldFail(true);
+    } else if (accessToken.balance > 0) {
+      variant = 'AccountCheck';
+      setShouldFail(false);
+    }
+    // 4. 모든 조건을 만족하면 CardPayment
+    else {
+      variant = 'CardPayment';
+    }
+    setPaymentVariant(variant);
+  };
+
+  const handleBidClick = () => {
+    handlePay(); // 입찰하기 버튼 클릭 시 handlePay 호출
+  };
+
+  const handleAutoBidClick = () => {
+    handlePay(); // 자동입찰 버튼 클릭 시에도 handlePay 호출
+  };
 
   return (
     <div className='relative h-full w-full' ref={containerRef}>
@@ -241,7 +297,12 @@ const AuctionRoomPage = () => {
           </div>
         </div>
         <div className='sticky right-0 bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-white py-9'>
-          <AuctionRoom />
+          <AuctionRoom
+            onBidClick={handleBidClick}
+            onAutoBidClick={handleAutoBidClick}
+            paymentVariant={paymentVariant}
+            shouldFail={shouldFail}
+          />
         </div>
       </div>
     </div>
