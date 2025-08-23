@@ -6,10 +6,8 @@ import { FilterTags } from '@/shared/ui';
 import SortCategory from '@/features/main/ui/SortCategory';
 import AuctionListSkeleton from '@/features/main/skleton/AuctionListSkeleton';
 import AuctionList from '@/widgets/auction/ui/AuctionList';
-import useUserInfo from '@/entities/user/hooks/useUserInfo';
 
 const MainPage = () => {
-  const { userInfo } = useUserInfo();
   const containerRef = useRef<HTMLDivElement>(null);
   const [section, setSection] = useState('진행중');
   const [category, setCategory] = useState<string[]>([]);
