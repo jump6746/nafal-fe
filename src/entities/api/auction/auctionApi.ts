@@ -23,7 +23,7 @@ export const getAuctionListAPI = async (param: {
   }
 
   return await apiRequest<undefined, AuctionListItem[]>({
-    url: `https://api.nafal.site/auctions?${queryParams.join('&')}`,
+    url: `/api/auctions?${queryParams.join('&')}`,
     method: 'GET',
     skipAuth: true,
   });
