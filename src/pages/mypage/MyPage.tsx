@@ -1,6 +1,7 @@
 import { useTopNavigationStore } from '@/shared/stores';
 import { Button } from '@/shared/ui';
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const MyPage = () => {
   const setText = useTopNavigationStore(state => state.setText);
@@ -86,6 +87,12 @@ const MyPage = () => {
       </section>
       {/* 하단 메뉴 */}
       <section className='flex flex-col gap-6 px-5 pt-10 pb-8 text-xl font-semibold text-gray-800'>
+        <Link to='/mypage/payment'>
+          <div className='flex cursor-pointer items-center justify-between'>
+            <span>결제수단 관리</span>
+            <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+          </div>
+        </Link>
         <div className='flex cursor-pointer items-center justify-between'>
           <span>럭키드로우 당첨 내역</span>
           <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
@@ -96,10 +103,6 @@ const MyPage = () => {
         </div>
         <div className='flex cursor-pointer items-center justify-between'>
           <span>배송지 관리</span>
-          <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
-        </div>
-        <div className='flex cursor-pointer items-center justify-between'>
-          <span>결제수단 관리</span>
           <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
         </div>
       </section>

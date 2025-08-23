@@ -22,6 +22,7 @@ const apiRequest = async <
   data,
   credentials,
   headers,
+  skipAuth = false,
 }: FetchProps<T, H>): Promise<ResponseDTO<P>> => {
   const body = data ? JSON.stringify(data) : null;
 
@@ -35,8 +36,8 @@ const apiRequest = async <
       const accessToken = getAccessToken();
 
       const defaultHeaders: Record<string, string> = {
-        'Content-Type': 'application/json',
-        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+        ...(method !== 'GET' && { 'Content-Type': 'application/json' }),
+        ...(accessToken && !skipAuth && { Authorization: `Bearer ${accessToken}` }),
       };
 
       const mergedHeaders = { ...defaultHeaders, ...headers };
