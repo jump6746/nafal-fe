@@ -4,8 +4,9 @@ import MainPageCategory from '@/widgets/main/ui/MainPageCategory';
 import MainPageCarousel from '@/widgets/main/ui/MainPageCarousel';
 import { FilterTags } from '@/shared/ui';
 import SortCategory from '@/features/main/ui/SortCategory';
+import { getAuctionListAPI } from '@/entities/api/auction/auctionApi';
+import { useQuery } from '@tanstack/react-query';
 import AuctionList from '@/widgets/auction/ui/AuctionList';
-import { popularDummy, newDummy, closingDummy } from '@/entities/auction/mockup/AuctionListMock';
 
 const MainPage = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -16,7 +17,6 @@ const MainPage = () => {
   const [brand, setBrand] = useState<string[]>([]);
   const [event, setEvent] = useState<string[]>([]);
   const [sort, setSort] = useState<string>('신규');
-
   const currentSortOptions =
     section === '진행중' ? ['신규', '마감 임박', '인기순'] : ['신규', '오픈 임박'];
 
@@ -54,6 +54,25 @@ const MainPage = () => {
   const updateSort = (newSort: string) => {
     setSort(newSort);
   };
+
+  const { data: getAuctionList } = useQuery({
+    queryKey: ['getAuctionList', section, sort, category, minPrice, maxPrice, brand, event],
+    queryFn: () =>
+      getAuctionListAPI({
+        status: section === '진행중' ? 'OPEN' : section === '예정' ? 'SCHEDULED' : 'CLOSED',
+        view:
+          sort === '신규'
+            ? 'NEW'
+            : sort === '마감 임박'
+              ? 'OPENING_SOON'
+              : sort === '인기'
+                ? 'POPULAR'
+                : 'DEFAULT',
+        keyword: '',
+        page: 0,
+        size: 10,
+      }),
+  });
 
   return (
     <div>
@@ -106,9 +125,7 @@ const MainPage = () => {
                   ? '곧 만나요'
                   : '제일 인기 있는 것만 모았어요'}
         </h2>
-        <AuctionList
-          data={sort === '신규' ? newDummy : sort === '마감 임박' ? closingDummy : popularDummy}
-        />
+        <AuctionList data={getAuctionList?.data || []} isImminent={sort === '마감 임박'} />
       </section>
     </div>
   );
