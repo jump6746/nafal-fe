@@ -3,7 +3,7 @@ import type { AuctionListItem } from '../type/types';
 // 인기
 export const popularDummy = [
   {
-    productId: 1,
+    productId: '1',
     immediatelyPurchasePrice: 120000,
     currentPrice: 100000,
     productName: 'KANU 원두 에디션 텀블러',
@@ -14,7 +14,7 @@ export const popularDummy = [
     bidCnt: 5,
   },
   {
-    productId: 2,
+    productId: '2',
     immediatelyPurchasePrice: 150000,
     currentPrice: 80000,
     productName: '스타벅스 리유저블 컵 세트',
@@ -25,7 +25,7 @@ export const popularDummy = [
     bidCnt: 12,
   },
   {
-    productId: 3,
+    productId: '3',
     immediatelyPurchasePrice: 90000,
     currentPrice: 40000,
     productName: '스누피 한정판 머그컵',
@@ -36,7 +36,7 @@ export const popularDummy = [
     bidCnt: 8,
   },
   {
-    productId: 4,
+    productId: '4',
     immediatelyPurchasePrice: 180000,
     currentPrice: 160000,
     productName: '네스프레소 머신',
@@ -47,7 +47,7 @@ export const popularDummy = [
     bidCnt: 20,
   },
   {
-    productId: 5,
+    productId: '5',
     immediatelyPurchasePrice: 110000,
     currentPrice: 70000,
     productName: '프리미엄 원두 세트',
@@ -58,7 +58,7 @@ export const popularDummy = [
     bidCnt: 6,
   },
   {
-    productId: 6,
+    productId: '6',
     immediatelyPurchasePrice: 220000,
     currentPrice: 180000,
     productName: '딤채 김치냉장고 미니',
@@ -69,7 +69,7 @@ export const popularDummy = [
     bidCnt: 15,
   },
   {
-    productId: 7,
+    productId: '7',
     immediatelyPurchasePrice: 70000,
     currentPrice: 50000,
     productName: '커피 드리퍼 풀세트',
@@ -80,7 +80,7 @@ export const popularDummy = [
     bidCnt: 9,
   },
   {
-    productId: 8,
+    productId: '8',
     immediatelyPurchasePrice: 300000,
     currentPrice: 250000,
     productName: '다이슨 청소기 V15',
@@ -95,7 +95,7 @@ export const popularDummy = [
 // 신규
 export const newDummy = [
   {
-    productId: 9,
+    productId: '9',
     immediatelyPurchasePrice: 60000,
     currentPrice: 30000,
     productName: '이케아 무드등',
@@ -106,7 +106,7 @@ export const newDummy = [
     bidCnt: 2,
   },
   {
-    productId: 10,
+    productId: '10',
     immediatelyPurchasePrice: 85000,
     currentPrice: 40000,
     productName: '브리츠 블루투스 스피커',
@@ -117,7 +117,7 @@ export const newDummy = [
     bidCnt: 4,
   },
   {
-    productId: 11,
+    productId: '11',
     immediatelyPurchasePrice: 140000,
     currentPrice: 100000,
     productName: '로지텍 무선 키보드',
@@ -128,7 +128,7 @@ export const newDummy = [
     bidCnt: 3,
   },
   {
-    productId: 12,
+    productId: '12',
     immediatelyPurchasePrice: 50000,
     currentPrice: 25000,
     productName: '무민 캐릭터 인형',
@@ -139,7 +139,7 @@ export const newDummy = [
     bidCnt: 1,
   },
   {
-    productId: 13,
+    productId: '13',
     immediatelyPurchasePrice: 200000,
     currentPrice: 150000,
     productName: '삼성 갤럭시 버즈',
@@ -150,7 +150,7 @@ export const newDummy = [
     bidCnt: 6,
   },
   {
-    productId: 14,
+    productId: '14',
     immediatelyPurchasePrice: 100000,
     currentPrice: 60000,
     productName: '나이키 에어포스 1',
@@ -161,7 +161,7 @@ export const newDummy = [
     bidCnt: 8,
   },
   {
-    productId: 15,
+    productId: '15',
     immediatelyPurchasePrice: 75000,
     currentPrice: 40000,
     productName: '무선 게이밍 마우스',
@@ -172,7 +172,7 @@ export const newDummy = [
     bidCnt: 2,
   },
   {
-    productId: 16,
+    productId: '16',
     immediatelyPurchasePrice: 300000,
     currentPrice: 210000,
     productName: 'LG 울트라 와이드 모니터',
@@ -187,7 +187,7 @@ export const newDummy = [
 // 마감
 export const closingDummy = [
   {
-    productId: 17,
+    productId: '17',
     immediatelyPurchasePrice: 130000,
     currentPrice: 120000,
     productName: '애플 매직 키보드',
@@ -198,7 +198,7 @@ export const closingDummy = [
     bidCnt: 11,
   },
   {
-    productId: 18,
+    productId: '18',
     immediatelyPurchasePrice: 70000,
     currentPrice: 50000,
     productName: '리락쿠마 쿠션',
@@ -209,7 +209,7 @@ export const closingDummy = [
     bidCnt: 4,
   },
   {
-    productId: 19,
+    productId: '19',
     immediatelyPurchasePrice: 160000,
     currentPrice: 140000,
     productName: '캔들 워머 무드등',
@@ -220,7 +220,7 @@ export const closingDummy = [
     bidCnt: 3,
   },
   {
-    productId: 20,
+    productId: '20',
     immediatelyPurchasePrice: 90000,
     currentPrice: 60000,
     productName: '캐릭터 피규어 세트',
@@ -231,7 +231,7 @@ export const closingDummy = [
     bidCnt: 6,
   },
   {
-    productId: 21,
+    productId: '21',
     immediatelyPurchasePrice: 280000,
     currentPrice: 200000,
     productName: '닌텐도 스위치 OLED',
@@ -242,7 +242,7 @@ export const closingDummy = [
     bidCnt: 20,
   },
   {
-    productId: 22,
+    productId: '22',
     immediatelyPurchasePrice: 60000,
     currentPrice: 35000,
     productName: '북유럽 감성 벽시계',
@@ -253,7 +253,7 @@ export const closingDummy = [
     bidCnt: 2,
   },
   {
-    productId: 23,
+    productId: '23',
     immediatelyPurchasePrice: 100000,
     currentPrice: 75000,
     productName: '캠핑용 버너',
@@ -264,7 +264,7 @@ export const closingDummy = [
     bidCnt: 5,
   },
   {
-    productId: 24,
+    productId: '24',
     immediatelyPurchasePrice: 400000,
     currentPrice: 350000,
     productName: '소니 플레이스테이션 5',
@@ -308,7 +308,7 @@ export const getMockAuctionListAPI = async (param: {
 
   // AuctionListItem 형태로 변환
   const transformedData = mockData.map(item => ({
-    auctionId: item.productId + 1000,
+    auctionId: item.productId + '000',
     productId: item.productId,
     userId: 1,
     sellerName: item.sellerName,
