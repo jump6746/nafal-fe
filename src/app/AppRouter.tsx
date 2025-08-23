@@ -62,6 +62,8 @@ const AppRouter = createBrowserRouter([
       {
         element: <CreateAuctionPage />,
         path: '/auction/create',
+      },
+      {
         element: <PayPage />,
         path: '/pay',
       },
