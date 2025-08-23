@@ -1,4 +1,4 @@
-import { getAuctionDetailAPI } from '@/entities/api/auction/auctionApi';
+import { getAuctionDetailAPI } from '@/entities/auction/api/auctionApi';
 import CountdownTimer from '@/features/auction/CountdownTimer';
 import { useTopNavigationStore } from '@/shared/stores';
 import Tooltip from '@/shared/ui/Tooltip/Tooltip';
@@ -8,8 +8,8 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { formatKoreanDate } from '@/shared/lib/formatKoreanDate';
-import AuthCheck from '@/shared/lib/Authcheck';
 import customToast from '@/shared/ui/CustomToast/customToast';
+import useUserInfo from '@/entities/user/hooks/useUserInfo';
 
 const AuctionRoomPage = () => {
   const navigate = useNavigate();
@@ -23,6 +23,7 @@ const AuctionRoomPage = () => {
   const [paymentVariant, setPaymentVariant] = useState<
     'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet'
   >('CardPayment');
+  const { userInfo } = useUserInfo();
 
   useEffect(() => {
     if (!showConfetti) {
@@ -63,39 +64,30 @@ const AuctionRoomPage = () => {
 
   // 입찰 처리 함수
   const handlePay = () => {
-    const authResult = AuthCheck();
-
-    if (!authResult.success) {
-      // 인증 실패시 로그인 페이지로 이동
+    if (!userInfo) {
       customToast.warning('로그인이 필요합니다.');
       navigate('/login');
       return;
     }
 
-    const accessToken = authResult.data;
-
     let variant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet' =
       'CardPayment';
 
     // 1. identityVerified가 없으면 CertificationNotYet
-    if (!accessToken.identityVerified) {
+    if (!userInfo.identityVerified) {
       variant = 'CertificationNotYet';
     }
     // 2. cardRegistered가 없으면 CardNotYet
-    else if (!accessToken.cardRegistered) {
+    else if (!userInfo.cardRegistered) {
       variant = 'CardNotYet';
     }
     // 3. balance가 null이거나 부족하면 AccountCheck 여기에 경매 가격 실시간 처리해야함함
-    else if (accessToken.balance === null || accessToken.balance <= 0) {
+    else if (userInfo.balance === null || userInfo.balance <= 0) {
       variant = 'AccountCheck';
       setShouldFail(true);
-    } else if (accessToken.balance > 0) {
+    } else if (userInfo.balance > 0) {
       variant = 'AccountCheck';
       setShouldFail(false);
-    }
-    // 4. 모든 조건을 만족하면 CardPayment
-    else {
-      variant = 'CardPayment';
     }
     setPaymentVariant(variant);
   };
@@ -120,16 +112,12 @@ const AuctionRoomPage = () => {
           }`}
         >
           <img
-            src='/images/mockup/storycard_bg.jpg'
+            src={auctionDetail.data.storyImageUrl?.presignedUrl}
             alt='스토리텔링 카드'
             className='h-full w-full object-cover'
           />
           <p className='absolute top-0 px-5 py-7.5 text-sm font-semibold text-gray-800'>
-            현재는 공식 판매처에서도 구할 수 없고, 중고 시장에서도 <br />
-            잘 나오지 않는 아이템이에요. <br />
-            <br />
-            KANU 팬들은 '잊을 수 없는 팝업의 상징'으로 여기며, <br />
-            한정판 굿즈 수집가들에게는 놓칠 수 없는 보물이죠!!
+            {auctionDetail.data.story}
           </p>
         </div>
       </div>
@@ -139,11 +127,11 @@ const AuctionRoomPage = () => {
           <div className='flex items-center gap-2'>
             {/* 브랜드 짧은 로고 */}
             <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 px-2'>
-              <img src='/images/LOGO/LOGO_Signature.svg' alt='로고 시그니처' />
+              <img src={auctionDetail.data.shortLogo.presignedUrl} alt='로고 시그니처' />
             </div>
             {/* 브랜드 긴 로고 */}
             <div className='aspect-[3/1] h-6'>
-              <img src='/images/LOGO/LOGO_Monogram.svg' alt='브랜드 로고' />
+              <img src={auctionDetail.data.longLogo.presignedUrl} alt='브랜드 로고' />
             </div>
           </div>
           <div className='group relative'>
@@ -168,10 +156,7 @@ const AuctionRoomPage = () => {
           </div>
           <div className='flex gap-1.5'>
             {auctionDetail.data.categories.map(category => (
-              <span
-                key={category.categoryId}
-                className='rounded-lg bg-gray-800 px-4.5 py-0.5 text-white'
-              >
+              <span key={category.id} className='rounded-lg bg-gray-800 px-4.5 py-0.5 text-white'>
                 {category.name}
               </span>
             ))}
@@ -246,7 +231,7 @@ const AuctionRoomPage = () => {
           </div>
           <div className='flex gap-4.5'>
             {auctionDetail.data.product.tags.map(tag => (
-              <span key={tag.tagId} className='text-sm font-semibold text-gray-900'>
+              <span key={tag.id} className='text-sm font-semibold text-gray-900'>
                 #{tag.name}
               </span>
             ))}
@@ -285,7 +270,7 @@ const AuctionRoomPage = () => {
           <h3 className='text-lg font-bold text-gray-800'>배송</h3>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>배송방법</span>
-            <span className='text-sm font-medium text-gray-900'>{auctionDetail.data.delivery}</span>
+            {/* <span className='text-sm font-medium text-gray-900'>{auctionDetail.data.delivery}</span> */}
           </div>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>배송비용</span>
