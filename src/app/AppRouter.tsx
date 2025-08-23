@@ -5,7 +5,7 @@ import { MainPage } from '@/pages/main';
 import { AutoBidPlace, BidPlace, DirectBuyPlace } from '@/widgets/auction/ui';
 import { MyPage, PaymentManagePage } from '@/pages/mypage';
 import { PayPage } from '@/pages/pay';
-import { LoginPage } from '@/pages/user';
+import { LoginPage, SignupPage } from '@/pages/user';
 import PaidSuccess from '@/pages/pay/PaidSuccess';
 import Test from '@/pages/test';
 
@@ -16,6 +16,10 @@ const AppRouter = createBrowserRouter([
       {
         element: <LoginPage />,
         path: '/login',
+      },
+      {
+        element: <SignupPage />,
+        path: '/signup',
       },
     ],
   },
