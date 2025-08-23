@@ -161,7 +161,7 @@ const CreateAuctionPage = () => {
 
   const renderStep = () => {
     const commonProps = {
-      setFormData,
+      formData,
       onNext: nextStep,
       onPrev: prevStep,
     };
@@ -170,9 +170,10 @@ const CreateAuctionPage = () => {
       case 1:
         return (
           <CreateAuctionStep1
-            setFormData={setFormData}
+            {...commonProps}
             onNext={nextStep}
             containerRef={containerRef}
+            updateProductCoreInfo={updateProductCoreInfo}
           />
         );
       case 2:

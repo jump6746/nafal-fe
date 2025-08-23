@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 interface Props {
   pos?: string;
-  setPos: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setPos: (value: string | undefined) => void;
 }
 
 const StatusDropDown = ({ pos, setPos }: Props) => {
