@@ -15,3 +15,18 @@ export interface SignupResponse {
   nickname: string;
   role: 'COMMON' | 'SELLER' | 'ADMIN';
 }
+
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  userId: number;
+  username: string;
+  nickname: string;
+  cardRegistered: boolean;
+  balance: number | null;
+  identityVerifeid: boolean;
+  accessToken: string;
+}

@@ -1,12 +1,16 @@
 import { useMutation } from '@tanstack/react-query';
 import signupApi from '../api/signupApi';
 import { customToast } from '@/shared/ui';
+import { useNavigate } from 'react-router-dom';
 
 const useSignupMutation = () => {
+  const navigate = useNavigate();
+
   return useMutation({
     mutationFn: signupApi,
     onSuccess: () => {
       customToast.confirm('회원가입에 성공하였습니다.');
+      navigate('/login');
     },
     onError: error => {
       if (error.status == 409) {
@@ -14,7 +18,7 @@ const useSignupMutation = () => {
       } else if (error.status == 400) {
         customToast.warning('비밀번호 형식이 올바르지 않습니다.');
       } else {
-        customToast.warning('서버 에러로 다시 시도해주세요.');
+        customToast.warning(error.message);
       }
     },
   });

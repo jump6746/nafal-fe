@@ -4,7 +4,7 @@ import { apiRequest } from '@/shared/lib';
 
 const signupApi = async (data: SignupRequest): Promise<ResponseDTO<SignupResponse>> => {
   return await apiRequest<SignupRequest, SignupResponse>({
-    url: '/api/auth/signup',
+    url: 'https://api.nafal.site/api/auth/signup',
     method: 'POST',
     data,
   });
