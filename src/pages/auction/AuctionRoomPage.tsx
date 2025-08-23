@@ -1,9 +1,13 @@
+import { getAuctionDetailAPI } from '@/entities/api/auction/auctionApi';
+import CountdownTimer from '@/features/auction/CountdownTimer';
 import { useTopNavigationStore } from '@/shared/stores';
 import Tooltip from '@/shared/ui/Tooltip/Tooltip';
 import { AuctionProductCarousel, AuctionRoom } from '@/widgets/auction/ui';
 import SuccessConfetti from '@/widgets/auction/ui/SuccessConfetti';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { formatKoreanDate } from '@/shared/lib/formatKoreanDate';
 
 const AuctionRoomPage = () => {
   const [showOverlay, setShowOverlay] = useState<boolean>(true);
@@ -41,6 +45,12 @@ const AuctionRoomPage = () => {
 
     return () => clearTimeout(timer);
   }, [showOverlay]);
+
+  const { productId } = useParams();
+  const { data: auctionDetail } = useSuspenseQuery({
+    queryKey: ['auctionDetail', productId],
+    queryFn: () => getAuctionDetailAPI(productId ?? '1'),
+  });
 
   return (
     <div className='relative h-full w-full' ref={containerRef}>
@@ -81,7 +91,7 @@ const AuctionRoomPage = () => {
             </div>
           </div>
           <div className='group relative'>
-            <div className='absolute -top-3 -translate-x-6/10 -translate-y-full opacity-0 group-hover:opacity-100'>
+            <div className='absolute -top-3 -translate-x-6/10 -translate-y-full'>
               <Tooltip Tooltip='럭키드로우 현황을 확인해보세요!' />
             </div>
             <Link to='/luckydraw' className='flex cursor-pointer items-center gap-1.5'>
@@ -94,15 +104,21 @@ const AuctionRoomPage = () => {
           {/* 상품 이름 */}
           <div className='flex w-full justify-between'>
             <span className='text-lg font-bold text-gray-900'>
-              {'카누 팝업 스토어 원두 에디션 텀블러'}
+              {auctionDetail.data.product.productName}
             </span>
             <span className='bg-point-200 text-point-900 rounded-full px-4 py-0.5 font-semibold'>
-              {'최상'}
+              {auctionDetail.data.product.condition}
             </span>
           </div>
           <div className='flex gap-1.5'>
-            <span className='rounded-lg bg-gray-800 px-4.5 py-0.5 text-white'>소품</span>
-            <span className='rounded-lg bg-gray-800 px-4.5 py-0.5 text-white'>텀블러</span>
+            {auctionDetail.data.categories.map(category => (
+              <span
+                key={category.categoryId}
+                className='rounded-lg bg-gray-800 px-4.5 py-0.5 text-white'
+              >
+                {category.name}
+              </span>
+            ))}
           </div>
         </div>
         <div className='flex flex-col gap-2 pt-1'>
@@ -110,21 +126,29 @@ const AuctionRoomPage = () => {
           <div className='flex gap-4.5'>
             <div className='flex flex-col gap-2'>
               <span className='text-sm font-medium text-gray-900'>현재가</span>
-              <span className='text-2xl font-semibold text-gray-900'>{'80,000'}원</span>
+              <span className='text-2xl font-semibold text-gray-900'>
+                {auctionDetail.data.currentPrice.toLocaleString()}원
+              </span>
             </div>
             <div className='flex flex-col gap-2'>
               <span className='text-sm font-medium text-gray-900'>입찰단위</span>
-              <span className='text-2xl font-semibold text-gray-900'>{'10,000'}원</span>
+              <span className='text-2xl font-semibold text-gray-900'>
+                {auctionDetail.data.bidUnit.toLocaleString()}원
+              </span>
             </div>
           </div>
           {/* 남은 시간, 00명 참여중 */}
           <div className='flex flex-col gap-0.5'>
-            <span className='text-sub-a-500 font-semibold'>남은 시간 {'00:00:00'}</span>
+            <span className='text-sub-a-500 font-semibold'>
+              남은 시간 <CountdownTimer endDate={auctionDetail.data.endAt} />
+            </span>
             <div className='flex items-center gap-1'>
               <div className='bg-sub-a-200 flex h-4.5 w-4.5 items-center justify-center rounded-full'>
                 <div className='bg-sub-a-500 h-3 w-3 animate-pulse rounded-full'></div>
               </div>
-              <span className='font-semibold text-gray-800'>{12}명 참여중</span>
+              <span className='font-semibold text-gray-800'>
+                {auctionDetail.data.participantCount}명 참여중
+              </span>
             </div>
           </div>
         </div>
@@ -135,23 +159,23 @@ const AuctionRoomPage = () => {
       <div className='mt-1.5 flex flex-col gap-4.5 bg-gray-50 px-5 pt-6'>
         {/* 등록일, 시작일, 종료일 */}
         <div className='flex flex-col text-sm font-medium text-gray-800'>
-          <span>등록일 {'2025. 7. 14. 오전 12:00:00'}</span>
-          <span>시작일 {'2025. 8. 23. 오전 10:00:00'}</span>
-          <span>종료일 {'2025. 8. 30. 오후 8:00:00'}</span>
+          <span>등록일 {formatKoreanDate(auctionDetail.data.createdAt)}</span>
+          <span>시작일 {formatKoreanDate(auctionDetail.data.startAt)}</span>
+          <span>종료일 {formatKoreanDate(auctionDetail.data.endAt)}</span>
         </div>
         {/* 행사 */}
         <div className='gradient-border flex flex-col gap-3 rounded-[12px] p-4'>
           <h3 className='text-lg font-bold text-gray-800'>행사</h3>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>행사명</span>
-            <span className='font-semibold text-gray-900'>{"카누 팝업스토어 'KANU House'"}</span>
+            <span className='font-semibold text-gray-900'>
+              {auctionDetail.data.event.eventName}
+            </span>
           </div>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>행사소개</span>
             <p className='text-sm font-medium text-gray-900'>
-              {
-                '2025년 여름 서울 성수동에서 진행된 카누 팝업스토어로, 브랜드 아이덴티티를 담은 한정 소품과 가구를 전시했습니다.'
-              }
+              {auctionDetail.data.event.eventDescription}
             </p>
           </div>
         </div>
@@ -161,39 +185,51 @@ const AuctionRoomPage = () => {
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>소개</span>
             <p className='text-sm font-medium text-gray-900'>
-              {
-                '카누 팝업스토어 전시 공간에서 실제 사용된 텀블러입니다. 카누 브랜드 컨셉이고, 세척 완료 상태입니다.'
-              }
+              {auctionDetail.data.product.productDescription}
             </p>
           </div>
           <div className='flex gap-4.5'>
-            <span className='text-sm font-semibold text-gray-900'>#{'카누'}</span>
-            <span className='text-sm font-semibold text-gray-900'>#{'텀블러'}</span>
-            <span className='text-sm font-semibold text-gray-900'>#{'원두'}</span>
+            {auctionDetail.data.product.tags.map(tag => (
+              <span key={tag.tagId} className='text-sm font-semibold text-gray-900'>
+                #{tag.name}
+              </span>
+            ))}
           </div>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>사이즈</span>
-            <span className='text-sm font-medium text-gray-900'>{'가로 50cm X 세로 100cm'}</span>
+            <span className='text-sm font-medium text-gray-900'>
+              {'가로 ' +
+                auctionDetail.data.product.widthCm +
+                'cm X 세로 ' +
+                auctionDetail.data.product.heightCm +
+                'cm'}
+            </span>
           </div>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>재질</span>
-            <span className='text-sm font-medium text-gray-900'>{'스테인리스'}</span>
+            <span className='text-sm font-medium text-gray-900'>
+              {auctionDetail.data.product.material}
+            </span>
           </div>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>사용위치</span>
-            <span className='text-sm font-medium text-gray-900'>{'거실'}</span>
+            <span className='text-sm font-medium text-gray-900'>
+              {auctionDetail.data.product.usageLocation}
+            </span>
           </div>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>에디션정보</span>
-            <span className='text-sm font-medium text-gray-900'>{'기성품'}</span>
+            <span className='text-sm font-medium text-gray-900'>
+              {auctionDetail.data.product.editionInfo}
+            </span>
           </div>
         </div>
         {/* 배송 */}
-        <div className='gradient-border mb-20 flex flex-col gap-3 rounded-[12px] p-4'>
+        <div className='gradient-border flex flex-col gap-3 rounded-[12px] p-4'>
           <h3 className='text-lg font-bold text-gray-800'>배송</h3>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>배송방법</span>
-            <span className='text-sm font-medium text-gray-900'>{'일반택배 / 방문 픽업 택 1'}</span>
+            <span className='text-sm font-medium text-gray-900'>{auctionDetail.data.delivery}</span>
           </div>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>배송비용</span>

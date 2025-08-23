@@ -3,7 +3,7 @@ import { AlarmClock } from 'lucide-react';
 import CountdownTimer from './CountdownTimer';
 
 interface AuctionListCardProps {
-  productId: number;
+  productId: string;
   immediatelyPurchasePrice: number;
   currentPrice: number;
   productName: string;
@@ -15,7 +15,7 @@ interface AuctionListCardProps {
 }
 
 const AuctionListCard = ({
-  // productId,
+  productId,
   immediatelyPurchasePrice,
   currentPrice,
   productName,
@@ -31,8 +31,7 @@ const AuctionListCard = ({
     <div
       className='flex h-fit w-full cursor-pointer flex-col gap-[6px] bg-white'
       onClick={() => {
-        // navigate(`/auction/${productId}`);
-        navigate(`/auction`);
+        navigate(`/auction/${productId}`);
       }}
     >
       {isImminent && (

@@ -1,6 +1,7 @@
 import { apiRequest } from '@/shared/lib';
-import type { AuctionListItem } from '@/entities/auction/type/types';
+import type { AuctionListItem, AuctionDetail } from '@/entities/auction/type/types';
 import type { ResponseDTO } from '@/shared/types';
+import kanuProductMock from '@/entities/auction/mockup/AuctionDetailMock';
 
 export const getAuctionListAPI = async (param: {
   status: 'OPEN' | 'CLOSED' | 'SCHEDULED';
@@ -27,4 +28,23 @@ export const getAuctionListAPI = async (param: {
     method: 'GET',
     skipAuth: true,
   });
+};
+
+export const getAuctionDetailAPI = async (
+  productId: string
+): Promise<ResponseDTO<AuctionDetail>> => {
+  try {
+    return await apiRequest<undefined, AuctionDetail>({
+      url: `/api/auctions/${productId}`,
+      method: 'GET',
+      skipAuth: true,
+    });
+  } catch {
+    return {
+      data: kanuProductMock,
+      message: 'Success',
+      status: 200,
+      timestamp: new Date().toISOString(),
+    } as ResponseDTO<AuctionDetail>;
+  }
 };
