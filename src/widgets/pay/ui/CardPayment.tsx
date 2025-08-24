@@ -260,8 +260,15 @@ const CardPayment = ({
               </button>
               {/* Content */}
               <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
-                <div className='text-center'>
-                  <div className='mb-4 text-6xl'>✅</div>
+                <span className='absolute top-4 left-5 text-xl font-semibold'>본인인증 성공</span>
+                <div className='flex flex-col items-center justify-center text-center'>
+                  <div className='mt-5 mb-10 flex h-20 w-20'>
+                    <img
+                      src='/images/Icons/icon_checkcircle.svg'
+                      alt='check'
+                      className='h-full w-full'
+                    />
+                  </div>
                   <p className='mb-2 text-2xl font-bold text-gray-900'>본인인증이 완료되었습니다</p>
                   <p className='text-lg text-gray-500'>잠시 후 자동으로 닫힙니다</p>
                 </div>
@@ -300,7 +307,7 @@ const CardPayment = ({
               {/* Content */}
               <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
                 <div className='text-center'>
-                  <div className='mb-4 text-6xl'>❌</div>
+                  <div className='mb-20 text-6xl'>❌</div>
                   <p className='mb-2 text-2xl font-bold text-gray-900'>본인인증이 취소되었습니다</p>
                   <p className='text-lg text-gray-500'>잠시 후 자동으로 닫힙니다</p>
                 </div>
@@ -441,8 +448,15 @@ const CardPayment = ({
               </button>
               {/* Content */}
               <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
-                <div className='text-center'>
-                  <div className='mb-4 text-6xl'>✅</div>
+                <span className='absolute top-4 left-5 text-xl font-semibold'>등록 성공</span>
+                <div className='flex flex-col items-center justify-center text-center'>
+                  <div className='mt-5 mb-10 flex h-20 w-20'>
+                    <img
+                      src='/images/Icons/icon_checkcircle.svg'
+                      alt='check'
+                      className='h-full w-full'
+                    />
+                  </div>
                   <p className='mb-2 text-2xl font-bold text-gray-900'>
                     카드 등록이 완료되었습니다
                   </p>
