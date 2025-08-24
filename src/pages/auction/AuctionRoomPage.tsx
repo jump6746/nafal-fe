@@ -8,6 +8,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { formatKoreanDate } from '@/shared/lib/formatKoreanDate';
+import { renderTextWithLineBreaks } from '@/shared/lib';
 import customToast from '@/shared/ui/CustomToast/customToast';
 import useUserInfo from '@/entities/user/hooks/useUserInfo';
 
@@ -56,10 +57,10 @@ const AuctionRoomPage = () => {
     return () => clearTimeout(timer);
   }, [showOverlay]);
 
-  const { productId } = useParams();
+  const { auctionId } = useParams();
   const { data: auctionDetail } = useSuspenseQuery({
-    queryKey: ['auctionDetail', productId],
-    queryFn: () => getAuctionDetailAPI(productId ?? '1'),
+    queryKey: ['auctionDetail', auctionId],
+    queryFn: () => getAuctionDetailAPI(auctionId ?? '1'),
   });
 
   // 입찰 처리 함수
@@ -123,49 +124,46 @@ const AuctionRoomPage = () => {
       </div>
       {/* 경매 정보 공간 */}
       <div className='flex flex-col gap-3.5 px-5 pt-11 pb-4.5'>
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center gap-2'>
-            {/* 브랜드 짧은 로고 */}
-            <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 px-2'>
-              <img
-                src={
-                  auctionDetail.data.shortLogo?.presignedUrl || '/images/LOGO/LOGO_Signature.svg'
-                }
-                alt='로고 시그니처'
-              />
+        <div className='flex flex-col gap-3'>
+          <div className='flex flex-col gap-1'>
+            {/* 브랜드 로고, 판매자명, 이벤트명, 럭키드로우 현황을 같은 행에 배치 */}
+            <div className='flex items-start justify-between'>
+              <div className='flex items-center gap-3'>
+                <img src={'/images/LOGO/LOGO_Signature.svg'} alt='로고 시그니처' />
+                <span className='text-xl font-bold'>{auctionDetail.data.sellerName}</span>
+              </div>
+              <div className='group relative flex-shrink-0'>
+                <div className='absolute -top-3 -translate-x-6/10 -translate-y-full'>
+                  <Tooltip Tooltip='럭키드로우 현황을 확인해보세요!' />
+                </div>
+                <Link
+                  to={`/luckydraw/${auctionDetail.data.event.eventId}`}
+                  className='flex cursor-pointer items-center gap-1.5'
+                >
+                  <img src='/images/Icons/solar_ticket-bold.svg' alt='티켓' />
+                  <span className='text-sub-b-400 font-semibold'>
+                    {auctionDetail.data.ticketCount}개
+                  </span>
+                </Link>
+              </div>
             </div>
-            {/* 브랜드 긴 로고 */}
-            <div className='aspect-[3/1] h-6'>
-              <img
-                src={auctionDetail.data.longLogo?.presignedUrl || '/images/LOGO/LOGO_Monogram.svg'}
-                alt='브랜드 로고'
-              />
+            {/* 이벤트명 */}
+            <div className='mt-3 flex min-w-0 flex-col'>
+              <span className='text-sm font-medium'>{auctionDetail.data.event.eventName}</span>
+              <span className='text-lg leading-tight font-bold break-words'>
+                {auctionDetail.data.product.title}
+              </span>
             </div>
-          </div>
-          <div className='group relative'>
-            <div className='absolute -top-3 -translate-x-6/10 -translate-y-full'>
-              <Tooltip Tooltip='럭키드로우 현황을 확인해보세요!' />
-            </div>
-            <Link to='/luckydraw' className='flex cursor-pointer items-center gap-1.5'>
-              <img src='/images/Icons/solar_ticket-bold.svg' alt='티켓' />
-              <span className='text-sub-b-400 font-semibold'>{10}개</span>
-            </Link>
-          </div>
-        </div>
-        <div className='flex flex-col gap-1.5'>
-          {/* 상품 이름 */}
-          <div className='flex w-full justify-between'>
-            <span className='text-lg font-bold text-gray-900'>
-              {auctionDetail.data.product.productName}
-            </span>
-            <span className='bg-point-200 text-point-900 rounded-full px-4 py-0.5 font-semibold'>
+            <span className='text-point-900 mt-1 font-semibold'>
               {auctionDetail.data.product.condition}
             </span>
           </div>
+        </div>
+        <div className='flex flex-col gap-1.5'>
           <div className='flex gap-1.5'>
             {auctionDetail.data.categories.map(category => (
-              <span key={category.id} className='rounded-lg bg-gray-800 px-4.5 py-0.5 text-white'>
-                {category.name}
+              <span key={category} className='rounded-lg bg-gray-800 px-4 py-0.5 text-white'>
+                {category}
               </span>
             ))}
           </div>
@@ -203,14 +201,32 @@ const AuctionRoomPage = () => {
         </div>
       </div>
       {/* divide */}
-      <div className='h-4 w-full bg-gray-200'></div>
+      <div className='h-3 w-full bg-gray-200'></div>
       {/* 상품 상세 정보 */}
       <div className='mt-1.5 flex flex-col gap-4.5 bg-gray-50 px-5 pt-6'>
         {/* 등록일, 시작일, 종료일 */}
-        <div className='flex flex-col text-sm font-medium text-gray-800'>
-          <span>등록일 {formatKoreanDate(auctionDetail.data.createdAt)}</span>
-          <span>시작일 {formatKoreanDate(auctionDetail.data.startAt)}</span>
-          <span>종료일 {formatKoreanDate(auctionDetail.data.endAt)}</span>
+        <div className='flex flex-col gap-[2px] rounded-lg bg-gray-100 px-4 py-4 text-sm font-medium'>
+          <div className='flex items-center gap-2'>
+            <span className='text-sm font-semibold text-gray-900'>등록일</span>
+            <span className='text-gray-700'>{formatKoreanDate(auctionDetail.data.createdAt)}</span>
+          </div>
+          <div className='flex items-center gap-2'>
+            <span className='text-sm font-semibold text-gray-900'>시작일</span>
+            <span className='text-gray-700'>{formatKoreanDate(auctionDetail.data.startAt)}</span>
+          </div>
+          <div className='flex items-center gap-2'>
+            <span className='text-sm font-semibold text-gray-900'>종료일</span>
+            <span className='text-gray-700'>{formatKoreanDate(auctionDetail.data.endAt)}</span>
+          </div>
+        </div>
+        {/* 탄소절감량 */}
+        <div className='gradient-border flex flex-col gap-[2px] rounded-[12px] p-4'>
+          <span className='text-sm leading-tight font-medium'>
+            {renderTextWithLineBreaks(auctionDetail.data.expectedEffectDesc)}
+          </span>
+          <span className='text-point-900 text-sm font-medium'>
+            탄소 절감 {auctionDetail.data.expectedEffectCo2Kg}kg
+          </span>
         </div>
         {/* 행사 */}
         <div className='gradient-border flex flex-col gap-3 rounded-[12px] p-4'>
@@ -239,8 +255,8 @@ const AuctionRoomPage = () => {
           </div>
           <div className='flex gap-4.5'>
             {auctionDetail.data.product.tags.map(tag => (
-              <span key={tag.id} className='text-sm font-semibold text-gray-900'>
-                #{tag.name}
+              <span key={tag} className='text-sm font-semibold text-gray-900'>
+                #{tag}
               </span>
             ))}
           </div>
@@ -276,18 +292,32 @@ const AuctionRoomPage = () => {
         {/* 배송 */}
         <div className='gradient-border flex flex-col gap-3 rounded-[12px] p-4'>
           <h3 className='text-lg font-bold text-gray-800'>배송</h3>
-          <div className='flex flex-col'>
-            <span className='text-sm font-medium text-gray-600'>배송방법</span>
-            {/* <span className='text-sm font-medium text-gray-900'>{auctionDetail.data.delivery}</span> */}
-          </div>
-          <div className='flex flex-col'>
-            <span className='text-sm font-medium text-gray-600'>배송비용</span>
-            <span className='text-sm font-medium text-gray-900'>{'3,500원'}</span>
-          </div>
-          <div className='flex flex-col'>
-            <span className='text-sm font-medium text-gray-600'>배송 참고사항</span>
-            <span className='text-sm font-medium text-gray-900'>{'없음'}</span>
-          </div>
+          {auctionDetail.data.delivery.deliveryMethod && (
+            <div className='flex flex-col'>
+              <>
+                <span className='text-sm font-medium text-gray-600'>배송방법</span>
+                <span className='text-sm font-medium text-gray-900'>
+                  {auctionDetail.data.delivery.deliveryMethod}
+                </span>
+              </>
+            </div>
+          )}
+          {auctionDetail.data.delivery.deliveryFee && (
+            <div className='flex flex-col'>
+              <span className='text-sm font-medium text-gray-600'>배송비용</span>
+              <span className='text-sm font-medium text-gray-900'>
+                {auctionDetail.data.delivery.deliveryFee.toLocaleString()}원
+              </span>
+            </div>
+          )}
+          {auctionDetail.data.delivery.deliveryNote && (
+            <div className='flex flex-col'>
+              <span className='text-sm font-medium text-gray-600'>배송 참고사항</span>
+              <span className='text-sm font-medium text-gray-900'>
+                {auctionDetail.data.delivery.deliveryNote}
+              </span>
+            </div>
+          )}
         </div>
         <div className='sticky right-0 bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-white py-9'>
           <AuctionRoom

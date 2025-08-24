@@ -1,4 +1,5 @@
-import { CategoryFilter, PriceFilter, EventFilter } from '../../../features/main/ui';
+import type { BrandItem, EventItem } from '@/entities/auction/type/types';
+import { CategoryFilter, PriceFilter, EventFilter, BrandFilter } from '../../../features/main/ui';
 
 interface MainPageCategoryProps {
   container: React.RefObject<HTMLElement | null>;
@@ -15,9 +16,13 @@ interface MainPageCategoryProps {
   event: string[];
   addEvent: (newEvent: string) => void;
   removeEvent: (eventToRemove: string) => void;
+  brandList: BrandItem[];
+  eventList: EventItem[];
 }
 
 const MainPageCategory = ({
+  brandList,
+  eventList,
   container,
   category,
   addCategory,
@@ -26,9 +31,9 @@ const MainPageCategory = ({
   maxPrice,
   updateMinPrice,
   updateMaxPrice,
-  // brand,
-  // addBrand,
-  // removeBrand,
+  brand,
+  addBrand,
+  removeBrand,
   event,
   addEvent,
   removeEvent,
@@ -51,7 +56,18 @@ const MainPageCategory = ({
 
       {/* <BrandFilter brand={brand} addBrand={addBrand} removeBrand={removeBrand} /> */}
 
-      <EventFilter event={event} addEvent={addEvent} removeEvent={removeEvent} />
+      <EventFilter
+        eventList={eventList}
+        event={event}
+        addEvent={addEvent}
+        removeEvent={removeEvent}
+      />
+      <BrandFilter
+        brandList={brandList}
+        brand={brand}
+        addBrand={addBrand}
+        removeBrand={removeBrand}
+      />
     </div>
   );
 };

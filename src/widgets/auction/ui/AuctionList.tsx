@@ -33,9 +33,9 @@ const AuctionList = ({
         view:
           sort === '신규'
             ? 'NEW'
-            : sort === '마감 임박'
+            : sort === '오픈 임박'
               ? 'OPENING_SOON'
-              : sort === '인기'
+              : sort === '인기순'
                 ? 'POPULAR'
                 : 'DEFAULT',
         keyword: '',
@@ -44,7 +44,7 @@ const AuctionList = ({
         categorys: category,
         minCurrentPrice: minPrice,
         maxCurrentPrice: maxPrice,
-        brand,
+        brand: brand,
         eventName: event,
       }),
     getNextPageParam: lastPage => {
