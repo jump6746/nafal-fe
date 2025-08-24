@@ -28,7 +28,6 @@ const apiRequest = async <
 
   const getAccessToken = () => {
     const accessToken = sessionStorage.getItem('nefal-access');
-
     return accessToken || null;
   };
 

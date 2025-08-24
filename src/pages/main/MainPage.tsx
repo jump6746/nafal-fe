@@ -2,12 +2,16 @@ import { Suspense, useRef, useState } from 'react';
 import MainPageNav from '@/features/main/ui/MainPageNav';
 import MainPageCategory from '@/widgets/main/ui/MainPageCategory';
 import MainPageCarousel from '@/widgets/main/ui/MainPageCarousel';
-import { FilterTags } from '@/shared/ui';
+import { Button, FilterTags } from '@/shared/ui';
 import SortCategory from '@/features/main/ui/SortCategory';
 import AuctionListSkeleton from '@/features/main/skleton/AuctionListSkeleton';
 import AuctionList from '@/widgets/auction/ui/AuctionList';
+import { useNavigate } from 'react-router-dom';
+import useUserInfo from '@/entities/user/hooks/useUserInfo';
 
 const MainPage = () => {
+  const navigate = useNavigate();
+  const { userInfo } = useUserInfo();
   const containerRef = useRef<HTMLDivElement>(null);
   const [section, setSection] = useState('진행중');
   const [category, setCategory] = useState<string[]>([]);
@@ -55,7 +59,7 @@ const MainPage = () => {
   };
 
   return (
-    <div>
+    <div className='relative'>
       <MainPageNav section={section} setSection={setSection} updateSort={updateSort} />
       <MainPageCarousel />
       <div className='flex flex-col gap-[18px] px-5' ref={containerRef}>
@@ -118,6 +122,18 @@ const MainPage = () => {
           />
         </Suspense>
       </section>
+      {userInfo && (userInfo.role == 'ADMIN' || userInfo.role == 'SELLER') ? (
+        <div className='sticky bottom-0 w-full bg-gradient-to-b from-transparent to-white px-5 py-9 pb-6'>
+          <Button
+            className='w-full'
+            onClick={() => {
+              navigate('/auction/create');
+            }}
+          >
+            상품 등록하기
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 };

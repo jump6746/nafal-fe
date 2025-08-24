@@ -1,6 +1,8 @@
+import useUserInfo from '@/entities/user/hooks/useUserInfo';
 import { useLoginMutation } from '@/entities/user/queries';
 import { Button, TextField } from '@/shared/ui';
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -8,6 +10,15 @@ const LoginPage = () => {
   const [pwValue, setPwValue] = useState<string>('');
 
   const loginMutate = useLoginMutation();
+  const { userInfo } = useUserInfo();
+  const navigate = useNavigate();
+
+  // 이미 로그인된 사용자인 경우 메인 페이지로 리다이렉트
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/'); // 메인 페이지로 리다이렉트 (필요에 따라 경로 수정)
+    }
+  }, [userInfo, navigate]);
 
   useEffect(() => {
     if (idValue.length > 0 && pwValue.length > 0) {
@@ -55,9 +66,14 @@ const LoginPage = () => {
           onChange={handlePwChange}
         />
       </div>
-      <Button type='submit' variant={'default'} disabled={!isValid} className='mt-auto w-full'>
-        로그인
-      </Button>
+      <div className='mt-auto flex w-full flex-col gap-4'>
+        <Link to='/signup' className='flex justify-center gap-1'>
+          회원이 아니신가요? <span className='font-medium text-gray-900'>간편 회원가입</span>
+        </Link>
+        <Button type='submit' variant={'default'} disabled={!isValid} className='mt-auto w-full'>
+          로그인
+        </Button>
+      </div>
     </form>
   );
 };

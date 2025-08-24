@@ -1,57 +1,52 @@
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@radix-ui/react-dropdown-menu';
+import { useDebounce } from '@/shared/hooks';
+import { useEffect, useState } from 'react';
 
 interface Props {
-  pos?: string;
-  setPos: React.Dispatch<React.SetStateAction<string | undefined>>;
+  pos: string;
+  setPos: (value: string | undefined) => void;
 }
 
 const StatusDropDown = ({ pos, setPos }: Props) => {
+  const [value, setValue] = useState<string>(pos);
+  const debouncedValue = useDebounce(value, 800);
+
+  useEffect(() => {
+    setPos(debouncedValue);
+  }, [debouncedValue]);
+
   if (pos) {
-    return null;
+    return (
+      <div className='relative flex w-fit items-center gap-0.5 rounded-full bg-gray-800 py-1.5 pr-2.5 pl-3.5'>
+        <span className='text-point-100'>{pos}</span>
+        <button
+          className='cursor-pointer'
+          onClick={() => {
+            setPos(undefined);
+            setValue('');
+          }}
+        >
+          <img src='/images/Icons/close_xs.svg' alt='추가' className='' />
+        </button>
+      </div>
+    );
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type='button'
-          className='flex w-fit cursor-pointer gap-0.5 rounded-full bg-gray-100 px-3 py-1.5'
-        >
-          <img src='/images/Icons/add.svg' alt='추가' />
-          <span>상태</span>
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-20 pt-1'>
-        <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={pos} onValueChange={setPos} className=''>
-          <DropdownMenuRadioItem
-            value='top'
-            className='flex cursor-pointer justify-center rounded-t-sm bg-gray-100 py-1.5'
-          >
-            최상
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem
-            value='bottom'
-            className='flex cursor-pointer justify-center bg-gray-100 py-1.5'
-          >
-            중
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem
-            value='right'
-            className='flex cursor-pointer justify-center rounded-b-sm bg-gray-100 py-1.5'
-          >
-            하
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className='relative flex w-fit items-center gap-2'>
+      <img
+        src='/images/Icons/add.svg'
+        alt='추가'
+        className='absolute top-1/2 left-1.5 -translate-y-1/2'
+      />
+      <input
+        className='text-semibold focus:ring-point-500 w-20 rounded-full bg-gray-50 py-1.5 pr-3 pl-8 placeholder:text-gray-900 focus:ring-1 focus:outline-none'
+        placeholder='태그'
+        value={value}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setValue(e.currentTarget.value);
+        }}
+      />
+    </div>
   );
 };
 

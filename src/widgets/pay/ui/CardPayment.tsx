@@ -2,9 +2,15 @@ import { Button } from '@/shared/ui/Button/Button';
 import { useEffect, useRef, useState } from 'react';
 import PASS from '@/features/auth/PASS';
 import CardRegistration from '@/features/auth/CardRegistration';
+import { updateCardRegisteredAPI, updateIdentityVerifiedAPI } from '@/entities/auth/api/authApi';
 
 interface CardPaymentProps {
-  variant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet';
+  variant:
+    | 'CardNotYet'
+    | 'AccountCheck'
+    | 'CardPayment'
+    | 'CertificationNotYet'
+    | 'AccountCheckFail';
   trigger?: React.ReactNode;
   Loadertime?: number;
   shouldFail?: boolean;
@@ -27,7 +33,7 @@ const CardPaymentHeader = (variant: CardPaymentProps['variant']) => {
   }
   if (variant === 'CardPayment') {
     return {
-      Maintitle: '결제가 진행중입니다.',
+      Maintitle: '입찰이 진행중입니다.',
       Subtitle: '',
       Buttontext: '',
     };
@@ -55,6 +61,7 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
   const percentRef = useRef(0);
   const header = CardPaymentHeader(variant);
 
+  console.log(shouldFail);
   // PASS 모달 닫기 함수
   const handleClosePassModal = () => {
     setShowPassModal(false);
@@ -69,26 +76,30 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
 
   // PASS 인증 완료 처리 함수
   const handlePassSuccess = () => {
-    setShowPassModal(false);
-    setShowSuccessMessage(true);
+    updateIdentityVerifiedAPI('true').then(() => {
+      setShowPassModal(false);
+      setShowSuccessMessage(true);
 
-    // 3초 후에 성공 메시지와 메인 모달을 모두 닫기
-    setTimeout(() => {
-      setShowSuccessMessage(false);
-      setIsOpen(false);
-    }, 3000);
+      // 3초 후에 성공 메시지와 메인 모달을 모두 닫기
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+        setIsOpen(false);
+      }, 3000);
+    });
   };
 
   // 카드 등록 완료 처리 함수
   const handleCardSuccess = () => {
-    setShowCardNotYetModal(false);
-    setShowCardSuccessMessage(true);
+    updateCardRegisteredAPI('true').then(() => {
+      setShowCardNotYetModal(false);
+      setShowCardSuccessMessage(true);
 
-    // 3초 후에 성공 메시지와 메인 모달을 모두 닫기
-    setTimeout(() => {
-      setShowCardSuccessMessage(false);
-      setIsOpen(false);
-    }, 3000);
+      // 3초 후에 성공 메시지와 메인 모달을 모두 닫기
+      setTimeout(() => {
+        setShowCardSuccessMessage(false);
+        setIsOpen(false);
+      }, 3000);
+    });
   };
 
   // AccountCheck 진행률 시뮬레이션 (자연스러운 증가)
