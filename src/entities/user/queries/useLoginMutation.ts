@@ -2,18 +2,20 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import loginApi from '../api/loginApi';
 import { customToast } from '@/shared/ui';
+import useAuthStore from '@/shared/stores/useAuthStore';
 
 const useLoginMutation = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const location = useLocation();
+  const { setToken } = useAuthStore();
 
   return useMutation({
     mutationFn: loginApi,
     onSuccess: response => {
       customToast.confirm('로그인 성공');
 
-      sessionStorage.setItem('nafal-access', response.data.accessToken);
+      setToken(response.data.accessToken);
 
       queryClient.invalidateQueries({ queryKey: ['user-info'] });
 
