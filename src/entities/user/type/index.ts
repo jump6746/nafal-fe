@@ -1,1 +1,8 @@
-export type { User, SignupRequest, SignupResponse, LoginRequest, LoginResponse } from './types';
+export type {
+  User,
+  SignupRequest,
+  SignupResponse,
+  LoginRequest,
+  LoginResponse,
+  GetUserResponse,
+} from './types';
