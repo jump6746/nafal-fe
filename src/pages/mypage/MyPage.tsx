@@ -102,20 +102,24 @@ const MyPage = () => {
             <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
           </div>
         </Link>
-        <div className='flex cursor-pointer items-center justify-between'>
-          <span>럭키드로우 당첨 내역</span>
-          <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
-        </div>
+        <Link to='/mypage/luckydraw'>
+          <div className='flex cursor-pointer items-center justify-between'>
+            <span>럭키드로우 당첨 내역</span>
+            <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+          </div>
+        </Link>
         <Link to='/mypage/shipping'>
           <div className='flex cursor-pointer items-center justify-between'>
             <span>배송 내역</span>
             <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
           </div>
         </Link>
-        <div className='flex cursor-pointer items-center justify-between'>
-          <span>배송지 관리</span>
-          <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
-        </div>
+        <Link to='/mypage/shippingPlace'>
+          <div className='flex cursor-pointer items-center justify-between'>
+            <span>배송지 관리</span>
+            <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+          </div>
+        </Link>
       </section>
     </div>
   );

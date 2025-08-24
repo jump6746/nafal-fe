@@ -12,7 +12,8 @@ import AuctionDetailSkeleton from '@/features/auction/skeleton/AuctionDetailSkel
 import LuckDrawPageSkeleton from '@/features/luckDraw/LuckDrawPageSkeleton';
 import { LandingPage } from '@/pages/landing';
 import ShippingPage from '@/pages/mypage/ShippingPage';
-import MyLuckDrawPage from '@/pages/mypage/MyLuckDrawpage';
+import MyLuckDrawPage from '@/pages/mypage/MyLuckDrawPage';
+import MyShippingPlacePage from '@/pages/mypage/MyShippingPlacePage';
 
 const AppRouter = createBrowserRouter([
   {
@@ -103,6 +104,10 @@ const AppRouter = createBrowserRouter([
       {
         element: <MyLuckDrawPage />,
         path: '/mypage/luckydraw',
+      },
+      {
+        element: <MyShippingPlacePage />,
+        path: '/mypage/shippingPlace',
       },
     ],
   },
