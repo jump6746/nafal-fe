@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import { Toaster } from '@/shared/ui';
 
 interface Props {
   headerSlot?: React.ReactNode;
@@ -9,15 +10,16 @@ interface Props {
 const Layout = (props: Props) => {
   return (
     <div
-      className='relative mx-auto flex h-full max-w-[450px] min-w-[320px] flex-col overflow-hidden bg-lime-100 px-5'
+      className='relative mx-auto flex h-full max-w-[450px] min-w-[320px] flex-col overflow-hidden shadow'
       id='topLayout'
     >
       {props.headerSlot}
-      <main className='flex-grow overflow-auto bg-amber-100'>
+      <main className='relative flex-grow overflow-auto'>
         <Outlet />
       </main>
       {props.navbarSlot}
       {props.modalSlot}
+      <Toaster />
     </div>
   );
 };

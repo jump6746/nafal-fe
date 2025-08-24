@@ -36,10 +36,10 @@ const LandingPage = () => {
   return (
     <div className='flex h-full flex-col items-center justify-center gap-5'>
       <h1>랜딩페이지</h1>
-      <Button variant='outline' className='cursor-pointer' onClick={handleTest}>
+      <Button variant='default' className='cursor-pointer' onClick={handleTest}>
         테스트
       </Button>
-      <Button variant='outline' className='cursor-pointer' onClick={handleWebSocketConnect}>
+      <Button variant='default' className='cursor-pointer' onClick={handleWebSocketConnect}>
         소켓 테스트
       </Button>
     </div>

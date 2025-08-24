@@ -22,11 +22,14 @@ const apiRequest = async <
   data,
   credentials,
   headers,
+  skipAuth = false,
 }: FetchProps<T, H>): Promise<ResponseDTO<P>> => {
   const body = data ? JSON.stringify(data) : null;
 
   const getAccessToken = () => {
-    return sessionStorage.getItem('nefal-access') || null;
+    const session = JSON.parse(sessionStorage.getItem('nefal-access') || '{}');
+
+    return session.accessToken || null;
   };
 
   const performRequest = async (retryCount = 0): Promise<ResponseDTO<P>> => {
@@ -35,8 +38,8 @@ const apiRequest = async <
       const accessToken = getAccessToken();
 
       const defaultHeaders: Record<string, string> = {
-        'Content-Type': 'application/json',
-        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+        ...(method !== 'GET' && { 'Content-Type': 'application/json' }),
+        ...(accessToken && !skipAuth && { Authorization: `Bearer ${accessToken}` }),
       };
 
       const mergedHeaders = { ...defaultHeaders, ...headers };
