@@ -1,3 +1,4 @@
+import { useTopNavigationStore } from '@/shared/stores';
 import { Link, useNavigate } from 'react-router-dom';
 
 export interface TopNavigationProps {
@@ -7,6 +8,7 @@ export interface TopNavigationProps {
 
 const TopNavigation = ({ type, title }: TopNavigationProps) => {
   const navigate = useNavigate();
+  const onClick = useTopNavigationStore(state => state.onClick);
 
   const handleBack = () => {
     navigate(-1);
@@ -16,7 +18,12 @@ const TopNavigation = ({ type, title }: TopNavigationProps) => {
     <nav className='flex w-full items-center justify-between px-5'>
       <div className='flex h-12 w-12 items-center justify-center'>
         {type === 'text' && (
-          <img src='/images/Icons/caret_left_lg.svg' alt='back' onClick={handleBack} />
+          <img
+            src='/images/Icons/caret_left_lg.svg'
+            alt='back'
+            onClick={onClick || handleBack}
+            className='cursor-pointer'
+          />
         )}
       </div>
       <div>

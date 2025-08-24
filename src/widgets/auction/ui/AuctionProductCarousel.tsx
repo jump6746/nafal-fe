@@ -2,16 +2,17 @@ import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/sha
 import { useEffect, useState } from 'react';
 
 interface Props {
+  imageUrls?: string[];
   setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AuctionProductCarousel = ({ setShowOverlay }: Props) => {
-  const images = [
-    '/images/mockup/image_kanu.png',
-    '/images/mockup/image_kanu.png',
-    '/images/mockup/image_kanu.png',
-  ];
+const images = [
+  '/images/mockup/image_kanu.png',
+  '/images/mockup/image_kanu.png',
+  '/images/mockup/image_kanu.png',
+];
 
+const AuctionProductCarousel = ({ imageUrls = images, setShowOverlay }: Props) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState<number>(0);
 
@@ -35,7 +36,7 @@ const AuctionProductCarousel = ({ setShowOverlay }: Props) => {
       >
         <Carousel setApi={setApi}>
           <CarouselContent>
-            {images.map((src, index) => (
+            {imageUrls.map((src, index) => (
               <CarouselItem key={index}>
                 <div className='aspect-[3/2] bg-gray-200'>
                   <img
@@ -53,7 +54,7 @@ const AuctionProductCarousel = ({ setShowOverlay }: Props) => {
         </span>
       </div>
       <div className='mt-2 flex justify-center gap-1'>
-        {images.map((_, index) => (
+        {imageUrls.map((_, index) => (
           <button
             key={index}
             className={`h-2 cursor-pointer rounded-full transition-all duration-300 ease-out ${
