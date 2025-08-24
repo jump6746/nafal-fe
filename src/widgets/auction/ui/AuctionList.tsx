@@ -37,7 +37,9 @@ const AuctionList = ({
               ? 'OPENING_SOON'
               : sort === '인기순'
                 ? 'POPULAR'
-                : 'DEFAULT',
+                : sort === '마감 임박'
+                  ? 'CLOSING_SOON'
+                  : 'DEFAULT',
         keyword: '',
         page: pageParam,
         size: 10,
