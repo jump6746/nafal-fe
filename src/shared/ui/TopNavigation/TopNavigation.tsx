@@ -1,5 +1,7 @@
+import useUserInfo from '@/entities/user/hooks/useUserInfo';
 import { useTopNavigationStore } from '@/shared/stores';
 import { Link, useNavigate } from 'react-router-dom';
+import { Lock } from 'lucide-react';
 
 export interface TopNavigationProps {
   type: 'logo' | 'text';
@@ -9,6 +11,7 @@ export interface TopNavigationProps {
 const TopNavigation = ({ type, title }: TopNavigationProps) => {
   const navigate = useNavigate();
   const onClick = useTopNavigationStore(state => state.onClick);
+  const { userInfo } = useUserInfo();
 
   const handleBack = () => {
     navigate(-1);
@@ -26,26 +29,34 @@ const TopNavigation = ({ type, title }: TopNavigationProps) => {
           />
         )}
       </div>
-      <div>
-        {' '}
+      <div className='absolute left-1/2 -translate-x-1/2 transform'>
         {type === 'text' ? (
           <h1 className='text-title-16 font-semibold'>{title}</h1>
         ) : (
           <img src='/images/LOGO/LOGO_Monogram.svg' alt='Logo' />
         )}
       </div>
-      <div className='flex h-12 flex-row items-center gap-4'>
-        <img src='/images/Icons/bell.svg' alt='alert' className='h-6 w-6' />
-        {type === 'text' ? (
-          <Link to='/'>
-            <img src='/images/Icons/home.svg' alt='home' className='h-6 w-6' />
+      {userInfo ? (
+        <div className='flex h-12 flex-row items-center gap-4'>
+          <img src='/images/Icons/bell.svg' alt='alert' className='h-6 w-6' />
+          {type === 'text' ? (
+            <Link to='/'>
+              <img src='/images/Icons/home.svg' alt='home' className='h-6 w-6' />
+            </Link>
+          ) : (
+            <Link to='/mypage'>
+              <img src='/images/Icons/user.svg' alt='mypage' className='h-6 w-6' />
+            </Link>
+          )}
+        </div>
+      ) : (
+        <div className='flex h-12 w-fit flex-row items-center gap-4'>
+          <Link to='/login' className='flex items-center gap-1 text-sm font-semibold'>
+            <Lock className='h-3 w-3 text-black' />
+            로그인
           </Link>
-        ) : (
-          <Link to='/mypage'>
-            <img src='/images/Icons/user.svg' alt='mypage' className='h-6 w-6' />
-          </Link>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 };

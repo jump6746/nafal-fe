@@ -9,6 +9,7 @@ export { default as AuctionNotice } from './AuctionNotice/AuctionNotice';
 export { default as SortCategory } from '../../features/main/ui/SortCategory';
 export { default as TextField } from './TextField/TextField';
 export { default as StatusDropDown } from './StatusDropDown/StatusDropDown';
+export { default as LoginModal } from './LoginModal';
 export {
   type CarouselApi,
   Carousel,

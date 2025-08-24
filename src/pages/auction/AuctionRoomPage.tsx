@@ -112,7 +112,7 @@ const AuctionRoomPage = () => {
           }`}
         >
           <img
-            src={auctionDetail.data.storyImageUrl?.presignedUrl}
+            src={auctionDetail.data.storyImageUrl?.presignedUrl || '/images/Dummy/MainPage/2.jpg'}
             alt='스토리텔링 카드'
             className='h-full w-full object-cover'
           />
@@ -127,11 +127,19 @@ const AuctionRoomPage = () => {
           <div className='flex items-center gap-2'>
             {/* 브랜드 짧은 로고 */}
             <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 px-2'>
-              <img src={auctionDetail.data.shortLogo.presignedUrl} alt='로고 시그니처' />
+              <img
+                src={
+                  auctionDetail.data.shortLogo?.presignedUrl || '/images/LOGO/LOGO_Signature.svg'
+                }
+                alt='로고 시그니처'
+              />
             </div>
             {/* 브랜드 긴 로고 */}
             <div className='aspect-[3/1] h-6'>
-              <img src={auctionDetail.data.longLogo.presignedUrl} alt='브랜드 로고' />
+              <img
+                src={auctionDetail.data.longLogo?.presignedUrl || '/images/LOGO/LOGO_Monogram.svg'}
+                alt='브랜드 로고'
+              />
             </div>
           </div>
           <div className='group relative'>

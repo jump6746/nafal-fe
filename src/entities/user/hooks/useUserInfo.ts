@@ -1,10 +1,11 @@
 import { useGetUserQuery } from '../queries';
 
 const useUserInfo = () => {
-  const { data } = useGetUserQuery();
+  const { data, isLoading } = useGetUserQuery();
 
   return {
     userInfo: data?.data,
+    isLoading,
   };
 };
 
