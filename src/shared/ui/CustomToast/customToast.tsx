@@ -10,6 +10,15 @@ const customToast = {
       </div>
     ));
   },
+  alarm: (message: string) => {
+    toast.custom(() => (
+      <div className='flex w-[356px] justify-center'>
+        <div className='flex items-center rounded-full border bg-white px-2.5 py-1.5'>
+          <span className='font-semibold text-gray-800'>{message}</span>
+        </div>
+      </div>
+    ));
+  },
   warning: (message: string) => {
     toast.custom(() => (
       <div className='flex w-[356px] justify-center'>

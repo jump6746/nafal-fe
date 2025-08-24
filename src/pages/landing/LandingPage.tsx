@@ -1,10 +1,10 @@
 import { testApi } from '@/entities/test/api';
-import { useWebSocket } from '@/shared/hooks';
+import { useSockJS } from '@/shared/hooks';
 import { Button } from '@/shared/ui';
 import { toast } from 'sonner';
 
 const LandingPage = () => {
-  const { isReady, connect } = useWebSocket();
+  const { isReady, connect } = useSockJS();
 
   const handleTest = async () => {
     try {
@@ -29,7 +29,7 @@ const LandingPage = () => {
       return;
     }
 
-    const accessToken = sessionStorage.getItem('nefal-access');
+    const accessToken = sessionStorage.getItem('nafal-access');
     console.log(accessToken);
     toast('WebSocket 연결 시도...');
     connect(`https://api.nafal.site/ws?token=${accessToken}`); // 테스트용 WebSocket 서버

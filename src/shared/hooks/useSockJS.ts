@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-interface WebSocketMessage {
+interface SockJSMessage {
   type:
     | 'ready'
     | 'status'
@@ -42,7 +42,7 @@ interface ChannelMessage {
   originalMessage: unknown;
 }
 
-interface UseSharedWebSocketReturn {
+interface UseSharedSockJSReturn {
   status: string;
   activeTabs: number;
   isReady: boolean;
@@ -51,7 +51,7 @@ interface UseSharedWebSocketReturn {
   subscribedChannels: string[];
   totalSubscriptions: number;
 
-  // 기본 WebSocket 기능
+  // 기본 SockJS 기능
   connect: (url: string) => void;
   disconnect: () => void;
   sendMessage: (message: string | object) => void;
@@ -67,7 +67,7 @@ interface UseSharedWebSocketReturn {
   onChannelMessage: (callback: (message: ChannelMessage) => void) => () => void;
 }
 
-const useWebSocket = (): UseSharedWebSocketReturn => {
+const useSockJS = (): UseSharedSockJSReturn => {
   const workerRef = useRef<SharedWorker | null>(null);
   const portRef = useRef<MessagePort | null>(null);
   const channelMessageCallbacks = useRef<Set<(message: ChannelMessage) => void>>(new Set());
@@ -81,157 +81,163 @@ const useWebSocket = (): UseSharedWebSocketReturn => {
   const [totalSubscriptions, setTotalSubscriptions] = useState<number>(0);
 
   // Worker 메시지 처리
-  const handleWorkerMessage = useCallback((event: MessageEvent) => {
-    const { type, data }: WebSocketMessage = event.data;
+  const handleWorkerMessage = useCallback(
+    (event: MessageEvent) => {
+      const { type, data }: SockJSMessage = event.data;
 
-    console.log('📨 Worker 메시지 수신:', type, data);
+      console.log('📨 Worker 메시지 수신:', type, data);
 
-    switch (type) {
-      case 'ready':
-        console.log('✅ Worker 준비 완료');
-        setIsReady(true);
-        setStatus(data.status || 'disconnected');
-        setActiveTabs(data.activeTabs || 0);
-        setSubscribedChannels(data.subscribedChannels || []);
-        setTotalSubscriptions(data.subscribedChannels?.length || 0);
-        setError(null);
-        console.log('📊 초기 상태:', {
-          status: data.status,
-          activeTabs: data.activeTabs,
-          subscribedChannels: data.subscribedChannels,
-        });
-        break;
-
-      case 'status':
-        console.log('📊 상태 변경:', data.status);
-        setStatus(data.status || 'disconnected');
-        setActiveTabs(data.activeTabs || 0);
-
-        if (data.subscribedChannels) {
-          setSubscribedChannels(data.subscribedChannels);
-          setTotalSubscriptions(data.subscribedChannels.length);
-        }
-        if (typeof data.totalSubscriptions === 'number') {
-          setTotalSubscriptions(data.totalSubscriptions);
-        }
-
-        if (data.status === 'connected') {
+      switch (type) {
+        case 'ready':
+          console.log('✅ Worker 준비 완료');
+          setIsReady(true);
+          setStatus(data.status || 'disconnected');
+          setActiveTabs(data.activeTabs || 0);
+          setSubscribedChannels(data.subscribedChannels || []);
+          setTotalSubscriptions(data.subscribedChannels?.length || 0);
           setError(null);
-          console.log('🎉 WebSocket 연결 성공!');
-        } else if (data.status === 'disconnected' && data.code) {
-          console.log('🔌 WebSocket 연결 종료:', data.code, data.reason);
-        }
-        break;
-
-      case 'message':
-        console.log('📩 일반 메시지 수신:', data.message);
-        setLastMessage(data.message);
-        setError(null);
-        break;
-
-      case 'channelMessage':
-        console.log(`📺 채널 메시지 수신 (${data.channel}):`, data.messageType);
-
-        // 채널 메시지 콜백들 실행
-        if (data.channel && data.timestamp) {
-          const channelMessage: ChannelMessage = {
-            channel: data.channel,
-            messageType: data.messageType || 'message',
-            message: data.message,
-            timestamp: data.timestamp,
-            originalMessage: data.originalMessage,
-          };
-
-          channelMessageCallbacks.current.forEach(callback => {
-            try {
-              callback(channelMessage);
-            } catch (error) {
-              console.error('❌ 채널 메시지 콜백 실행 실패:', error);
-            }
+          console.log('📊 초기 상태:', {
+            status: data.status,
+            activeTabs: data.activeTabs,
+            subscribedChannels: data.subscribedChannels,
           });
-        } else {
-          console.error('❌ 채널 메시지에 필수 필드가 없음:', data);
-        }
+          break;
 
-        setError(null);
-        break;
+        case 'status':
+          console.log('📊 상태 변경:', data.status);
+          setStatus(data.status || 'disconnected');
+          setActiveTabs(data.activeTabs || 0);
 
-      case 'subscribed':
-        console.log(`✅ 채널 구독 완료: ${data.channel}`);
-        if (data.channel && !subscribedChannels.includes(data.channel)) {
-          setSubscribedChannels(prev => [...prev, data.channel!]);
-        }
-        if (typeof data.totalSubscriptions === 'number') {
-          setTotalSubscriptions(data.totalSubscriptions);
-        }
-        setError(null);
-        break;
+          if (data.subscribedChannels) {
+            setSubscribedChannels(data.subscribedChannels);
+            setTotalSubscriptions(data.subscribedChannels.length);
+          }
+          if (typeof data.totalSubscriptions === 'number') {
+            setTotalSubscriptions(data.totalSubscriptions);
+          }
 
-      case 'unsubscribed':
-        console.log(`❌ 채널 구독 해제: ${data.channel}`);
-        if (data.channel) {
-          setSubscribedChannels(prev => prev.filter(ch => ch !== data.channel));
-        }
-        if (typeof data.totalSubscriptions === 'number') {
-          setTotalSubscriptions(data.totalSubscriptions);
-        }
-        setError(null);
-        break;
+          if (data.status === 'connected') {
+            setError(null);
+            console.log('🎉 SockJS 연결 성공!');
+          } else if (data.status === 'disconnected' && data.code) {
+            console.log('🔌 SockJS 연결 종료:', data.code, data.reason);
+          }
+          break;
 
-      case 'subscriptions':
-        console.log('📋 구독 현황 업데이트:', data.subscribedChannels);
-        setSubscribedChannels(data.subscribedChannels || []);
-        setTotalSubscriptions(data.subscribedChannels?.length || 0);
-        break;
+        case 'message':
+          console.log('📩 일반 메시지 수신:', data.message);
+          setLastMessage(data.message);
+          setError(null);
+          break;
 
-      case 'subscriptionUpdate':
-        console.log(`📺 다른 탭 구독 업데이트: ${data.action} - ${data.channel}`);
+        case 'channelMessage':
+          console.log(`📺 채널 메시지 수신 (${data.channel}):`, data.messageType);
 
-        if (data.action === 'subscribed' && data.channel) {
-          setSubscribedChannels(prev =>
-            prev.includes(data.channel!) ? prev : [...prev, data.channel!]
-          );
-        } else if (data.action === 'unsubscribed' && data.channel) {
-          setSubscribedChannels(prev => prev.filter(ch => ch !== data.channel));
-        }
+          // 채널 메시지 콜백들 실행
+          if (data.channel && data.timestamp) {
+            const channelMessage: ChannelMessage = {
+              channel: data.channel,
+              messageType: data.messageType || 'message',
+              message: data.message,
+              timestamp: data.timestamp,
+              originalMessage: data.originalMessage,
+            };
 
-        if (typeof data.totalSubscriptions === 'number') {
-          setTotalSubscriptions(data.totalSubscriptions);
-        }
-        break;
+            channelMessageCallbacks.current.forEach(callback => {
+              try {
+                callback(channelMessage);
+              } catch (error) {
+                console.error('❌ 채널 메시지 콜백 실행 실패:', error);
+              }
+            });
+          } else {
+            console.error('❌ 채널 메시지에 필수 필드가 없음:', data);
+          }
 
-      case 'sent':
-        console.log('📤 메시지 전송 완료');
-        setError(null);
-        break;
+          setError(null);
+          break;
 
-      case 'error':
-        console.error('❌ 에러 수신:', data.message);
-        setError(typeof data.message === 'string' ? data.message : 'Unknown error');
-        break;
+        case 'subscribed':
+          console.log(`✅ 채널 구독 완료: ${data.channel}`);
+          if (data.channel && !subscribedChannels.includes(data.channel)) {
+            setSubscribedChannels(prev => [...prev, data.channel!]);
+          }
+          if (typeof data.totalSubscriptions === 'number') {
+            setTotalSubscriptions(data.totalSubscriptions);
+          }
+          setError(null);
+          break;
 
-      default:
-        console.warn('⚠️ 알 수 없는 메시지 타입:', type);
-    }
-  }, []);
+        case 'unsubscribed':
+          console.log(`❌ 채널 구독 해제: ${data.channel}`);
+          if (data.channel) {
+            setSubscribedChannels(prev => prev.filter(ch => ch !== data.channel));
+          }
+          if (typeof data.totalSubscriptions === 'number') {
+            setTotalSubscriptions(data.totalSubscriptions);
+          }
+          setError(null);
+          break;
 
-  // Worker 초기화
+        case 'subscriptions':
+          console.log('📋 구독 현황 업데이트:', data.subscribedChannels);
+          setSubscribedChannels(data.subscribedChannels || []);
+          setTotalSubscriptions(data.subscribedChannels?.length || 0);
+          break;
+
+        case 'subscriptionUpdate':
+          console.log(`📺 다른 탭 구독 업데이트: ${data.action} - ${data.channel}`);
+
+          if (data.action === 'subscribed' && data.channel) {
+            setSubscribedChannels(prev =>
+              prev.includes(data.channel!) ? prev : [...prev, data.channel!]
+            );
+          } else if (data.action === 'unsubscribed' && data.channel) {
+            setSubscribedChannels(prev => prev.filter(ch => ch !== data.channel));
+          }
+
+          if (typeof data.totalSubscriptions === 'number') {
+            setTotalSubscriptions(data.totalSubscriptions);
+          }
+          break;
+
+        case 'sent':
+          console.log('📤 메시지 전송 완료');
+          setError(null);
+          break;
+
+        case 'error':
+          console.error('❌ 에러 수신:', data.message);
+          setError(typeof data.message === 'string' ? data.message : 'Unknown error');
+          break;
+
+        default:
+          console.warn('⚠️ 알 수 없는 메시지 타입:', type);
+      }
+    },
+    [subscribedChannels]
+  );
+
   useEffect(() => {
-    console.log('🔄 채널 구독 기능이 포함된 useWebSocket Hook 초기화');
+    console.log('🔄 useSockJS Hook 초기화');
+
+    // useEffect가 재실행될 때 상태 초기화
+    setIsReady(false);
+    setError(null);
 
     try {
       console.log('🚀 Shared Worker 생성 시도');
-      workerRef.current = new SharedWorker('/websocket-worker.js');
+      // SockJS Shared Worker로 변경
+      workerRef.current = new SharedWorker('/sockjs-worker.js');
       portRef.current = workerRef.current.port;
-      console.log('✅ Shared Worker 인스턴스 생성 완료');
 
       portRef.current.onmessage = handleWorkerMessage;
-      portRef.current.onmessageerror = (error: MessageEvent) => {
+      portRef.current.onmessageerror = error => {
         console.error('❌ 포트 메시지 에러:', error);
         setError('포트 통신 오류가 발생했습니다');
       };
 
-      workerRef.current.onerror = (error: ErrorEvent) => {
+      workerRef.current.onerror = error => {
         console.error('❌ Worker 에러:', error);
         setError(`Worker 오류: ${error.message}`);
       };
@@ -245,27 +251,40 @@ const useWebSocket = (): UseSharedWebSocketReturn => {
 
     return () => {
       console.log('🧹 Hook 정리');
+      // 상태도 초기화
+      setIsReady(false);
+      setError(null);
+
       if (portRef.current) {
-        try {
-          portRef.current.close();
-        } catch (closeError) {
-          console.error('❌ 포트 해제 실패:', closeError);
-        }
+        portRef.current.close();
       }
       workerRef.current = null;
       portRef.current = null;
       channelMessageCallbacks.current.clear();
-      console.log('✅ Hook 정리 완료');
     };
-  }, [handleWorkerMessage]);
+  }, []);
 
-  // 기본 WebSocket 기능들
+  // 기본 SockJS 기능들
   const connect = useCallback(
     (url: string) => {
       console.log('🔗 연결 요청:', url);
+      console.log('🔍 connect 호출 시점 상세:', {
+        'portRef.current 존재': !!portRef.current,
+        'portRef.current 타입': typeof portRef.current,
+        'portRef.current': portRef.current,
+        isReady: isReady,
+        '호출 시점': new Date().toISOString(),
+      });
 
       if (!portRef.current) {
         console.error('❌ 포트가 없음');
+        console.error('상세 디버깅:', {
+          portRef: portRef,
+          'portRef.current': portRef.current,
+          'portRef.current === null': portRef.current === null,
+          'portRef.current === undefined': portRef.current === undefined,
+          'Boolean(portRef.current)': Boolean(portRef.current),
+        });
         setError('Worker 포트가 초기화되지 않았습니다');
         return;
       }
@@ -278,7 +297,7 @@ const useWebSocket = (): UseSharedWebSocketReturn => {
 
       if (!url?.trim()) {
         console.error('❌ 유효하지 않은 URL');
-        setError('유효한 WebSocket URL을 입력해주세요');
+        setError('유효한 SockJS URL을 입력해주세요');
         return;
       }
 
@@ -329,8 +348,8 @@ const useWebSocket = (): UseSharedWebSocketReturn => {
       }
 
       if (status !== 'connected') {
-        console.warn('⚠️ WebSocket이 연결되지 않음, 현재 상태:', status);
-        setError(`WebSocket이 연결되지 않았습니다 (현재: ${status})`);
+        console.warn('⚠️ SockJS가 연결되지 않음, 현재 상태:', status);
+        setError(`SockJS가 연결되지 않았습니다 (현재: ${status})`);
         return;
       }
 
@@ -512,7 +531,7 @@ const useWebSocket = (): UseSharedWebSocketReturn => {
     subscribedChannels,
     totalSubscriptions,
 
-    // 기본 WebSocket 기능
+    // 기본 SockJS 기능
     connect,
     disconnect,
     sendMessage,
@@ -529,4 +548,4 @@ const useWebSocket = (): UseSharedWebSocketReturn => {
   };
 };
 
-export default useWebSocket;
+export default useSockJS;
