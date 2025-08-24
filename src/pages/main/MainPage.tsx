@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import MainPageNav from '@/features/main/ui/MainPageNav';
 import MainPageCategory from '@/widgets/main/ui/MainPageCategory';
 import MainPageCarousel from '@/widgets/main/ui/MainPageCarousel';
@@ -8,7 +8,6 @@ import AuctionListSkeleton from '@/features/main/skleton/AuctionListSkeleton';
 import AuctionList from '@/widgets/auction/ui/AuctionList';
 import { useNavigate } from 'react-router-dom';
 import useUserInfo from '@/entities/user/hooks/useUserInfo';
-import { useSockJS } from '@/shared/hooks';
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -58,17 +57,6 @@ const MainPage = () => {
   const updateSort = (newSort: string) => {
     setSort(newSort);
   };
-
-  // socket
-  const { isReady, connect, status } = useSockJS();
-
-  useEffect(() => {
-    const accessToken = sessionStorage.getItem('nafal-access');
-
-    if (accessToken && isReady && status === 'disconnected') {
-      connect(`https://api.nafal.site/ws?token=${accessToken}`);
-    }
-  }, [isReady, status]);
 
   return (
     <div className='relative'>

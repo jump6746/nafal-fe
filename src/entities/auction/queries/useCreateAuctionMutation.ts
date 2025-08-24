@@ -10,7 +10,7 @@ const useCreateAuctionMutation = () => {
     mutationFn: createAuctionApi,
     onSuccess: response => {
       customToast.confirm('경매 등록 성공!');
-      navigate(`/auction/${response.data.newAuctionId}`);
+      navigate(`/auction/${response.data.newEventId}/${response.data.newAuctionId}`);
     },
     onError: error => {
       customToast.warning(error.message);

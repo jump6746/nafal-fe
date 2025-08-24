@@ -66,7 +66,7 @@ export interface ProductDetail {
   thumbnailImageUrl: ImageInfo;
   originalImageUrl: ImageInfo;
   productDescription: string;
-  tags: Tag[];
+  tags: string[];
   widthCm: number;
   heightCm: number;
   material: string;
@@ -83,7 +83,7 @@ export interface AuctionDetail {
   sellerName: string;
   shortLogo: ImageInfo;
   longLogo: ImageInfo;
-  categories: Category[];
+  categories: string[];
   currentPrice: number;
   bidUnit: number;
   participantCount: number;
@@ -207,4 +207,14 @@ export interface CreateAuctionStep {
     cost: number;
     note: string;
   };
+}
+
+export interface GetBidHistoryResponse {
+  content: {
+    username: string;
+    message: string;
+    placedAt: string;
+  }[];
+  hasNext: boolean;
+  nextCursor: string | null;
 }

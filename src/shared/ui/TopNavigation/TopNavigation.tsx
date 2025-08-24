@@ -1,4 +1,3 @@
-import useUserInfo from '@/entities/user/hooks/useUserInfo';
 import { useTopNavigationStore } from '@/shared/stores';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock } from 'lucide-react';
@@ -11,7 +10,8 @@ export interface TopNavigationProps {
 const TopNavigation = ({ type, title }: TopNavigationProps) => {
   const navigate = useNavigate();
   const onClick = useTopNavigationStore(state => state.onClick);
-  const { userInfo } = useUserInfo();
+
+  const accessToken = sessionStorage.getItem('nafal-access');
 
   const handleBack = () => {
     navigate(-1);
@@ -36,7 +36,7 @@ const TopNavigation = ({ type, title }: TopNavigationProps) => {
           <img src='/images/LOGO/LOGO_Monogram.svg' alt='Logo' />
         )}
       </div>
-      {userInfo ? (
+      {accessToken ? (
         <div className='flex h-12 flex-row items-center gap-4'>
           <img src='/images/Icons/bell.svg' alt='alert' className='h-6 w-6' />
           {type === 'text' ? (

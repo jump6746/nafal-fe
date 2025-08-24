@@ -192,7 +192,7 @@ const CreateAuctionPreview = ({ formData }: Props) => {
           {/* 남은 시간, 00명 참여중 */}
           <div className='flex flex-col gap-0.5'>
             <span className='text-sub-a-500 font-semibold'>
-              마감 시간 {formData.auctionSettings.endAt.toISOString()}
+              마감 시간 {formatKoreanDate(formData.auctionSettings.endAt.toISOString())}
             </span>
           </div>
         </div>

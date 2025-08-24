@@ -161,10 +161,8 @@ const CreateAuctionStep1 = ({ formData, updateProductCoreInfo, onNext, container
     onNext();
   };
 
-  const hasTags = categories.length > 0;
-
   return (
-    <section className='flex h-full w-full flex-col gap-4 px-5 pt-12 pb-9'>
+    <section className='flex h-full w-full flex-col gap-4 overflow-auto px-5 pt-12 pb-9'>
       <h2 className='text-xl font-extrabold text-gray-900'>제목</h2>
       <TextField
         placeholder='상품명을 입력하세요.'
@@ -175,7 +173,7 @@ const CreateAuctionStep1 = ({ formData, updateProductCoreInfo, onNext, container
       <StatusDropDown pos={condition} setPos={handleConditionChange} />
       <div
         ref={containerRef}
-        className={`flex cursor-grab flex-row gap-2 overflow-x-scroll select-none ${hasTags ? 'pb-[18px]' : ''}`}
+        className={`flex h-9 flex-shrink-0 cursor-grab flex-row gap-2 overflow-x-scroll select-none`}
         style={{ scrollbarWidth: 'none' }}
         onMouseDown={handleMouseDown}
         onMouseLeave={handleMouseLeave}
