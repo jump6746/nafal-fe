@@ -8,7 +8,7 @@ const uploadToS3API = async (
     method: 'PUT',
     body: image.file,
     headers: {
-      'Content-Type': image.file.type,
+      'Content-Type': 'image/webp',
     },
   });
 

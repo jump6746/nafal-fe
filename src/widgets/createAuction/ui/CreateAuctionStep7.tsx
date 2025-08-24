@@ -56,7 +56,6 @@ const CreateAuctionStep7 = ({ formData, onNext, updateDeliveryDetails }: Props) 
 
     // 모든 단계 완료 - 경매 등록 처리
     console.log('경매 등록 데이터:', formData);
-    customToast.confirm('경매가 등록되었습니다!');
 
     onNext(); // 혹은 등록 완료 후 다른 페이지로 이동
   };

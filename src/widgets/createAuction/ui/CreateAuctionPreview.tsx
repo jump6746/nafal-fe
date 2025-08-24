@@ -8,7 +8,7 @@ import {
 } from '@/entities/image/api';
 import { formatKoreanDate } from '@/shared/lib/formatKoreanDate';
 import { useTopNavigationStore } from '@/shared/stores';
-import { Button, customToast } from '@/shared/ui';
+import { Button } from '@/shared/ui';
 import { AuctionProductCarousel } from '@/widgets/auction/ui';
 import { useEffect, useState } from 'react';
 
