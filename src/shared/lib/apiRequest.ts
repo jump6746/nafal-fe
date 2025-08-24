@@ -27,7 +27,7 @@ const apiRequest = async <
   const body = data ? JSON.stringify(data) : null;
 
   const getAccessToken = () => {
-    const accessToken = sessionStorage.getItem('nefal-access');
+    const accessToken = sessionStorage.getItem('nafal-access');
     return accessToken || null;
   };
 

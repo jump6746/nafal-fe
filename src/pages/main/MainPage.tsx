@@ -1,4 +1,4 @@
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import MainPageNav from '@/features/main/ui/MainPageNav';
 import MainPageCategory from '@/widgets/main/ui/MainPageCategory';
 import MainPageCarousel from '@/widgets/main/ui/MainPageCarousel';
@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import useUserInfo from '@/entities/user/hooks/useUserInfo';
 import { getBrandListAPI, getEventListAPI } from '@/entities/auction/api/auctionApi';
 import { useQuery } from '@tanstack/react-query';
+import { useSockJS } from '@/shared/hooks';
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -69,6 +70,17 @@ const MainPage = () => {
     queryKey: ['eventList'],
     queryFn: getEventListAPI,
   });
+
+  // socket
+  const { isReady, connect, status } = useSockJS();
+
+  useEffect(() => {
+    const accessToken = sessionStorage.getItem('nafal-access');
+
+    if (accessToken && isReady && status === 'disconnected') {
+      connect(`https://api.nafal.site/ws?token=${accessToken}`);
+    }
+  }, [isReady, status]);
 
   return (
     <div className='relative'>
