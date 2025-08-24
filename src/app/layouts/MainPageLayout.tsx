@@ -1,4 +1,4 @@
-import { Layout, TopNavigation } from '@/shared/ui';
+import { Layout, TopNavigation, LoginModal } from '@/shared/ui';
 
 const MainPageLayout = () => {
   return (
@@ -8,6 +8,7 @@ const MainPageLayout = () => {
           <TopNavigation type='logo' />
         </div>
       }
+      modalSlot={<LoginModal />}
     />
   );
 };
