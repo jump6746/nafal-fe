@@ -3,8 +3,9 @@ import { AlarmClock } from 'lucide-react';
 import CountdownTimer from './CountdownTimer';
 
 interface AuctionListCardProps {
+  auctionId: string;
   productId: string;
-  immediatelyPurchasePrice: number;
+  immediatelyPurchasePrice?: number;
   currentPrice: number;
   productName: string;
   url: string;
@@ -15,6 +16,7 @@ interface AuctionListCardProps {
 }
 
 const AuctionListCard = ({
+  auctionId,
   productId,
   immediatelyPurchasePrice,
   currentPrice,
@@ -31,7 +33,7 @@ const AuctionListCard = ({
     <div
       className='flex h-fit w-full cursor-pointer flex-col gap-[6px] bg-white'
       onClick={() => {
-        navigate(`/auction/${productId}`);
+        navigate(`/auction/${auctionId}/${productId}`);
       }}
     >
       {isImminent && (
@@ -67,7 +69,7 @@ const AuctionListCard = ({
           <div className='mt-[-3px] flex flex-row items-center gap-[6px]'>
             <span className='text-xs text-gray-600'>즉시구매가</span>
             <span className='text-sm font-semibold text-gray-900 sm:text-base'>
-              {immediatelyPurchasePrice.toLocaleString()}원
+              {immediatelyPurchasePrice ? immediatelyPurchasePrice.toLocaleString() + '원' : '-'}
             </span>
           </div>
         </div>

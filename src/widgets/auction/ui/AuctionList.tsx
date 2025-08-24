@@ -107,7 +107,8 @@ const AuctionList = ({
       <div className='grid grid-cols-2 gap-x-[16px] gap-y-[28px]'>
         {auctions.map((item: AuctionListItem) => (
           <AuctionListCard
-            key={item.auctionId}
+            auctionId={item.auctionId}
+            key={item.productId}
             productId={item.productId}
             immediatelyPurchasePrice={item.immediatelyPurchasePrice}
             currentPrice={item.currentPrice}
