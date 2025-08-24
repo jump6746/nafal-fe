@@ -23,7 +23,7 @@ const OrderProduct = ({ imageUrl, productName, sellerName, amount }: OrderProduc
           <div className='flex flex-row items-center gap-[10px]'>
             <span className='text-xs font-medium text-gray-600'>낙찰가</span>
             <span className='text-base font-semibold text-gray-900'>
-              {amount.toLocaleString()}원
+              {(amount || 0).toLocaleString()}원
             </span>
           </div>
         </div>

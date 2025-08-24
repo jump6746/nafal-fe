@@ -26,6 +26,7 @@ interface AuctionRoomProps {
   shouldFail: boolean;
   isPaymentModalOpen?: boolean;
   onPaymentModalOpenChange?: (open: boolean) => void;
+  onAccountCheckSuccess?: () => void;
 }
 
 const AuctionRoom = ({
@@ -38,6 +39,7 @@ const AuctionRoom = ({
   shouldFail,
   isPaymentModalOpen,
   onPaymentModalOpenChange,
+  onAccountCheckSuccess,
 }: AuctionRoomProps) => {
   const { status, subscribe, onChannelMessage, sendMessage } = useSockJS();
   const [messages, setMessages] = useState<
@@ -157,6 +159,7 @@ const AuctionRoom = ({
                   shouldFail={shouldFail}
                   isOpen={isPaymentModalOpen}
                   onOpenChange={onPaymentModalOpenChange}
+                  onAccountCheckSuccess={onAccountCheckSuccess}
                 />
               )}
             </div>

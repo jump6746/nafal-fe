@@ -5,7 +5,7 @@ import Tooltip from '@/shared/ui/Tooltip/Tooltip';
 import { AuctionProductCarousel, AuctionRoom, BidPlace } from '@/widgets/auction/ui';
 import SuccessConfetti from '@/widgets/auction/ui/SuccessConfetti';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { formatKoreanDate } from '@/shared/lib/formatKoreanDate';
 import { renderTextWithLineBreaks } from '@/shared/lib';
@@ -151,6 +151,12 @@ const AuctionRoomPage = () => {
     e.stopPropagation();
     handlePay(); // 자동입찰 버튼 클릭 시에도 handlePay 호출
   };
+
+  // AccountCheck 성공 시 CardPayment로 변경
+  const handleAccountCheckSuccess = useCallback(() => {
+    console.log('AccountCheck 성공! CardPayment로 변경');
+    setPaymentVariant('CardPayment');
+  }, []);
 
   return (
     <div
@@ -394,6 +400,7 @@ const AuctionRoomPage = () => {
               shouldFail={shouldFail}
               isPaymentModalOpen={isPaymentModalOpen}
               onPaymentModalOpenChange={setIsPaymentModalOpen}
+              onAccountCheckSuccess={handleAccountCheckSuccess}
             />
           )}
         </div>
