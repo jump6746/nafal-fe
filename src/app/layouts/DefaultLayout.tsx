@@ -1,7 +1,7 @@
-import { Layout } from '@/shared/ui';
+import { Layout, LoginModal } from '@/shared/ui';
 
 const DefaultLayout = () => {
-  return <Layout />;
+  return <Layout modalSlot={<LoginModal />} />;
 };
 
 export default DefaultLayout;

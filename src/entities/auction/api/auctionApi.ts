@@ -37,10 +37,10 @@ export const getAuctionListAPI = async (param: {
 };
 
 export const getAuctionDetailAPI = async (
-  productId: string
+  auctionId: string
 ): Promise<ResponseDTO<AuctionDetail>> => {
   return await apiRequest<undefined, AuctionDetail>({
-    url: `/api/auctions/${productId}`,
+    url: `https://api.nafal.site/api/auctions/${auctionId}`,
     method: 'GET',
     skipAuth: true,
   });

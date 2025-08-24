@@ -11,6 +11,9 @@ import { Suspense } from 'react';
 import AuctionDetailSkeleton from '@/features/auction/skeleton/AuctionDetailSkeleton';
 import LuckDrawPageSkeleton from '@/features/luckDraw/LuckDrawPageSkeleton';
 import { LandingPage } from '@/pages/landing';
+import ShippingPage from '@/pages/mypage/ShippingPage';
+import MyLuckDrawPage from '@/pages/mypage/MyLuckDrawPage';
+import MyShippingPlacePage from '@/pages/mypage/MyShippingPlacePage';
 
 const AppRouter = createBrowserRouter([
   {
@@ -48,7 +51,7 @@ const AppRouter = createBrowserRouter([
             <AuctionRoomPage />
           </Suspense>
         ),
-        path: '/auction/:auctionId/:productId',
+        path: '/auction/:eventId/:auctionId',
       },
       {
         element: <BidPlace />,
@@ -93,6 +96,18 @@ const AppRouter = createBrowserRouter([
       {
         element: <PaymentManagePage />,
         path: '/mypage/payment',
+      },
+      {
+        element: <ShippingPage />,
+        path: '/mypage/shipping',
+      },
+      {
+        element: <MyLuckDrawPage />,
+        path: '/mypage/luckydraw',
+      },
+      {
+        element: <MyShippingPlacePage />,
+        path: '/mypage/shippingPlace',
       },
     ],
   },

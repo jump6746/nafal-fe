@@ -6,14 +6,14 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const MyPage = () => {
   const setText = useTopNavigationStore(state => state.setText);
-  const { userInfo } = useUserInfo();
+  const { userInfo, isLoading } = useUserInfo();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userInfo) {
+    if (!isLoading && !userInfo) {
       navigate('/login');
     }
-  }, [userInfo, navigate]);
+  }, [userInfo, isLoading, navigate]);
 
   useEffect(() => {
     setText('마이페이지');
@@ -102,17 +102,32 @@ const MyPage = () => {
             <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
           </div>
         </Link>
-        <div className='flex cursor-pointer items-center justify-between'>
-          <span>럭키드로우 당첨 내역</span>
-          <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
-        </div>
-        <div className='flex cursor-pointer items-center justify-between'>
-          <span>배송 내역</span>
-          <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
-        </div>
-        <div className='flex cursor-pointer items-center justify-between'>
-          <span>배송지 관리</span>
-          <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+        <Link to='/mypage/luckydraw'>
+          <div className='flex cursor-pointer items-center justify-between'>
+            <span>럭키드로우 당첨 내역</span>
+            <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+          </div>
+        </Link>
+        <Link to='/mypage/shipping'>
+          <div className='flex cursor-pointer items-center justify-between'>
+            <span>배송 내역</span>
+            <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+          </div>
+        </Link>
+        <Link to='/mypage/shippingPlace'>
+          <div className='flex cursor-pointer items-center justify-between'>
+            <span>배송지 관리</span>
+            <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
+          </div>
+        </Link>
+        <div
+          className='flex cursor-pointer items-center justify-between'
+          onClick={() => {
+            sessionStorage.clear();
+            window.location.href = '/';
+          }}
+        >
+          <span className='text-sub-a-400'>로그아웃</span>
         </div>
       </section>
     </div>
