@@ -25,7 +25,11 @@ const MainPageNav = ({ section, setSection, updateSort }: MainPageNavProps) => {
           }`}
           onClick={() => {
             setSection(sectionName);
-            updateSort('신규');
+            if (sectionName === '종료') {
+              updateSort('');
+            } else {
+              updateSort('신규');
+            }
           }}
         >
           {sectionName}

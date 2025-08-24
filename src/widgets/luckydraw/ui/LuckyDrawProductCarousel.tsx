@@ -1,7 +1,11 @@
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/shared/ui';
 import { useEffect, useState } from 'react';
 
-const LuckDrawProductCarousel = () => {
+const LuckDrawProductCarousel = ({
+  setLuckyDrawindex,
+}: {
+  setLuckyDrawindex: (index: number) => void;
+}) => {
   const images = [
     '/images/mockup/image_kanu.png',
     '/images/mockup/image_kanu.png',
@@ -15,11 +19,12 @@ const LuckDrawProductCarousel = () => {
     if (!api) return;
 
     setCurrent(api.selectedScrollSnap());
-
+    setLuckyDrawindex(api.selectedScrollSnap());
     api.on('select', () => {
       setCurrent(api.selectedScrollSnap());
+      setLuckyDrawindex(api.selectedScrollSnap());
     });
-  }, [api]);
+  }, [api, setLuckyDrawindex]);
 
   return (
     <div className='w-full'>

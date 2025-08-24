@@ -7,9 +7,9 @@ import { MyPage, PaymentManagePage, MyPageAdmin } from '@/pages/mypage';
 import { PayPage } from '@/pages/pay';
 import { LoginPage, SignupPage } from '@/pages/user';
 import PaidSuccess from '@/pages/pay/PaidSuccess';
-import Test from '@/pages/test';
 import { Suspense } from 'react';
 import AuctionDetailSkeleton from '@/features/auction/skeleton/AuctionDetailSkeleton';
+import LuckDrawPageSkeleton from '@/features/luckDraw/LuckDrawPageSkeleton';
 import { LandingPage } from '@/pages/landing';
 
 const AppRouter = createBrowserRouter([
@@ -48,7 +48,7 @@ const AppRouter = createBrowserRouter([
             <AuctionRoomPage />
           </Suspense>
         ),
-        path: '/auction/:productId',
+        path: '/auction/:auctionId/:productId',
       },
       {
         element: <BidPlace />,
@@ -63,8 +63,12 @@ const AppRouter = createBrowserRouter([
         path: '/directbuy',
       },
       {
-        element: <LuckDrawPage />,
-        path: '/luckydraw',
+        element: (
+          <Suspense fallback={<LuckDrawPageSkeleton />}>
+            <LuckDrawPage />
+          </Suspense>
+        ),
+        path: '/luckydraw/:auctionId',
       },
       {
         element: <MyPage />,
@@ -89,10 +93,6 @@ const AppRouter = createBrowserRouter([
       {
         element: <PaymentManagePage />,
         path: '/mypage/payment',
-      },
-      {
-        element: <Test />,
-        path: '/test',
       },
     ],
   },

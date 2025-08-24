@@ -7,17 +7,21 @@ import {
   DrawerTrigger,
 } from '@/shared/ui/Drawer/Drawer';
 import AuctionChatWindow from '@/entities/auction/ui/AuctionChatWindow';
-import customToast from '@/shared/ui/CustomToast/customToast';
+import CardPayment from '@/widgets/pay/ui/CardPayment';
 
-const AuctionRoom = () => {
-  const handleBidClick = () => {
-    customToast.confirm('10,000원 입찰이 완료되었습니다!');
-  };
+interface AuctionRoomProps {
+  onBidClick: () => void;
+  onAutoBidClick: () => void;
+  paymentVariant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet';
+  shouldFail: boolean;
+}
 
-  const handleAutoBidClick = () => {
-    customToast.warning('잔액이 부족합니다.');
-  };
-
+const AuctionRoom = ({
+  onBidClick,
+  onAutoBidClick,
+  paymentVariant,
+  shouldFail,
+}: AuctionRoomProps) => {
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -57,12 +61,18 @@ const AuctionRoom = () => {
               <span className='text-xs font-medium text-gray-800'>직접 입력하기</span>
             </button>
             <div className='flex w-full flex-row items-center justify-between gap-2'>
-              <Button className='h-[60px] flex-1' variant='white' onClick={handleAutoBidClick}>
+              <Button className='h-[60px] flex-1' variant='white' onClick={onAutoBidClick}>
                 자동입찰
               </Button>
-              <Button className='h-[60px] w-[200px]' onClick={handleBidClick}>
-                10,000원 입찰하기
-              </Button>
+              <CardPayment
+                variant={paymentVariant}
+                trigger={
+                  <Button className='h-[60px] w-[200px]' onClick={onBidClick}>
+                    10,000원 입찰하기
+                  </Button>
+                }
+                shouldFail={shouldFail}
+              />
             </div>
           </DrawerFooter>
         </div>

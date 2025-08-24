@@ -1,13 +1,26 @@
+import { getLuckDrawListAPI } from '@/entities/luckDraw/api/luckDrawApi';
 import { useTopNavigationStore } from '@/shared/stores';
 import { LuckyDrawProductCarousel } from '@/widgets/luckydraw/ui';
-import { useEffect } from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const LuckyDrawPage = () => {
   const setText = useTopNavigationStore(state => state.setText);
+  const { auctionId } = useParams();
+  const [LuckyDrawInfo, setLuckyDrawInfo] = useState<number>(0);
 
   useEffect(() => {
     setText('럭키드로우');
   }, []);
+
+  const setLuckyDrawindex = (index: number) => {
+    setLuckyDrawInfo(index);
+  };
+  const { data: luckDrawList } = useSuspenseQuery({
+    queryKey: ['luckDrawList', auctionId],
+    queryFn: () => getLuckDrawListAPI(auctionId ?? ''),
+  });
 
   return (
     <div
@@ -27,21 +40,32 @@ const LuckyDrawPage = () => {
         </span>
         <span className='font-semibold text-gray-400'>총 {10}개 중 추첨</span>
       </div>
-      <LuckyDrawProductCarousel />
+      <LuckyDrawProductCarousel setLuckyDrawindex={setLuckyDrawindex} />
       <div className='flex flex-col gap-4.5 px-5 pt-7.5'>
         <span className='text-lg font-bold text-gray-900'>
-          {'카누 팝업스토어 원두 에디션 손수건'}
+          {LuckyDrawInfo < luckDrawList.data.length
+            ? luckDrawList.data[LuckyDrawInfo].productName
+            : '미공개 증정품'}
         </span>
-        <div className='flex flex-col'>
-          <span className='text-sm font-medium text-gray-600'>총 증정 개수</span>
-          <span className='font-semibold text-gray-900'>{1}개</span>
-        </div>
-        <div className='flex flex-col pt-1.5'>
-          <span className='text-sm font-medium text-gray-600'>현황</span>
-          <span className='font-semibold text-gray-900'>
-            {90}/{100}
-          </span>
-        </div>
+        {LuckyDrawInfo < luckDrawList.data.length ? (
+          <>
+            <div className='flex flex-col'>
+              <span className='text-sm font-medium text-gray-600'>총 증정 개수</span>
+              <span className='font-semibold text-gray-900'>
+                총{luckDrawList.data[LuckyDrawInfo].amount}개
+              </span>
+            </div>
+            <div className='flex flex-col pt-1.5'>
+              <span className='text-sm font-medium text-gray-600'>현황</span>
+              <span className='font-semibold text-gray-900'>
+                {luckDrawList.data[LuckyDrawInfo].progress}/{' '}
+                {luckDrawList.data[LuckyDrawInfo].limit}
+              </span>
+            </div>
+          </>
+        ) : (
+          <p className='text-base font-semibold text-gray-900'>이전 증정품 추첨 후 공개됩니다</p>
+        )}
       </div>
     </div>
   );
