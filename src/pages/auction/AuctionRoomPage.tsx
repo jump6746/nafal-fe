@@ -56,10 +56,10 @@ const AuctionRoomPage = () => {
     return () => clearTimeout(timer);
   }, [showOverlay]);
 
-  const { productId } = useParams();
+  const { auctionId } = useParams();
   const { data: auctionDetail } = useSuspenseQuery({
-    queryKey: ['auctionDetail', productId],
-    queryFn: () => getAuctionDetailAPI(productId ?? '1'),
+    queryKey: ['auctionDetail', auctionId],
+    queryFn: () => getAuctionDetailAPI(auctionId ?? '1'),
   });
 
   // 입찰 처리 함수
@@ -127,19 +127,13 @@ const AuctionRoomPage = () => {
           <div className='flex items-center gap-2'>
             {/* 브랜드 짧은 로고 */}
             <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 px-2'>
-              <img
-                src={
-                  auctionDetail.data.shortLogo?.presignedUrl || '/images/LOGO/LOGO_Signature.svg'
-                }
-                alt='로고 시그니처'
-              />
+              <img src={'/images/LOGO/LOGO_Signature.svg'} alt='로고 시그니처' />
             </div>
             {/* 브랜드 긴 로고 */}
             <div className='aspect-[3/1] h-6'>
-              <img
-                src={auctionDetail.data.longLogo?.presignedUrl || '/images/LOGO/LOGO_Monogram.svg'}
-                alt='브랜드 로고'
-              />
+              <span className='text-title-16 font-semibold'>
+                {auctionDetail.data.event.eventName || '브랜드 로고'}
+              </span>
             </div>
           </div>
           <div className='group relative'>

@@ -1,3 +1,4 @@
+import type { BrandItem } from '@/entities/auction/type/types';
 import {
   Drawer,
   DrawerContent,
@@ -7,16 +8,20 @@ import {
 } from '@/shared/ui/Drawer/Drawer';
 
 interface BrandFilterProps {
+  brandList: BrandItem[];
   brand: string[];
   addBrand: (newBrand: string) => void;
   removeBrand: (brandToRemove: string) => void;
 }
 
-const BRANDS = ['삼성', '애플', '엘지', '나이키', '아디다스', '무인양품', '이케아', '다이슨'];
-
-const BrandFilter = ({ brand, addBrand, removeBrand }: BrandFilterProps) => {
+const BrandFilter = ({
+  brandList,
+  brand: selectedBrands,
+  addBrand,
+  removeBrand,
+}: BrandFilterProps) => {
   const handleBrandClick = (brandName: string) => {
-    if (brand.includes(brandName)) {
+    if (selectedBrands.includes(brandName)) {
       removeBrand(brandName);
     } else {
       addBrand(brandName);
@@ -37,17 +42,17 @@ const BrandFilter = ({ brand, addBrand, removeBrand }: BrandFilterProps) => {
           </DrawerHeader>
           <div className='flex h-full max-h-[calc(40vh-60px)] flex-col gap-4 p-4'>
             <div className='flex flex-wrap gap-2'>
-              {BRANDS.map(brandName => (
+              {brandList.map(brand => (
                 <button
-                  key={brandName}
-                  onClick={() => handleBrandClick(brandName)}
+                  key={brand.id}
+                  onClick={() => handleBrandClick(brand.name)}
                   className={`rounded-md px-3 py-2 text-sm transition-colors ${
-                    brand.includes(brandName)
+                    selectedBrands.includes(brand.name)
                       ? 'bg-gray-800 text-white'
                       : 'bg-gray-100 hover:bg-gray-200'
                   }`}
                 >
-                  {brandName}
+                  {brand.name}
                 </button>
               ))}
             </div>

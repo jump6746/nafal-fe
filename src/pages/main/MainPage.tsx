@@ -8,6 +8,8 @@ import AuctionListSkeleton from '@/features/main/skleton/AuctionListSkeleton';
 import AuctionList from '@/widgets/auction/ui/AuctionList';
 import { useNavigate } from 'react-router-dom';
 import useUserInfo from '@/entities/user/hooks/useUserInfo';
+import { getBrandListAPI, getEventListAPI } from '@/entities/auction/api/auctionApi';
+import { useQuery } from '@tanstack/react-query';
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -58,12 +60,24 @@ const MainPage = () => {
     setSort(newSort);
   };
 
+  const brandList = useQuery({
+    queryKey: ['brandList'],
+    queryFn: getBrandListAPI,
+  });
+
+  const eventList = useQuery({
+    queryKey: ['eventList'],
+    queryFn: getEventListAPI,
+  });
+
   return (
     <div className='relative'>
       <MainPageNav section={section} setSection={setSection} updateSort={updateSort} />
       <MainPageCarousel />
       <div className='flex flex-col gap-[18px] px-5' ref={containerRef}>
         <MainPageCategory
+          brandList={brandList.data?.data ?? []}
+          eventList={eventList.data?.data ?? []}
           container={containerRef}
           category={category}
           addCategory={addCategory}

@@ -57,6 +57,7 @@ export interface ImageInfo {
 }
 
 export interface EventInfo {
+  eventId: string;
   eventName: string;
   eventDescription: string;
 }
@@ -81,8 +82,6 @@ export interface AuctionDetail {
   userId: number;
   status: 'OPEN' | 'CLOSED' | 'SCHEDULED';
   sellerName: string;
-  shortLogo: ImageInfo;
-  longLogo: ImageInfo;
   categories: Category[];
   currentPrice: number;
   bidUnit: number;
@@ -207,4 +206,13 @@ export interface CreateAuctionStep {
     cost: number;
     note: string;
   };
+}
+
+export interface BrandItem {
+  id: number;
+  name: string;
+}
+export interface EventItem {
+  id: number;
+  name: string;
 }
