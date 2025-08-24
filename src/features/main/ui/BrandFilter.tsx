@@ -42,19 +42,20 @@ const BrandFilter = ({
           </DrawerHeader>
           <div className='flex h-full max-h-[calc(40vh-60px)] flex-col gap-4 p-4'>
             <div className='flex flex-wrap gap-2'>
-              {brandList.map(brand => (
-                <button
-                  key={brand.id}
-                  onClick={() => handleBrandClick(brand.name)}
-                  className={`rounded-md px-3 py-2 text-sm transition-colors ${
-                    selectedBrands.includes(brand.name)
-                      ? 'bg-gray-800 text-white'
-                      : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
-                >
-                  {brand.name}
-                </button>
-              ))}
+              {brandList.length > 0 &&
+                brandList.map(brand => (
+                  <button
+                    key={brand.brandId}
+                    onClick={() => handleBrandClick(brand.brandName)}
+                    className={`rounded-md px-3 py-2 text-sm transition-colors ${
+                      selectedBrands.includes(brand.brandName)
+                        ? 'bg-gray-800 text-white'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                  >
+                    {brand.brandName}
+                  </button>
+                ))}
             </div>
           </div>
         </DrawerContent>

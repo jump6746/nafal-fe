@@ -8,6 +8,7 @@ import {
   DrawerDescription,
 } from '@/shared/ui/Drawer/Drawer';
 import type { EventItem } from '@/entities/auction/type/types';
+import { useEffect } from 'react';
 
 interface EventFilterProps {
   eventList: EventItem[];
@@ -16,19 +17,18 @@ interface EventFilterProps {
   removeEvent: (eventToRemove: string) => void;
 }
 
-const EventFilter = ({
-  eventList,
-  event: selectedEvents,
-  addEvent,
-  removeEvent,
-}: EventFilterProps) => {
+const EventFilter = ({ eventList, event, addEvent, removeEvent }: EventFilterProps) => {
   const handleEventClick = (eventName: string) => {
-    if (selectedEvents.includes(eventName)) {
+    if (event.includes(eventName)) {
       removeEvent(eventName);
     } else {
       addEvent(eventName);
     }
   };
+
+  useEffect(() => {
+    console.log(eventList);
+  }, [eventList]);
 
   return (
     <Drawer>
@@ -47,19 +47,20 @@ const EventFilter = ({
           </DrawerHeader>
           <div className='flex h-full max-h-[calc(40vh-60px)] flex-col gap-4 p-4'>
             <div className='flex flex-col gap-2 overflow-y-auto px-1'>
-              {eventList.map(event => (
-                <button
-                  key={event.id}
-                  onClick={() => handleEventClick(event.name)}
-                  className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                    selectedEvents.includes(event.name)
-                      ? 'bg-gray-800 text-white'
-                      : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
-                >
-                  {event.name}
-                </button>
-              ))}
+              {eventList.length > 0 &&
+                eventList.map(eventName => (
+                  <button
+                    key={eventName.eventId}
+                    onClick={() => handleEventClick(eventName.eventName)}
+                    className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                      event.includes(eventName.eventName)
+                        ? 'bg-gray-800 text-white'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                  >
+                    {eventName.eventName}
+                  </button>
+                ))}
             </div>
           </div>
         </DrawerContent>

@@ -207,10 +207,10 @@ export interface CreateAuctionStep {
 }
 
 export interface BrandItem {
-  id: number;
-  name: string;
+  brandId: string;
+  brandName: string;
 }
 export interface EventItem {
-  id: number;
-  name: string;
+  eventId: string;
+  eventName: string;
 }
