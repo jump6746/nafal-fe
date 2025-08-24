@@ -109,42 +109,6 @@ const MyPage = () => {
             </Button>
           </Link>
         </div>
-        {/* divide */}
-        <div className='h-3 w-full bg-gray-200'></div>
-        {/* 상품 */}
-        <div className='flex flex-col gap-3 px-5 py-3'>
-          <img
-            src='/images/mockup/image_kanu.png'
-            alt='카누'
-            className='aspect-[7/4] w-full rounded-xl object-cover object-center'
-          />
-          <div className='flex flex-col pt-1'>
-            <h4 className='font-semibold'>{'KANU'}</h4>
-            <span className='font-medium'>{'카누 팝업스토어 원두 에디션 텀블러 세트'}</span>
-          </div>
-          <div className='flex items-center gap-2.5'>
-            <span className='text-xs font-medium text-gray-600'>낙찰가</span>
-            <span className='font-semibold'>{'10,000'}원</span>
-          </div>
-        </div>
-        {/* divide */}
-        <div className='h-3 w-full bg-gray-200'></div>
-        {/* 상품 */}
-        <div className='flex flex-col gap-3 px-5 py-3'>
-          <img
-            src='/images/mockup/image_kanu.png'
-            alt='카누'
-            className='aspect-[7/4] w-full rounded-xl object-cover object-center'
-          />
-          <div className='flex flex-col pt-1'>
-            <h4 className='font-semibold'>{'KANU'}</h4>
-            <span className='font-medium'>{'카누 팝업스토어 원두 에디션 텀블러 세트'}</span>
-          </div>
-          <div className='flex items-center gap-2.5'>
-            <span className='text-xs font-medium text-gray-600'>낙찰가</span>
-            <span className='font-semibold'>{'10,000'}원</span>
-          </div>
-        </div>
       </section>
       {/* 하단 메뉴 */}
       <section className='flex flex-col gap-6 px-5 pt-10 pb-8 text-xl font-semibold text-gray-800'>
