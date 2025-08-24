@@ -10,7 +10,7 @@ const useLoginMutation = () => {
     mutationFn: loginApi,
     onSuccess: response => {
       customToast.confirm('로그인 성공');
-      sessionStorage.setItem('nefal-access', JSON.stringify(response.data));
+      sessionStorage.setItem('nefal-access', response.data.accessToken);
       navigate('/');
     },
     onError: error => {
