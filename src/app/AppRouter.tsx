@@ -10,6 +10,7 @@ import PaidSuccess from '@/pages/pay/PaidSuccess';
 import { Suspense } from 'react';
 import AuctionDetailSkeleton from '@/features/auction/skeleton/AuctionDetailSkeleton';
 import LuckDrawPageSkeleton from '@/features/luckDraw/LuckDrawPageSkeleton';
+import { LandingPage } from '@/pages/landing';
 
 const AppRouter = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const AppRouter = createBrowserRouter([
       {
         element: <MainPage />,
         path: '/',
+      },
+      {
+        element: <LandingPage />,
+        path: '/socketTest',
       },
     ],
   },

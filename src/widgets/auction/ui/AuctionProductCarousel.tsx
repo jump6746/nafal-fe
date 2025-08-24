@@ -5,16 +5,17 @@ import 'yet-another-react-lightbox/styles.css';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 
 interface Props {
+  imageUrls?: string[];
   setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AuctionProductCarousel = ({ setShowOverlay }: Props) => {
-  const images = [
-    '/images/mockup/image_kanu.png',
-    '/images/mockup/image_kanu.png',
-    '/images/mockup/image_kanu.png',
-  ];
+const images = [
+  '/images/mockup/image_kanu.png',
+  '/images/mockup/image_kanu.png',
+  '/images/mockup/image_kanu.png',
+];
 
+const AuctionProductCarousel = ({ imageUrls = images, setShowOverlay }: Props) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState<number>(0);
   const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
@@ -46,7 +47,7 @@ const AuctionProductCarousel = ({ setShowOverlay }: Props) => {
       <div className='relative'>
         <Carousel setApi={setApi}>
           <CarouselContent>
-            {images.map((src, index) => (
+            {imageUrls.map((src, index) => (
               <CarouselItem key={index}>
                 <div
                   className='group relative aspect-[3/2] cursor-pointer bg-gray-200'
@@ -112,7 +113,7 @@ const AuctionProductCarousel = ({ setShowOverlay }: Props) => {
         </span>
       </div>
       <div className='mt-2 flex justify-center gap-1'>
-        {images.map((_, index) => (
+        {imageUrls.map((_, index) => (
           <button
             key={index}
             className={`h-2 cursor-pointer rounded-full transition-all duration-300 ease-out ${
