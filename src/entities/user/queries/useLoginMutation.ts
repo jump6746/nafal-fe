@@ -1,10 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import loginApi from '../api/loginApi';
 import { customToast } from '@/shared/ui';
 
 const useLoginMutation = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const location = useLocation();
 
   return useMutation({
@@ -13,6 +14,9 @@ const useLoginMutation = () => {
       customToast.confirm('로그인 성공');
 
       sessionStorage.setItem('nafal-access', response.data.accessToken);
+
+      queryClient.invalidateQueries({ queryKey: ['user-info'] });
+
       navigate(location.state?.from || '/');
     },
     onError: error => {

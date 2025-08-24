@@ -2,7 +2,6 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/shared/lib';
 
 interface AuctionNoticeProps {
-  key: number;
   notice: string;
   isMine: boolean;
 }

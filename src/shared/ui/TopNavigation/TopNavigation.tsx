@@ -1,7 +1,7 @@
-import useUserInfo from '@/entities/user/hooks/useUserInfo';
 import { useTopNavigationStore } from '@/shared/stores';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock } from 'lucide-react';
+import useUserInfo from '@/entities/user/hooks/useUserInfo';
 
 export interface TopNavigationProps {
   type: 'logo' | 'text';

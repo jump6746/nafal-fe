@@ -4,8 +4,8 @@ import { apiRequest } from '@/shared/lib';
 
 const createAuctionApi = async (
   data: CreateAuctionRequest
-): Promise<ResponseDTO<{ newAuctionId: number }>> => {
-  return await apiRequest<CreateAuctionRequest, { newAuctionId: number }>({
+): Promise<ResponseDTO<{ newEventId: number; newAuctionId: number }>> => {
+  return await apiRequest<CreateAuctionRequest, { newEventId: number; newAuctionId: number }>({
     url: 'https://api.nafal.site/api/admin/auctions',
     method: 'POST',
     data,

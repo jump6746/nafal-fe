@@ -206,6 +206,15 @@ export interface CreateAuctionStep {
   };
 }
 
+export interface GetBidHistoryResponse {
+  content: {
+    username: string;
+    message: string;
+    placedAt: string;
+  }[];
+  hasNext: boolean;
+  nextCursor: string | null;
+}
 export interface BrandItem {
   brandId: string;
   brandName: string;

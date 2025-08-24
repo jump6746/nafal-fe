@@ -8,4 +8,5 @@ export type {
   AuctionDetailResponse,
   CreateAuctionRequest,
   CreateAuctionStep,
+  GetBidHistoryResponse,
 } from './types';
