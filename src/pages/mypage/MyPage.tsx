@@ -1,10 +1,19 @@
+import useUserInfo from '@/entities/user/hooks/useUserInfo';
 import { useTopNavigationStore } from '@/shared/stores';
 import { Button } from '@/shared/ui';
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const MyPage = () => {
   const setText = useTopNavigationStore(state => state.setText);
+  const { userInfo } = useUserInfo();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userInfo) {
+      navigate('/login');
+    }
+  }, [userInfo, navigate]);
 
   useEffect(() => {
     setText('마이페이지');
@@ -15,7 +24,7 @@ const MyPage = () => {
       <div className='gradient-bg relative flex aspect-[75/34] w-full flex-col justify-end overflow-hidden px-5 py-5.5'>
         <span className='text-xl font-semibold'>어서오세요</span>
         <div className='flex items-center gap-2 text-xl font-semibold'>
-          <span>{'김유저'}님</span>
+          <span>{userInfo?.nickname}님</span>
           <button>
             <img src='/images/Icons/pencil.svg' alt='수정' />
           </button>

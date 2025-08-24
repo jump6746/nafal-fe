@@ -49,7 +49,7 @@ const SignupPage = () => {
           <TextField
             id='username'
             variant='default'
-            className='w-full bg-gray-300'
+            className='w-full bg-gray-200'
             onChange={handleIdChange}
           />
         </div>
@@ -61,7 +61,7 @@ const SignupPage = () => {
             type='password'
             id='password'
             variant='default'
-            className='w-full bg-gray-300'
+            className='w-full bg-gray-200'
             onChange={handlePwChange}
           />
         </div>
