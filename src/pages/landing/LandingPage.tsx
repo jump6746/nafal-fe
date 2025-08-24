@@ -29,8 +29,10 @@ const LandingPage = () => {
       return;
     }
 
+    const accessToken = sessionStorage.getItem('nefal-access');
+    console.log(accessToken);
     toast('WebSocket 연결 시도...');
-    connect('https://api.nafal.site/ws'); // 테스트용 WebSocket 서버
+    connect(`https://api.nafal.site/ws?token=${accessToken}`); // 테스트용 WebSocket 서버
   };
 
   return (
