@@ -5,12 +5,7 @@ import CardRegistration from '@/features/auth/CardRegistration';
 import { updateCardRegisteredAPI, updateIdentityVerifiedAPI } from '@/entities/auth/api/authApi';
 
 interface CardPaymentProps {
-  variant:
-    | 'CardNotYet'
-    | 'AccountCheck'
-    | 'CardPayment'
-    | 'CertificationNotYet'
-    | 'AccountCheckFail';
+  variant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet' | 'NeedLogin';
   trigger?: React.ReactNode;
   Loadertime?: number;
   shouldFail?: boolean;
@@ -45,6 +40,13 @@ const CardPaymentHeader = (variant: CardPaymentProps['variant']) => {
       Buttontext: '본인인증 하기',
     };
   }
+  if (variant === 'NeedLogin') {
+    return {
+      Maintitle: '로그인이 필요합니다',
+      Subtitle: '이 기능을 사용하려면 로그인이 필요합니다',
+      Buttontext: '로그인하기',
+    };
+  }
 };
 
 const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentProps) => {
@@ -59,7 +61,11 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
   const [showAccountCheckFailure, setShowAccountCheckFailure] = useState(false);
   const progressTimerRef = useRef<number | null>(null);
   const percentRef = useRef(0);
-  const header = CardPaymentHeader(variant);
+  const header = CardPaymentHeader(variant) || {
+    Maintitle: '',
+    Subtitle: '',
+    Buttontext: '',
+  };
 
   console.log(shouldFail);
   // PASS 모달 닫기 함수
@@ -182,11 +188,10 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
   }, [isOpen, variant, Loadertime, shouldFail]);
 
   if (!isOpen) {
+    if (variant === 'NeedLogin') {
+      return <div>{trigger}</div>;
+    }
     return <div onClick={() => setIsOpen(true)}>{trigger}</div>;
-  }
-
-  if (!header) {
-    return <div>에러입니다 수고하세요.</div>;
   }
 
   // 본인인증 성공 메시지

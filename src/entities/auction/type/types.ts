@@ -55,8 +55,8 @@ export interface EventInfo {
 export interface ProductDetail {
   productName: string;
   title: string;
-  thumbnailImageUrl: ImageInfo;
-  originalImageUrl: ImageInfo;
+  thumbnailImageUrl: ImageInfo[];
+  originalImageUrl: ImageInfo[];
   productDescription: string;
   tags: string[];
   widthCm: number;

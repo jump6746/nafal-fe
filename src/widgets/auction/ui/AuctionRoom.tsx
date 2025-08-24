@@ -12,7 +12,12 @@ import CardPayment from '@/widgets/pay/ui/CardPayment';
 interface AuctionRoomProps {
   onBidClick: () => void;
   onAutoBidClick: () => void;
-  paymentVariant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet';
+  paymentVariant:
+    | 'CardNotYet'
+    | 'AccountCheck'
+    | 'CardPayment'
+    | 'CertificationNotYet'
+    | 'NeedLogin';
   shouldFail: boolean;
 }
 
