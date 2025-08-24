@@ -10,7 +10,7 @@ import type { ResponseDTO } from '@/shared/types';
 
 export const getAuctionListAPI = async (param: {
   status: 'OPEN' | 'CLOSED' | 'SCHEDULED';
-  view?: 'DEFAULT' | 'NEW' | 'POPULAR' | 'OPENING_SOON';
+  view?: 'DEFAULT' | 'NEW' | 'POPULAR' | 'OPENING_SOON' | 'CLOSING_SOON';
   keyword?: string;
   page?: number;
   size?: number;

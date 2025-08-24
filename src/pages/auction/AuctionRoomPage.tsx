@@ -6,25 +6,26 @@ import { AuctionProductCarousel, AuctionRoom } from '@/widgets/auction/ui';
 import SuccessConfetti from '@/widgets/auction/ui/SuccessConfetti';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { formatKoreanDate } from '@/shared/lib/formatKoreanDate';
 import { renderTextWithLineBreaks } from '@/shared/lib';
-import customToast from '@/shared/ui/CustomToast/customToast';
 import useUserInfo from '@/entities/user/hooks/useUserInfo';
+import { useLoginModal } from '@/shared/hooks';
 
 const AuctionRoomPage = () => {
-  const navigate = useNavigate();
   const [showOverlay, setShowOverlay] = useState<boolean>(true);
   const setText = useTopNavigationStore(state => state.setText);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [shouldFail, setShouldFail] = useState<boolean>(false);
-
   // CardPayment 관련 상태
   const [paymentVariant, setPaymentVariant] = useState<
-    'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet'
-  >('CardPayment');
-  const { userInfo } = useUserInfo();
+    'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet' | 'NeedLogin'
+  >('NeedLogin');
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [shouldOpenModal, setShouldOpenModal] = useState(false);
+  const { userInfo, isLoading } = useUserInfo();
+  const { showLoginModal } = useLoginModal();
 
   useEffect(() => {
     if (!showConfetti) {
@@ -43,6 +44,14 @@ const AuctionRoomPage = () => {
   useEffect(() => {
     setText('제품');
   }, [setText]);
+
+  // shouldOpenModal이 true일 때만 모달 열기
+  useEffect(() => {
+    if (shouldOpenModal) {
+      setIsPaymentModalOpen(true);
+      setShouldOpenModal(false); // 플래그 리셋
+    }
+  }, [shouldOpenModal]);
 
   // 3초 후 자동으로 사라지게
   useEffect(() => {
@@ -65,39 +74,67 @@ const AuctionRoomPage = () => {
 
   // 입찰 처리 함수
   const handlePay = () => {
-    if (!userInfo) {
-      customToast.warning('로그인이 필요합니다.');
-      navigate('/login');
+    console.log('handlePay 실행됨');
+    console.log('userInfo:', userInfo);
+    console.log('isLoading:', isLoading);
+
+    // 로딩 중인 경우 처리하지 않음
+    if (isLoading) {
+      console.log('사용자 정보 로딩 중...');
       return;
     }
 
-    let variant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet' =
-      'CardPayment';
+    if (!userInfo) {
+      console.log('설정할 paymentVariant: NeedLogin');
+      setPaymentVariant('NeedLogin');
+      showLoginModal();
+      return;
+    }
+
+    let newVariant:
+      | 'CardNotYet'
+      | 'AccountCheck'
+      | 'CardPayment'
+      | 'CertificationNotYet'
+      | 'NeedLogin';
+    let newShouldFail = false;
 
     // 1. identityVerified가 없으면 CertificationNotYet
     if (!userInfo.identityVerified) {
-      variant = 'CertificationNotYet';
+      newVariant = 'CertificationNotYet';
     }
     // 2. cardRegistered가 없으면 CardNotYet
     else if (!userInfo.cardRegistered) {
-      variant = 'CardNotYet';
+      newVariant = 'CardNotYet';
     }
     // 3. balance가 null이거나 부족하면 AccountCheck 여기에 경매 가격 실시간 처리해야함함
     else if (userInfo.balance === null || userInfo.balance <= 0) {
-      variant = 'AccountCheck';
-      setShouldFail(true);
+      newVariant = 'AccountCheck';
+      newShouldFail = true;
     } else if (userInfo.balance > 0) {
-      variant = 'AccountCheck';
-      setShouldFail(false);
+      newVariant = 'AccountCheck';
+      newShouldFail = false;
+    } else {
+      newVariant = 'CardPayment';
     }
-    setPaymentVariant(variant);
+
+    console.log('설정할 paymentVariant:', newVariant);
+    console.log('설정할 shouldFail:', newShouldFail);
+
+    setPaymentVariant(newVariant);
+    setShouldFail(newShouldFail);
+    setShouldOpenModal(true);
   };
 
-  const handleBidClick = () => {
+  const handleBidClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     handlePay(); // 입찰하기 버튼 클릭 시 handlePay 호출
   };
 
-  const handleAutoBidClick = () => {
+  const handleAutoBidClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     handlePay(); // 자동입찰 버튼 클릭 시에도 handlePay 호출
   };
 
@@ -106,7 +143,14 @@ const AuctionRoomPage = () => {
       {showConfetti && <SuccessConfetti container={containerRef} />}
       {/* 사진 공간  */}
       <div className='relative'>
-        <AuctionProductCarousel setShowOverlay={setShowOverlay} />
+        <AuctionProductCarousel
+          imageUrls={
+            Array.isArray(auctionDetail.data.product.originalImageUrl)
+              ? auctionDetail.data.product.originalImageUrl.map(img => img.presignedUrl)
+              : []
+          }
+          setShowOverlay={setShowOverlay}
+        />
         <div
           className={`absolute top-0 aspect-[3/2] w-full transition-opacity duration-1000 ${
             showOverlay ? 'opacity-100' : 'pointer-events-none opacity-0'
@@ -148,8 +192,10 @@ const AuctionRoomPage = () => {
               </div>
             </div>
             {/* 이벤트명 */}
-            <div className='mt-3 flex min-w-0 flex-col'>
-              <span className='text-sm font-medium'>{auctionDetail.data.event.eventName}</span>
+            <div className='mt-3 flex min-w-0 flex-col gap-[1px]'>
+              <span className='text-sm font-medium text-gray-700'>
+                {auctionDetail.data.event.eventName}
+              </span>
               <span className='text-lg leading-tight font-bold break-words'>
                 {auctionDetail.data.product.title}
               </span>
@@ -325,6 +371,8 @@ const AuctionRoomPage = () => {
             onAutoBidClick={handleAutoBidClick}
             paymentVariant={paymentVariant}
             shouldFail={shouldFail}
+            isPaymentModalOpen={isPaymentModalOpen}
+            onPaymentModalOpenChange={setIsPaymentModalOpen}
           />
         </div>
       </div>

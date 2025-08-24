@@ -8,7 +8,6 @@ import {
   DrawerDescription,
 } from '@/shared/ui/Drawer/Drawer';
 import type { EventItem } from '@/entities/auction/type/types';
-import { useEffect } from 'react';
 
 interface EventFilterProps {
   eventList: EventItem[];
@@ -26,10 +25,6 @@ const EventFilter = ({ eventList, event, addEvent, removeEvent }: EventFilterPro
     }
   };
 
-  useEffect(() => {
-    console.log(eventList);
-  }, [eventList]);
-
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -46,13 +41,13 @@ const EventFilter = ({ eventList, event, addEvent, removeEvent }: EventFilterPro
             <DrawerDescription>관심있는 행사를 골라보세요.</DrawerDescription>
           </DrawerHeader>
           <div className='flex h-full max-h-[calc(40vh-60px)] flex-col gap-4 p-4'>
-            <div className='flex flex-col gap-2 overflow-y-auto px-1'>
+            <div className='flex flex-wrap gap-2 overflow-y-auto px-1'>
               {eventList.length > 0 &&
                 eventList.map(eventName => (
                   <button
                     key={eventName.eventId}
                     onClick={() => handleEventClick(eventName.eventName)}
-                    className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                    className={`w-fit rounded-md px-3 py-2 text-left text-sm transition-colors ${
                       event.includes(eventName.eventName)
                         ? 'bg-gray-800 text-white'
                         : 'bg-gray-100 hover:bg-gray-200'

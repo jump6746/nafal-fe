@@ -1,19 +1,17 @@
 import { Button } from '@/shared/ui/Button/Button';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import PASS from '@/features/auth/PASS';
 import CardRegistration from '@/features/auth/CardRegistration';
 import { updateCardRegisteredAPI, updateIdentityVerifiedAPI } from '@/entities/auth/api/authApi';
 
 interface CardPaymentProps {
-  variant:
-    | 'CardNotYet'
-    | 'AccountCheck'
-    | 'CardPayment'
-    | 'CertificationNotYet'
-    | 'AccountCheckFail';
+  variant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet' | 'NeedLogin';
   trigger?: React.ReactNode;
   Loadertime?: number;
   shouldFail?: boolean;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const CardPaymentHeader = (variant: CardPaymentProps['variant']) => {
@@ -45,10 +43,37 @@ const CardPaymentHeader = (variant: CardPaymentProps['variant']) => {
       Buttontext: '본인인증 하기',
     };
   }
+  if (variant === 'NeedLogin') {
+    return {
+      Maintitle: '로그인이 필요합니다',
+      Subtitle: '이 기능을 사용하려면 로그인이 필요합니다',
+      Buttontext: '로그인하기',
+    };
+  }
 };
 
-const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+const CardPayment = ({
+  variant,
+  trigger,
+  Loadertime,
+  shouldFail,
+  isOpen: externalIsOpen,
+  onOpenChange,
+}: CardPaymentProps) => {
+  const queryClient = useQueryClient();
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+
+  const setIsOpen = useCallback(
+    (open: boolean) => {
+      if (onOpenChange) {
+        onOpenChange(open);
+      } else {
+        setInternalIsOpen(open);
+      }
+    },
+    [onOpenChange]
+  );
   const [showCardNotYetModal, setShowCardNotYetModal] = useState(false);
   const [showPassModal, setShowPassModal] = useState(false);
   const [showCancelMessage, setShowCancelMessage] = useState(false);
@@ -59,9 +84,12 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
   const [showAccountCheckFailure, setShowAccountCheckFailure] = useState(false);
   const progressTimerRef = useRef<number | null>(null);
   const percentRef = useRef(0);
-  const header = CardPaymentHeader(variant);
-
-  console.log(shouldFail);
+  const successTimerRef = useRef<number | null>(null);
+  const header = CardPaymentHeader(variant) || {
+    Maintitle: '',
+    Subtitle: '',
+    Buttontext: '',
+  };
   // PASS 모달 닫기 함수
   const handleClosePassModal = () => {
     setShowPassModal(false);
@@ -77,11 +105,14 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
   // PASS 인증 완료 처리 함수
   const handlePassSuccess = () => {
     updateIdentityVerifiedAPI('true').then(() => {
+      // 사용자 정보 캐시 무효화하여 최신 데이터 다시 fetch
+      queryClient.invalidateQueries({ queryKey: ['user-info'] });
+
       setShowPassModal(false);
       setShowSuccessMessage(true);
 
       // 3초 후에 성공 메시지와 메인 모달을 모두 닫기
-      setTimeout(() => {
+      successTimerRef.current = window.setTimeout(() => {
         setShowSuccessMessage(false);
         setIsOpen(false);
       }, 3000);
@@ -91,16 +122,30 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
   // 카드 등록 완료 처리 함수
   const handleCardSuccess = () => {
     updateCardRegisteredAPI('true').then(() => {
+      // 사용자 정보 캐시 무효화하여 최신 데이터 다시 fetch
+      queryClient.invalidateQueries({ queryKey: ['user-info'] });
+
       setShowCardNotYetModal(false);
       setShowCardSuccessMessage(true);
 
       // 3초 후에 성공 메시지와 메인 모달을 모두 닫기
-      setTimeout(() => {
+      successTimerRef.current = window.setTimeout(() => {
         setShowCardSuccessMessage(false);
         setIsOpen(false);
       }, 3000);
     });
   };
+
+  // 모달이 열릴 때 이전 타이머들 정리
+  useEffect(() => {
+    if (isOpen) {
+      // 이전 성공 타이머 정리
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
+        successTimerRef.current = null;
+      }
+    }
+  }, [isOpen]);
 
   // AccountCheck 진행률 시뮬레이션 (자연스러운 증가)
   useEffect(() => {
@@ -156,7 +201,7 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
           } else {
             setShowAccountCheckSuccess(true);
             // 성공 모달 2.2초 후 닫힘
-            window.setTimeout(() => {
+            successTimerRef.current = window.setTimeout(() => {
               setShowAccountCheckSuccess(false);
               setIsOpen(false);
             }, 2200);
@@ -178,15 +223,15 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
         clearTimeout(progressTimerRef.current);
         progressTimerRef.current = null;
       }
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
+        successTimerRef.current = null;
+      }
     };
-  }, [isOpen, variant, Loadertime, shouldFail]);
+  }, [isOpen, variant, Loadertime, shouldFail, setIsOpen]);
 
   if (!isOpen) {
-    return <div onClick={() => setIsOpen(true)}>{trigger}</div>;
-  }
-
-  if (!header) {
-    return <div>에러입니다 수고하세요.</div>;
+    return <div>{trigger}</div>;
   }
 
   // 본인인증 성공 메시지
@@ -215,8 +260,15 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
               </button>
               {/* Content */}
               <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
-                <div className='text-center'>
-                  <div className='mb-4 text-6xl'>✅</div>
+                <span className='absolute top-4 left-5 text-xl font-semibold'>본인인증 성공</span>
+                <div className='flex flex-col items-center justify-center text-center'>
+                  <div className='mt-5 mb-10 flex h-20 w-20'>
+                    <img
+                      src='/images/Icons/icon_checkcircle.svg'
+                      alt='check'
+                      className='h-full w-full'
+                    />
+                  </div>
                   <p className='mb-2 text-2xl font-bold text-gray-900'>본인인증이 완료되었습니다</p>
                   <p className='text-lg text-gray-500'>잠시 후 자동으로 닫힙니다</p>
                 </div>
@@ -255,7 +307,7 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
               {/* Content */}
               <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
                 <div className='text-center'>
-                  <div className='mb-4 text-6xl'>❌</div>
+                  <div className='mb-20 text-6xl'>❌</div>
                   <p className='mb-2 text-2xl font-bold text-gray-900'>본인인증이 취소되었습니다</p>
                   <p className='text-lg text-gray-500'>잠시 후 자동으로 닫힙니다</p>
                 </div>
@@ -396,8 +448,15 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
               </button>
               {/* Content */}
               <div className='flex min-h-0 flex-1 flex-col items-center justify-center px-7'>
-                <div className='text-center'>
-                  <div className='mb-4 text-6xl'>✅</div>
+                <span className='absolute top-4 left-5 text-xl font-semibold'>등록 성공</span>
+                <div className='flex flex-col items-center justify-center text-center'>
+                  <div className='mt-5 mb-10 flex h-20 w-20'>
+                    <img
+                      src='/images/Icons/icon_checkcircle.svg'
+                      alt='check'
+                      className='h-full w-full'
+                    />
+                  </div>
                   <p className='mb-2 text-2xl font-bold text-gray-900'>
                     카드 등록이 완료되었습니다
                   </p>

@@ -10,10 +10,17 @@ import AuctionChatWindow from '@/entities/auction/ui/AuctionChatWindow';
 import CardPayment from '@/widgets/pay/ui/CardPayment';
 
 interface AuctionRoomProps {
-  onBidClick: () => void;
-  onAutoBidClick: () => void;
-  paymentVariant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet';
+  onBidClick: (e: React.MouseEvent) => void;
+  onAutoBidClick: (e: React.MouseEvent) => void;
+  paymentVariant:
+    | 'CardNotYet'
+    | 'AccountCheck'
+    | 'CardPayment'
+    | 'CertificationNotYet'
+    | 'NeedLogin';
   shouldFail: boolean;
+  isPaymentModalOpen?: boolean;
+  onPaymentModalOpenChange?: (open: boolean) => void;
 }
 
 const AuctionRoom = ({
@@ -21,6 +28,8 @@ const AuctionRoom = ({
   onAutoBidClick,
   paymentVariant,
   shouldFail,
+  isPaymentModalOpen,
+  onPaymentModalOpenChange,
 }: AuctionRoomProps) => {
   return (
     <Drawer>
@@ -72,6 +81,8 @@ const AuctionRoom = ({
                   </Button>
                 }
                 shouldFail={shouldFail}
+                isOpen={isPaymentModalOpen}
+                onOpenChange={onPaymentModalOpenChange}
               />
             </div>
           </DrawerFooter>

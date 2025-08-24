@@ -41,13 +41,13 @@ const BrandFilter = ({
             <span className='font-semibold text-gray-800'>브랜드 필터</span>
           </DrawerHeader>
           <div className='flex h-full max-h-[calc(40vh-60px)] flex-col gap-4 p-4'>
-            <div className='flex flex-wrap gap-2'>
+            <div className='flex flex-wrap gap-2 overflow-y-auto px-1'>
               {brandList.length > 0 &&
                 brandList.map(brand => (
                   <button
                     key={brand.brandId}
                     onClick={() => handleBrandClick(brand.brandName)}
-                    className={`rounded-md px-3 py-2 text-sm transition-colors ${
+                    className={`w-fit rounded-md px-3 py-2 text-left text-sm transition-colors ${
                       selectedBrands.includes(brand.brandName)
                         ? 'bg-gray-800 text-white'
                         : 'bg-gray-100 hover:bg-gray-200'

@@ -119,6 +119,7 @@ const PASS = ({ onSuccess }: PASSProps) => {
                     id='agree_all'
                     className='mr-3 h-5 w-5'
                     checked={true}
+                    readOnly
                   />
                   <label htmlFor='agree_all' className='text-base font-bold text-gray-800'>
                     전체 동의하기
@@ -139,6 +140,7 @@ const PASS = ({ onSuccess }: PASSProps) => {
                       value='Y'
                       className='mr-3 h-5 w-5'
                       checked={true}
+                      readOnly
                     />
                     <label htmlFor='agree1' className='text-xs text-gray-800'>
                       개인정보이용동의
@@ -156,6 +158,7 @@ const PASS = ({ onSuccess }: PASSProps) => {
                       value='Y'
                       className='mr-3 h-5 w-5'
                       checked={true}
+                      readOnly
                     />
                     <label htmlFor='agree2' className='text-xs text-gray-800'>
                       고유식별정보처리동의
@@ -173,6 +176,7 @@ const PASS = ({ onSuccess }: PASSProps) => {
                       value='Y'
                       className='mr-3 h-5 w-5'
                       checked={true}
+                      readOnly
                     />
                     <label htmlFor='agree3' className='text-xs text-gray-800'>
                       서비스이용약관동의
@@ -190,6 +194,7 @@ const PASS = ({ onSuccess }: PASSProps) => {
                       value='Y'
                       className='mr-3 h-5 w-5'
                       checked={true}
+                      readOnly
                     />
                     <label htmlFor='agree4' className='text-xs text-gray-800'>
                       통신사이용약관동의
