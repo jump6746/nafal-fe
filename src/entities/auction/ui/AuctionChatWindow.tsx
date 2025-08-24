@@ -70,6 +70,14 @@ const AuctionChatWindow = ({ messages }: Props) => {
     }
   }, [allMessages.length > 0]); // 첫 메시지가 로드되었을 때만
 
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container && allMessages.length > 0) {
+      // 초기에는 맨 아래로 스크롤
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [messages]); // 첫 메시지가 로드되었을 때만
+
   // 내 최고 입찰가 계산
   useEffect(() => {
     let maxBid = 0;

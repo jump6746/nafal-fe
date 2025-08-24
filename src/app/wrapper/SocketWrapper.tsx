@@ -3,9 +3,11 @@ import { customToast, Toaster } from '@/shared/ui';
 import { useEffect, useRef } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import AppRouter from '../AppRouter';
+import useAuthStore from '@/shared/stores/useAuthStore';
 
 const SocketWrapper = () => {
   const { isReady, connect, status, subscribe, onChannelMessage } = useSockJS();
+  const { token } = useAuthStore();
 
   // 연결 시도 여부를 추적하는 ref
   const connectionAttempted = useRef(false);
@@ -13,10 +15,8 @@ const SocketWrapper = () => {
 
   // 1. SockJS 연결 (한 번만 실행)
   useEffect(() => {
-    const accessToken = sessionStorage.getItem('nafal-access');
-
     // 이미 연결을 시도했거나, 토큰이 없거나, Worker가 준비되지 않았으면 리턴
-    if (connectionAttempted.current || !accessToken || !isReady) {
+    if (!token || connectionAttempted.current || !isReady) {
       return;
     }
 
@@ -24,9 +24,9 @@ const SocketWrapper = () => {
     if (status === 'disconnected') {
       console.log('🔗 SockJS 연결 시도...');
       connectionAttempted.current = true; // 연결 시도 기록
-      connect(`https://api.nafal.site/ws?token=${accessToken}`);
+      connect(`https://api.nafal.site/ws?token=${token}`);
     }
-  }, [isReady, status, connect]);
+  }, [token, isReady, status, connect]);
 
   // 2. 연결 완료 후 알림 채널 구독 (한 번만 실행)
   useEffect(() => {
