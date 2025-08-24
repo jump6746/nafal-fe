@@ -120,6 +120,15 @@ const MyPage = () => {
             <img src='/images/Icons/caret_right_lg.svg' alt='더 보기' />
           </div>
         </Link>
+        <div
+          className='flex cursor-pointer items-center justify-between'
+          onClick={() => {
+            sessionStorage.clear();
+            window.location.href = '/';
+          }}
+        >
+          <span className='text-sub-a-400'>로그아웃</span>
+        </div>
       </section>
     </div>
   );

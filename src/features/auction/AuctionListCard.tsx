@@ -45,7 +45,11 @@ const AuctionListCard = ({
         </div>
       )}
       <div className='relative aspect-square w-full'>
-        <img src={url} alt={productName} className='h-full w-full rounded-2xl object-cover' />
+        <img
+          src={url}
+          alt={productName}
+          className='aspect-square w-full rounded-2xl object-cover'
+        />
         <div className='text-point-100 absolute top-[10px] left-2 h-fit w-fit rounded-full bg-gray-900 px-[6px] py-1 text-xs font-medium sm:px-[10px] sm:text-sm'>
           {bidCnt}건 입찰
         </div>
