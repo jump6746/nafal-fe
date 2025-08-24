@@ -3,7 +3,7 @@ import AuctionOvertakingAlert from './AuctionOvertakingAlert';
 import useUserInfo from '@/entities/user/hooks/useUserInfo';
 import useGetInfinityBidHistory from '../queries/useGetInfinityBidHistory';
 import { useParams } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, type JSX } from 'react';
 
 interface Props {
   messages: {
@@ -16,6 +16,7 @@ interface Props {
 const AuctionChatWindow = ({ messages }: Props) => {
   const { userInfo } = useUserInfo();
   const { auctionId } = useParams();
+  const [myHighestBid, setMyHighestBid] = useState<number>(0);
   const observerRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -69,9 +70,61 @@ const AuctionChatWindow = ({ messages }: Props) => {
     }
   }, [allMessages.length > 0]); // 첫 메시지가 로드되었을 때만
 
+  // 내 최고 입찰가 계산
   useEffect(() => {
-    console.log(messages);
-  }, [messages]);
+    let maxBid = 0;
+    [...allMessages, ...messages].forEach(item => {
+      if (item.username === userInfo?.username) {
+        const text = item.message;
+        const itemPrice = parseInt((text.match(/[\d,]+/) || ['0'])[0].replace(/,/g, ''));
+        if (itemPrice > maxBid) {
+          maxBid = itemPrice;
+        }
+      }
+    });
+    setMyHighestBid(maxBid);
+  }, [allMessages, messages, userInfo?.username]);
+
+  // 메시지를 렌더링하는 함수
+  const renderMessages = (messageList: typeof allMessages, keyPrefix: string) => {
+    const elements: JSX.Element[] = [];
+
+    messageList.forEach((item, index) => {
+      const text = item.message;
+      const itemPrice = parseInt((text.match(/[\d,]+/) || ['0'])[0].replace(/,/g, ''));
+      const isMyMessage = item.username === userInfo?.username;
+
+      // 메시지 렌더링
+      elements.push(
+        <AuctionNotice
+          key={`${keyPrefix}-${item.placedAt}-${index}`}
+          notice={item.message}
+          isMine={isMyMessage}
+        />
+      );
+
+      // 내 메시지이고, 다른 사람이 나보다 높은 가격으로 입찰했을 때 알림 표시
+      if (isMyMessage && itemPrice < myHighestBid) {
+        // 내 이후 메시지들 중에서 더 높은 입찰이 있는지 확인
+        const laterMessages = messageList.slice(index + 1);
+        const hasHigherBid = laterMessages.some(laterItem => {
+          if (laterItem.username === userInfo?.username) return false; // 내 메시지는 제외
+          const laterPrice = parseInt(
+            (laterItem.message.match(/[\d,]+/) || ['0'])[0].replace(/,/g, '')
+          );
+          return laterPrice > itemPrice;
+        });
+
+        if (hasHigherBid) {
+          elements.push(
+            <AuctionOvertakingAlert key={`alert-${keyPrefix}-${item.placedAt}-${index}`} />
+          );
+        }
+      }
+    });
+
+    return elements;
+  };
 
   return (
     <div
@@ -79,22 +132,11 @@ const AuctionChatWindow = ({ messages }: Props) => {
       className='chat-scroll relative flex min-h-0 flex-1 flex-col items-center gap-[10px] overflow-y-auto px-4 pt-3'
     >
       <div ref={observerRef} className='h-2 w-full flex-shrink-0' />
-      {/* 메시지 목록 (역순으로 표시) */}
-      {allMessages.map((item, index) => (
-        <AuctionNotice
-          key={`${item.placedAt}-${index}`} // 고유한 키 생성
-          notice={item.message}
-          isMine={item.username === userInfo?.nickname}
-        />
-      ))}
-      {messages.map(item => (
-        <AuctionNotice
-          key={`${item.message} - ${item.placedAt}`}
-          notice={item.message}
-          isMine={item.username === userInfo?.username}
-        />
-      ))}
-      <AuctionOvertakingAlert />
+      {/* 기존 메시지들 */}
+      {renderMessages(allMessages, 'history')}
+
+      {/* 실시간 메시지들 */}
+      {renderMessages(messages, 'realtime')}
     </div>
   );
 };

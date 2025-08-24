@@ -141,11 +141,16 @@ const AuctionRoom = ({
                 자동입찰
               </Button>
               {paymentVariant === 'CardPayment' ? (
+                <Button className='flex h-[60px] w-[200px] flex-col' onClick={handleBidDirect}>
+                  <span>{(currentPrice + bidUnit).toLocaleString()}원</span>
+                  <span> 입찰하기</span>
+                </Button>
+              ) : (
                 <CardPayment
                   variant={paymentVariant}
                   trigger={
                     <Button className='flex h-[60px] w-[200px] flex-col' onClick={onBidClick}>
-                      <span>{(currentPrice + bidUnit).toLocaleString()}원</span>
+                      {/* <span>{(currentPrice + bidUnit).toLocaleString()}원</span> */}
                       <span> 입찰하기</span>
                     </Button>
                   }
@@ -153,11 +158,6 @@ const AuctionRoom = ({
                   isOpen={isPaymentModalOpen}
                   onOpenChange={onPaymentModalOpenChange}
                 />
-              ) : (
-                <Button className='flex h-[60px] w-[200px] flex-col' onClick={handleBidDirect}>
-                  <span>{(currentPrice + bidUnit).toLocaleString()}원</span>
-                  <span> 입찰하기</span>
-                </Button>
               )}
             </div>
           </DrawerFooter>
