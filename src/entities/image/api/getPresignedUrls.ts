@@ -1,6 +1,6 @@
-import type { ErrorResponse, ResponseDTO } from '@/shared/types';
+import type { ResponseDTO } from '@/shared/types';
 import { getPresignedUrlAPI } from '.';
-import type { ImageFile } from '../type';
+import type { ImageFile, S3PresignedResponse } from '../type';
 
 interface Props {
   imageFiles: ImageFile[];
@@ -8,7 +8,7 @@ interface Props {
 
 const getPresignedUrls = async ({
   imageFiles,
-}: Props): Promise<(ResponseDTO<undefined> | ErrorResponse)[]> => {
+}: Props): Promise<ResponseDTO<S3PresignedResponse>[]> => {
   try {
     // 각 파일마다 개별적으로 presigned URL 요청 (병렬 처리)
     const presignedUrlPromises = imageFiles.map(async (imageFile, index) => {

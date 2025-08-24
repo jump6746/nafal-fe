@@ -1,9 +1,12 @@
-import type { CreateAuctionRequest } from '@/entities/auction/type';
+import type { CreateAuctionStep } from '@/entities/auction/type';
+import type { ImageFile } from '@/entities/image/type';
 import { useTopNavigationStore } from '@/shared/stores';
 import {
+  CreateAuctionPreview,
   CreateAuctionStep1,
   CreateAuctionStep2,
   CreateAuctionStep3,
+  CreateAuctionStep3_5,
   CreateAuctionStep4,
   CreateAuctionStep5,
   CreateAuctionStep6,
@@ -16,13 +19,13 @@ const CreateAuctionPage = () => {
   const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [formData, setFormData] = useState<CreateAuctionRequest>({
+  const [formData, setFormData] = useState<CreateAuctionStep>({
     productCoreInfo: {
       title: '',
       condition: '',
       categories: [],
       expectedEffect: '',
-      imageKeys: [],
+      imageFiles: [],
     },
     productAttributes: {
       detailInfo: '',
@@ -37,7 +40,7 @@ const CreateAuctionPage = () => {
     },
     storyDetails: {
       content: '',
-      imageKey: '',
+      imageFile: {} as ImageFile,
     },
     auctionSettings: {
       startPrice: 0,
@@ -62,11 +65,11 @@ const CreateAuctionPage = () => {
   const setOnClick = useTopNavigationStore(state => state.setOnClick);
   const clearOnClick = useTopNavigationStore(state => state.clearOnClick);
 
-  const TOTAL_STEPS = 7;
+  const TOTAL_STEPS = 9;
 
   // 헬퍼 함수들 - 각 섹션별 업데이트를 쉽게 만들어줌
   const updateProductCoreInfo = useCallback(
-    (updates: Partial<CreateAuctionRequest['productCoreInfo']>) => {
+    (updates: Partial<CreateAuctionStep['productCoreInfo']>) => {
       setFormData(prev => ({
         ...prev,
         productCoreInfo: { ...prev.productCoreInfo, ...updates },
@@ -76,7 +79,7 @@ const CreateAuctionPage = () => {
   );
 
   const updateProductAttributes = useCallback(
-    (updates: Partial<CreateAuctionRequest['productAttributes']>) => {
+    (updates: Partial<CreateAuctionStep['productAttributes']>) => {
       setFormData(prev => ({
         ...prev,
         productAttributes: { ...prev.productAttributes, ...updates },
@@ -86,7 +89,7 @@ const CreateAuctionPage = () => {
   );
 
   const updateProductAdditionalInfo = useCallback(
-    (updates: Partial<CreateAuctionRequest['productAdditionalInfo']>) => {
+    (updates: Partial<CreateAuctionStep['productAdditionalInfo']>) => {
       setFormData(prev => ({
         ...prev,
         productAdditionalInfo: { ...prev.productAdditionalInfo, ...updates },
@@ -95,18 +98,15 @@ const CreateAuctionPage = () => {
     []
   );
 
-  const updateStoryDetails = useCallback(
-    (updates: Partial<CreateAuctionRequest['storyDetails']>) => {
-      setFormData(prev => ({
-        ...prev,
-        storyDetails: { ...prev.storyDetails, ...updates },
-      }));
-    },
-    []
-  );
+  const updateStoryDetails = useCallback((updates: Partial<CreateAuctionStep['storyDetails']>) => {
+    setFormData(prev => ({
+      ...prev,
+      storyDetails: { ...prev.storyDetails, ...updates },
+    }));
+  }, []);
 
   const updateAuctionSettings = useCallback(
-    (updates: Partial<CreateAuctionRequest['auctionSettings']>) => {
+    (updates: Partial<CreateAuctionStep['auctionSettings']>) => {
       setFormData(prev => ({
         ...prev,
         auctionSettings: { ...prev.auctionSettings, ...updates },
@@ -115,18 +115,15 @@ const CreateAuctionPage = () => {
     []
   );
 
-  const updateEventDetails = useCallback(
-    (updates: Partial<CreateAuctionRequest['eventDetails']>) => {
-      setFormData(prev => ({
-        ...prev,
-        eventDetails: { ...prev.eventDetails, ...updates },
-      }));
-    },
-    []
-  );
+  const updateEventDetails = useCallback((updates: Partial<CreateAuctionStep['eventDetails']>) => {
+    setFormData(prev => ({
+      ...prev,
+      eventDetails: { ...prev.eventDetails, ...updates },
+    }));
+  }, []);
 
   const updateDeliveryDetails = useCallback(
-    (updates: Partial<CreateAuctionRequest['deliveryDetails']>) => {
+    (updates: Partial<CreateAuctionStep['deliveryDetails']>) => {
       setFormData(prev => ({
         ...prev,
         deliveryDetails: { ...prev.deliveryDetails, ...updates },
@@ -141,29 +138,24 @@ const CreateAuctionPage = () => {
     }
   };
 
-  const prevStep = useCallback(() => {
-    if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
-    } else {
-      navigate(-1);
-    }
-  }, [currentStep, navigate]);
-
   useEffect(() => {
     setOnClick(() => {
-      prevStep();
+      if (currentStep > 1) {
+        setCurrentStep(prev => prev - 1);
+      } else {
+        navigate(-1);
+      }
     });
 
     return () => {
       clearOnClick();
     };
-  }, [currentStep, setOnClick, prevStep, clearOnClick]);
+  }, [currentStep]);
 
   const renderStep = () => {
     const commonProps = {
       formData,
       onNext: nextStep,
-      onPrev: prevStep,
     };
 
     switch (currentStep) {
@@ -172,22 +164,39 @@ const CreateAuctionPage = () => {
           <CreateAuctionStep1
             {...commonProps}
             onNext={nextStep}
-            containerRef={containerRef}
+            container={containerRef}
             updateProductCoreInfo={updateProductCoreInfo}
           />
         );
       case 2:
-        return <CreateAuctionStep2 {...commonProps} />;
+        return <CreateAuctionStep2 {...commonProps} updateStoryDetails={updateStoryDetails} />;
       case 3:
-        return <CreateAuctionStep3 {...commonProps} />;
+        return (
+          <CreateAuctionStep3 {...commonProps} updateAuctionSettings={updateAuctionSettings} />
+        );
       case 4:
-        return <CreateAuctionStep4 {...commonProps} />;
+        return (
+          <CreateAuctionStep3_5 {...commonProps} updateAuctionSettings={updateAuctionSettings} />
+        );
       case 5:
-        return <CreateAuctionStep5 {...commonProps} />;
+        return <CreateAuctionStep4 {...commonProps} updateEventDetails={updateEventDetails} />;
       case 6:
-        return <CreateAuctionStep6 {...commonProps} />;
+        return (
+          <CreateAuctionStep5 {...commonProps} updateProductAttributes={updateProductAttributes} />
+        );
       case 7:
-        return <CreateAuctionStep7 {...commonProps} />;
+        return (
+          <CreateAuctionStep6
+            {...commonProps}
+            updateProductAdditionalInfo={updateProductAdditionalInfo}
+          />
+        );
+      case 8:
+        return (
+          <CreateAuctionStep7 {...commonProps} updateDeliveryDetails={updateDeliveryDetails} />
+        );
+      case 9:
+        return <CreateAuctionPreview {...commonProps} />;
     }
   };
 

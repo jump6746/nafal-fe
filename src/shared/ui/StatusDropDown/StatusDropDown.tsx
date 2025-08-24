@@ -2,17 +2,17 @@ import { useDebounce } from '@/shared/hooks';
 import { useEffect, useState } from 'react';
 
 interface Props {
-  pos?: string;
+  pos: string;
   setPos: (value: string | undefined) => void;
 }
 
 const StatusDropDown = ({ pos, setPos }: Props) => {
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState<string>(pos);
   const debouncedValue = useDebounce(value, 800);
 
   useEffect(() => {
     setPos(debouncedValue);
-  }, [debouncedValue, setPos]);
+  }, [debouncedValue]);
 
   if (pos) {
     return (

@@ -6,6 +6,7 @@ import type {
   EventSchema,
   WinnerSchema,
 } from '../model';
+import type { ImageFile } from '@/entities/image/type';
 
 export type Auction = z.infer<typeof AuctionSchema>;
 export type Event = z.infer<typeof EventSchema>;
@@ -146,4 +147,45 @@ export interface CreateAuctionRequest {
   auctionSettings: AuctionSettings;
   eventDetails: EventDetails;
   deliveryDetails: DeliveryDetails;
+}
+
+export interface CreateAuctionStep {
+  productCoreInfo: {
+    title: string;
+    condition: string;
+    categories: string[];
+    expectedEffect: string;
+    imageFiles: ImageFile[];
+  };
+  productAttributes: {
+    detailInfo: string;
+    tags: string[];
+    width: number;
+    height: number;
+  };
+  productAdditionalInfo: {
+    material: string;
+    usageLocation: string;
+    editionInfo: string;
+  };
+  storyDetails: {
+    content: string;
+    imageFile: ImageFile;
+  };
+  auctionSettings: {
+    startPrice: number;
+    bidIncrement: number;
+    immediatelyPurchasePrice: number;
+    startAt: Date;
+    endAt: Date;
+  };
+  eventDetails: {
+    name: string;
+    description: string;
+  };
+  deliveryDetails: {
+    method: string;
+    cost: number;
+    note: string;
+  };
 }

@@ -7,4 +7,5 @@ export type {
   AuctionDetail,
   AuctionDetailResponse,
   CreateAuctionRequest,
+  CreateAuctionStep,
 } from './types';
