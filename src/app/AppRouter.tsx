@@ -11,6 +11,7 @@ import { Suspense } from 'react';
 import AuctionDetailSkeleton from '@/features/auction/skeleton/AuctionDetailSkeleton';
 import LuckDrawPageSkeleton from '@/features/luckDraw/LuckDrawPageSkeleton';
 import { LandingPage } from '@/pages/landing';
+import ShippingPage from '@/pages/mypage/ShippingPage';
 
 const AppRouter = createBrowserRouter([
   {
@@ -93,6 +94,10 @@ const AppRouter = createBrowserRouter([
       {
         element: <PaymentManagePage />,
         path: '/mypage/payment',
+      },
+      {
+        element: <ShippingPage />,
+        path: '/mypage/shipping',
       },
     ],
   },
