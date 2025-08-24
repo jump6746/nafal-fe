@@ -46,7 +46,12 @@ const SignupPage = () => {
           <label htmlFor='username' className='font-semibold text-gray-900'>
             아이디
           </label>
-          <TextField id='username' variant='default' className='w-full' onChange={handleIdChange} />
+          <TextField
+            id='username'
+            variant='default'
+            className='w-full bg-gray-300'
+            onChange={handleIdChange}
+          />
         </div>
         <div className='relative flex flex-col gap-1'>
           <label htmlFor='password' className='font-semibold text-gray-900'>
@@ -56,7 +61,7 @@ const SignupPage = () => {
             type='password'
             id='password'
             variant='default'
-            className='w-full'
+            className='w-full bg-gray-300'
             onChange={handlePwChange}
           />
         </div>
