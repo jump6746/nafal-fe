@@ -13,14 +13,13 @@ export const formatKoreanDate = (dateString: string): string => {
     const day = date.getDate();
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
 
     // 오전/오후 구분
     const ampm = hours < 12 ? '오전' : '오후';
     const displayHours = hours < 12 ? hours : hours - 12;
     const displayHours12 = displayHours === 0 ? 12 : displayHours;
 
-    return `${year}. ${month}. ${day}. ${ampm} ${displayHours12}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${year}년 ${month}월 ${day}일 ${ampm} ${displayHours12}시 ${minutes.toString().padStart(2, '0')}분`;
   } catch {
     return dateString; // 에러 발생 시 원본 문자열 반환
   }

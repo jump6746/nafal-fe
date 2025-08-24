@@ -41,16 +41,6 @@ export interface PageResponse<T> {
   empty: boolean;
 }
 
-export interface Category {
-  id: number;
-  name: string;
-}
-
-export interface Tag {
-  id: number;
-  name: string;
-}
-
 export interface ImageInfo {
   presignedUrl: string;
   s3Key: string;
@@ -64,10 +54,11 @@ export interface EventInfo {
 
 export interface ProductDetail {
   productName: string;
+  title: string;
   thumbnailImageUrl: ImageInfo;
   originalImageUrl: ImageInfo;
   productDescription: string;
-  tags: Tag[];
+  tags: string[];
   widthCm: number;
   heightCm: number;
   material: string;
@@ -82,19 +73,26 @@ export interface AuctionDetail {
   userId: number;
   status: 'OPEN' | 'CLOSED' | 'SCHEDULED';
   sellerName: string;
-  categories: Category[];
+  categories: string[];
   currentPrice: number;
   bidUnit: number;
   participantCount: number;
   ticketCount: number;
   event: EventInfo;
   product: ProductDetail;
-  delivery: unknown;
+  delivery: Delivery;
   story: string;
   storyImageUrl: ImageInfo | null;
   startAt: string;
   endAt: string;
   createdAt: string;
+  expectedEffectCo2Kg: number;
+  expectedEffectDesc: string;
+}
+export interface Delivery {
+  deliveryMethod: string | null;
+  deliveryFee: number | null;
+  deliveryNote: string | null;
 }
 
 export interface AuctionDetailResponse {
