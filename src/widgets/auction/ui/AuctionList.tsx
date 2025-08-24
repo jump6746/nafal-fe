@@ -33,18 +33,20 @@ const AuctionList = ({
         view:
           sort === '신규'
             ? 'NEW'
-            : sort === '마감 임박'
+            : sort === '오픈 임박'
               ? 'OPENING_SOON'
-              : sort === '인기'
+              : sort === '인기순'
                 ? 'POPULAR'
-                : 'DEFAULT',
+                : sort === '마감 임박'
+                  ? 'CLOSING_SOON'
+                  : 'DEFAULT',
         keyword: '',
         page: pageParam,
         size: 10,
         categorys: category,
         minCurrentPrice: minPrice,
         maxCurrentPrice: maxPrice,
-        brand,
+        brand: brand,
         eventName: event,
       }),
     getNextPageParam: lastPage => {
@@ -79,7 +81,7 @@ const AuctionList = ({
 
   if (auctions.length === 0) {
     return (
-      <div className='mt-20 flex h-full w-full flex-col items-center justify-center bg-gray-50 text-center'>
+      <div className='mt-20 flex h-full w-full flex-col items-center justify-center bg-gray-50 py-10 text-center'>
         {/* 아이콘 (Heroicons의 magnifying-glass) */}
         <svg
           xmlns='http://www.w3.org/2000/svg'

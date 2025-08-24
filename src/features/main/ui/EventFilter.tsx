@@ -7,24 +7,16 @@ import {
   DrawerTitle,
   DrawerDescription,
 } from '@/shared/ui/Drawer/Drawer';
+import type { EventItem } from '@/entities/auction/type/types';
 
 interface EventFilterProps {
+  eventList: EventItem[];
   event: string[];
   addEvent: (newEvent: string) => void;
   removeEvent: (eventToRemove: string) => void;
 }
 
-const EVENTS = [
-  '라이프집 두 번째 오프라인 팝업 집들2',
-  "카누 팝업스토어 'KANU House'",
-  '성균관대 디자인과제전',
-  '서울대 미술대 동문전',
-  '한예종 조형예술전',
-  '홍익대 예술대 졸업작품전',
-  '이화여대 패션과제전',
-];
-
-const EventFilter = ({ event, addEvent, removeEvent }: EventFilterProps) => {
+const EventFilter = ({ eventList, event, addEvent, removeEvent }: EventFilterProps) => {
   const handleEventClick = (eventName: string) => {
     if (event.includes(eventName)) {
       removeEvent(eventName);
@@ -49,20 +41,21 @@ const EventFilter = ({ event, addEvent, removeEvent }: EventFilterProps) => {
             <DrawerDescription>관심있는 행사를 골라보세요.</DrawerDescription>
           </DrawerHeader>
           <div className='flex h-full max-h-[calc(40vh-60px)] flex-col gap-4 p-4'>
-            <div className='flex flex-col gap-2 overflow-y-auto px-1'>
-              {EVENTS.map(eventName => (
-                <button
-                  key={eventName}
-                  onClick={() => handleEventClick(eventName)}
-                  className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                    event.includes(eventName)
-                      ? 'bg-gray-800 text-white'
-                      : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
-                >
-                  {eventName}
-                </button>
-              ))}
+            <div className='flex flex-wrap gap-2 overflow-y-auto px-1'>
+              {eventList.length > 0 &&
+                eventList.map(eventName => (
+                  <button
+                    key={eventName.eventId}
+                    onClick={() => handleEventClick(eventName.eventName)}
+                    className={`w-fit rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                      event.includes(eventName.eventName)
+                        ? 'bg-gray-800 text-white'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                  >
+                    {eventName.eventName}
+                  </button>
+                ))}
             </div>
           </div>
         </DrawerContent>

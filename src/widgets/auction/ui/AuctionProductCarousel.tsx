@@ -9,13 +9,7 @@ interface Props {
   setShowOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const images = [
-  '/images/mockup/image_kanu.png',
-  '/images/mockup/image_kanu.png',
-  '/images/mockup/image_kanu.png',
-];
-
-const AuctionProductCarousel = ({ imageUrls = images, setShowOverlay }: Props) => {
+const AuctionProductCarousel = ({ imageUrls, setShowOverlay }: Props) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState<number>(0);
   const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
@@ -47,7 +41,7 @@ const AuctionProductCarousel = ({ imageUrls = images, setShowOverlay }: Props) =
       <div className='relative'>
         <Carousel setApi={setApi}>
           <CarouselContent>
-            {imageUrls.map((src, index) => (
+            {imageUrls?.map((src, index) => (
               <CarouselItem key={index}>
                 <div
                   className='group relative aspect-[3/2] cursor-pointer bg-gray-200'
@@ -113,7 +107,7 @@ const AuctionProductCarousel = ({ imageUrls = images, setShowOverlay }: Props) =
         </span>
       </div>
       <div className='mt-2 flex justify-center gap-1'>
-        {imageUrls.map((_, index) => (
+        {imageUrls?.map((_, index) => (
           <button
             key={index}
             className={`h-2 cursor-pointer rounded-full transition-all duration-300 ease-out ${
@@ -129,7 +123,7 @@ const AuctionProductCarousel = ({ imageUrls = images, setShowOverlay }: Props) =
         open={lightboxOpen}
         close={() => setLightboxOpen(false)}
         index={lightboxIndex}
-        slides={images.map(src => ({ src }))}
+        slides={imageUrls?.map(src => ({ src }))}
         carousel={{ finite: true }}
         plugins={[Zoom]}
         zoom={{
@@ -144,8 +138,8 @@ const AuctionProductCarousel = ({ imageUrls = images, setShowOverlay }: Props) =
           scrollToZoom: true,
         }}
         render={{
-          buttonPrev: images.length <= 1 ? () => null : undefined,
-          buttonNext: images.length <= 1 ? () => null : undefined,
+          buttonPrev: imageUrls?.length && imageUrls.length <= 1 ? () => null : undefined,
+          buttonNext: imageUrls?.length && imageUrls.length <= 1 ? () => null : undefined,
         }}
       />
     </div>

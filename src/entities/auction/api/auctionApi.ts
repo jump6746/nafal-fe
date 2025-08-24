@@ -1,10 +1,16 @@
 import { apiRequest } from '@/shared/lib';
-import type { AuctionListItem, AuctionDetail, PageResponse } from '@/entities/auction/type/types';
+import type {
+  AuctionListItem,
+  AuctionDetail,
+  PageResponse,
+  BrandItem,
+  EventItem,
+} from '@/entities/auction/type/types';
 import type { ResponseDTO } from '@/shared/types';
 
 export const getAuctionListAPI = async (param: {
   status: 'OPEN' | 'CLOSED' | 'SCHEDULED';
-  view?: 'DEFAULT' | 'NEW' | 'POPULAR' | 'OPENING_SOON';
+  view?: 'DEFAULT' | 'NEW' | 'POPULAR' | 'OPENING_SOON' | 'CLOSING_SOON';
   keyword?: string;
   page?: number;
   size?: number;
@@ -25,9 +31,9 @@ export const getAuctionListAPI = async (param: {
     queryParams.push(`categorys=${param.categorys.join(',')}`);
   if (param.maxCurrentPrice) queryParams.push(`maxCurrentPrice=${param.maxCurrentPrice}`);
   if (param.minCurrentPrice) queryParams.push(`minCurrentPrice=${param.minCurrentPrice}`);
-  if (param.brand && param.brand.length > 0) queryParams.push(`brands=${param.brand.join(',')}`);
+  if (param.brand && param.brand.length > 0) queryParams.push(`brand=${param.brand.join(',')}`);
   if (param.eventName && param.eventName.length > 0)
-    queryParams.push(`eventNames=${param.eventName.join(',')}`);
+    queryParams.push(`eventName=${param.eventName.join(',')}`);
 
   return await apiRequest<undefined, PageResponse<AuctionListItem>>({
     url: `https://api.nafal.site/api/auctions?${queryParams.join('&')}`,
@@ -41,6 +47,22 @@ export const getAuctionDetailAPI = async (
 ): Promise<ResponseDTO<AuctionDetail>> => {
   return await apiRequest<undefined, AuctionDetail>({
     url: `https://api.nafal.site/api/auctions/${auctionId}`,
+    method: 'GET',
+    skipAuth: true,
+  });
+};
+
+export const getBrandListAPI = async (): Promise<ResponseDTO<BrandItem[]>> => {
+  return await apiRequest<undefined, BrandItem[]>({
+    url: 'https://api.nafal.site/api/users/sellers',
+    method: 'GET',
+    skipAuth: true,
+  });
+};
+
+export const getEventListAPI = async (): Promise<ResponseDTO<EventItem[]>> => {
+  return await apiRequest<undefined, EventItem[]>({
+    url: 'https://api.nafal.site/api/events',
     method: 'GET',
     skipAuth: true,
   });

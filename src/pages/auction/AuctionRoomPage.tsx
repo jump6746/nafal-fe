@@ -6,13 +6,13 @@ import { AuctionProductCarousel, AuctionRoom, BidPlace } from '@/widgets/auction
 import SuccessConfetti from '@/widgets/auction/ui/SuccessConfetti';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { formatKoreanDate } from '@/shared/lib/formatKoreanDate';
-import customToast from '@/shared/ui/CustomToast/customToast';
+import { renderTextWithLineBreaks } from '@/shared/lib';
 import useUserInfo from '@/entities/user/hooks/useUserInfo';
+import { useLoginModal } from '@/shared/hooks';
 
 const AuctionRoomPage = () => {
-  const navigate = useNavigate();
   const [showOverlay, setShowOverlay] = useState<boolean>(true);
   const [shouldFail, setShouldFail] = useState<boolean>(false);
   const [openBid, setOpenBid] = useState<boolean>(false);
@@ -22,12 +22,15 @@ const AuctionRoomPage = () => {
   const setText = useTopNavigationStore(state => state.setText);
   const setOnClick = useTopNavigationStore(state => state.setOnClick);
 
+  const [shouldFail, setShouldFail] = useState<boolean>(false);
   // CardPayment 관련 상태
   const [paymentVariant, setPaymentVariant] = useState<
-    'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet'
-  >('AccountCheck');
-  //CardPayment
-  const { userInfo } = useUserInfo();
+    'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet' | 'NeedLogin'
+  >('NeedLogin');
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [shouldOpenModal, setShouldOpenModal] = useState(false);
+  const { userInfo, isLoading } = useUserInfo();
+  const { showLoginModal } = useLoginModal();
 
   useEffect(() => {
     if (!showConfetti) {
@@ -57,6 +60,14 @@ const AuctionRoomPage = () => {
     setText('제품');
   }, [setText]);
 
+  // shouldOpenModal이 true일 때만 모달 열기
+  useEffect(() => {
+    if (shouldOpenModal) {
+      setIsPaymentModalOpen(true);
+      setShouldOpenModal(false); // 플래그 리셋
+    }
+  }, [shouldOpenModal]);
+
   // 3초 후 자동으로 사라지게
   useEffect(() => {
     if (!showOverlay) {
@@ -78,35 +89,57 @@ const AuctionRoomPage = () => {
 
   // 입찰 처리 함수
   const handlePay = () => {
-    if (!sessionStorage.getItem('nafal-access')) {
-      customToast.warning('로그인이 필요합니다.');
-      navigate('/login');
+    // 로딩 중인 경우 처리하지 않음
+    if (isLoading) {
+      console.log('사용자 정보 로딩 중...');
       return;
     }
 
-    let variant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet' =
-      'CardPayment';
+    if (!userInfo) {
+      console.log('설정할 paymentVariant: NeedLogin');
+      setPaymentVariant('NeedLogin');
+      showLoginModal();
+      return;
+    }
+
+    let newVariant:
+      | 'CardNotYet'
+      | 'AccountCheck'
+      | 'CardPayment'
+      | 'CertificationNotYet'
+      | 'NeedLogin';
+    let newShouldFail = false;
 
     // 1. identityVerified가 없으면 CertificationNotYet
-    if (!userInfo?.identityVerified) {
-      variant = 'CertificationNotYet';
+    if (!userInfo.identityVerified) {
+      newVariant = 'CertificationNotYet';
     }
     // 2. cardRegistered가 없으면 CardNotYet
     else if (!userInfo.cardRegistered) {
-      variant = 'CardNotYet';
+      newVariant = 'CardNotYet';
     }
     // 3. balance가 null이거나 부족하면 AccountCheck 여기에 경매 가격 실시간 처리해야함함
     else if (userInfo.balance === null || userInfo.balance <= 0) {
-      variant = 'AccountCheck';
-      setShouldFail(true);
+      newVariant = 'AccountCheck';
+      newShouldFail = true;
     } else if (userInfo.balance > 0) {
-      variant = 'AccountCheck';
-      setShouldFail(false);
+      newVariant = 'AccountCheck';
+      newShouldFail = false;
+    } else {
+      newVariant = 'CardPayment';
     }
-    setPaymentVariant(variant);
+
+    console.log('설정할 paymentVariant:', newVariant);
+    console.log('설정할 shouldFail:', newShouldFail);
+
+    setPaymentVariant(newVariant);
+    setShouldFail(newShouldFail);
+    setShouldOpenModal(true);
   };
 
-  const handleBidClick = () => {
+  const handleBidClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     handlePay(); // 입찰하기 버튼 클릭 시 handlePay 호출
 
     if (paymentVariant !== 'AccountCheck') {
@@ -116,7 +149,9 @@ const AuctionRoomPage = () => {
     setOpenBid(true);
   };
 
-  const handleAutoBidClick = () => {
+  const handleAutoBidClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     handlePay(); // 자동입찰 버튼 클릭 시에도 handlePay 호출
   };
 
@@ -128,7 +163,14 @@ const AuctionRoomPage = () => {
       {showConfetti && <SuccessConfetti container={containerRef} />}
       {/* 사진 공간  */}
       <div className='relative'>
-        <AuctionProductCarousel setShowOverlay={setShowOverlay} />
+        <AuctionProductCarousel
+          imageUrls={
+            Array.isArray(auctionDetail.data.product.originalImageUrl)
+              ? auctionDetail.data.product.originalImageUrl.map(img => img.presignedUrl)
+              : []
+          }
+          setShowOverlay={setShowOverlay}
+        />
         <div
           className={`absolute top-0 aspect-[3/2] w-full overflow-hidden transition-opacity duration-1000 ${
             showOverlay ? 'opacity-100' : 'pointer-events-none opacity-0'
@@ -146,48 +188,47 @@ const AuctionRoomPage = () => {
       </div>
       {/* 경매 정보 공간 */}
       <div className='flex flex-col gap-3.5 px-5 pt-11 pb-4.5'>
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center gap-2'>
-            {/* 브랜드 짧은 로고 */}
-            <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 px-2'>
-              <img
-                src={
-                  auctionDetail.data.shortLogo?.presignedUrl || '/images/LOGO/LOGO_Signature.svg'
-                }
-                alt='로고 시그니처'
-              />
+        <div className='flex flex-col gap-3'>
+          <div className='flex flex-col gap-1'>
+            {/* 브랜드 로고, 판매자명, 이벤트명, 럭키드로우 현황을 같은 행에 배치 */}
+            <div className='flex items-start justify-between'>
+              <div className='flex items-center gap-3'>
+                <img src={'/images/LOGO/LOGO_Signature.svg'} alt='로고 시그니처' />
+                <span className='text-xl font-bold'>{auctionDetail.data.sellerName}</span>
+              </div>
+              <div className='group relative flex-shrink-0'>
+                <div className='absolute -top-3 -translate-x-6/10 -translate-y-full'>
+                  <Tooltip Tooltip='럭키드로우 현황을 확인해보세요!' />
+                </div>
+                <Link
+                  to={`/luckydraw/${auctionDetail.data.event.eventId}`}
+                  className='flex cursor-pointer items-center gap-1.5'
+                >
+                  <img src='/images/Icons/solar_ticket-bold.svg' alt='티켓' />
+                  <span className='text-sub-b-400 font-semibold'>
+                    {auctionDetail.data.ticketCount}개
+                  </span>
+                </Link>
+              </div>
             </div>
-            {/* 브랜드 긴 로고 */}
-            <div className='aspect-[3/1] h-6'>
-              <img
-                src={auctionDetail.data.longLogo?.presignedUrl || '/images/LOGO/LOGO_Monogram.svg'}
-                alt='브랜드 로고'
-              />
+            {/* 이벤트명 */}
+            <div className='mt-3 flex min-w-0 flex-col gap-[1px]'>
+              <span className='text-sm font-medium text-gray-700'>
+                {auctionDetail.data.event.eventName}
+              </span>
+              <span className='text-lg leading-tight font-bold break-words'>
+                {auctionDetail.data.product.title}
+              </span>
             </div>
-          </div>
-          <div className='group relative'>
-            <div className='absolute -top-3 -translate-x-6/10 -translate-y-full'>
-              <Tooltip Tooltip='럭키드로우 현황을 확인해보세요!' />
-            </div>
-            <Link to='/luckydraw' className='flex cursor-pointer items-center gap-1.5'>
-              <img src='/images/Icons/solar_ticket-bold.svg' alt='티켓' />
-              <span className='text-sub-b-400 font-semibold'>{10}개</span>
-            </Link>
-          </div>
-        </div>
-        <div className='flex flex-col gap-1.5'>
-          {/* 상품 이름 */}
-          <div className='flex w-full justify-between'>
-            <span className='text-lg font-bold text-gray-900'>
-              {auctionDetail.data.product.productName}
-            </span>
-            <span className='bg-point-200 text-point-900 rounded-full px-4 py-0.5 font-semibold'>
+            <span className='text-point-900 mt-1 font-semibold'>
               {auctionDetail.data.product.condition}
             </span>
           </div>
+        </div>
+        <div className='flex flex-col gap-1.5'>
           <div className='flex gap-1.5'>
             {auctionDetail.data.categories.map(category => (
-              <span key={category} className='rounded-lg bg-gray-800 px-4.5 py-0.5 text-white'>
+              <span key={category} className='rounded-lg bg-gray-800 px-4 py-0.5 text-white'>
                 {category}
               </span>
             ))}
@@ -226,14 +267,32 @@ const AuctionRoomPage = () => {
         </div>
       </div>
       {/* divide */}
-      <div className='h-4 w-full bg-gray-200'></div>
+      <div className='h-3 w-full bg-gray-200'></div>
       {/* 상품 상세 정보 */}
       <div className='mt-1.5 flex flex-col gap-4.5 bg-gray-50 px-5 pt-6'>
         {/* 등록일, 시작일, 종료일 */}
-        <div className='flex flex-col text-sm font-medium text-gray-800'>
-          <span>등록일 {formatKoreanDate(auctionDetail.data.createdAt)}</span>
-          <span>시작일 {formatKoreanDate(auctionDetail.data.startAt)}</span>
-          <span>종료일 {formatKoreanDate(auctionDetail.data.endAt)}</span>
+        <div className='flex flex-col gap-[2px] rounded-lg bg-gray-100 px-4 py-4 text-sm font-medium'>
+          <div className='flex items-center gap-2'>
+            <span className='text-sm font-semibold text-gray-900'>등록일</span>
+            <span className='text-gray-700'>{formatKoreanDate(auctionDetail.data.createdAt)}</span>
+          </div>
+          <div className='flex items-center gap-2'>
+            <span className='text-sm font-semibold text-gray-900'>시작일</span>
+            <span className='text-gray-700'>{formatKoreanDate(auctionDetail.data.startAt)}</span>
+          </div>
+          <div className='flex items-center gap-2'>
+            <span className='text-sm font-semibold text-gray-900'>종료일</span>
+            <span className='text-gray-700'>{formatKoreanDate(auctionDetail.data.endAt)}</span>
+          </div>
+        </div>
+        {/* 탄소절감량 */}
+        <div className='gradient-border flex flex-col gap-[2px] rounded-[12px] p-4'>
+          <span className='text-sm leading-tight font-medium'>
+            {renderTextWithLineBreaks(auctionDetail.data.expectedEffectDesc)}
+          </span>
+          <span className='text-point-900 text-sm font-medium'>
+            탄소 절감 {auctionDetail.data.expectedEffectCo2Kg}kg
+          </span>
         </div>
         {/* 행사 */}
         <div className='gradient-border flex flex-col gap-3 rounded-[12px] p-4'>
@@ -299,18 +358,32 @@ const AuctionRoomPage = () => {
         {/* 배송 */}
         <div className='gradient-border flex flex-col gap-3 rounded-[12px] p-4'>
           <h3 className='text-lg font-bold text-gray-800'>배송</h3>
-          <div className='flex flex-col'>
-            <span className='text-sm font-medium text-gray-600'>배송방법</span>
-            {/* <span className='text-sm font-medium text-gray-900'>{auctionDetail.data.delivery}</span> */}
-          </div>
-          <div className='flex flex-col'>
-            <span className='text-sm font-medium text-gray-600'>배송비용</span>
-            <span className='text-sm font-medium text-gray-900'>{'3,500원'}</span>
-          </div>
-          <div className='flex flex-col'>
-            <span className='text-sm font-medium text-gray-600'>배송 참고사항</span>
-            <span className='text-sm font-medium text-gray-900'>{'없음'}</span>
-          </div>
+          {auctionDetail.data.delivery.deliveryMethod && (
+            <div className='flex flex-col'>
+              <>
+                <span className='text-sm font-medium text-gray-600'>배송방법</span>
+                <span className='text-sm font-medium text-gray-900'>
+                  {auctionDetail.data.delivery.deliveryMethod}
+                </span>
+              </>
+            </div>
+          )}
+          {auctionDetail.data.delivery.deliveryFee && (
+            <div className='flex flex-col'>
+              <span className='text-sm font-medium text-gray-600'>배송비용</span>
+              <span className='text-sm font-medium text-gray-900'>
+                {auctionDetail.data.delivery.deliveryFee.toLocaleString()}원
+              </span>
+            </div>
+          )}
+          {auctionDetail.data.delivery.deliveryNote && (
+            <div className='flex flex-col'>
+              <span className='text-sm font-medium text-gray-600'>배송 참고사항</span>
+              <span className='text-sm font-medium text-gray-900'>
+                {auctionDetail.data.delivery.deliveryNote}
+              </span>
+            </div>
+          )}
         </div>
         <div className='sticky right-0 bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-white py-9'>
           {auctionId && (
@@ -318,9 +391,12 @@ const AuctionRoomPage = () => {
               auctionId={auctionId}
               price={auctionDetail.data.currentPrice}
               bidUnit={auctionDetail.data.bidUnit}
+              onBidClick={handleBidClick}
               onAutoBidClick={handleAutoBidClick}
               paymentVariant={paymentVariant}
               shouldFail={shouldFail}
+              isPaymentModalOpen={isPaymentModalOpen}
+              onPaymentModalOpenChange={setIsPaymentModalOpen}
             />
           )}
         </div>

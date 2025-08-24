@@ -15,18 +15,29 @@ interface AuctionRoomProps {
   auctionId: string;
   price: number;
   bidUnit: number;
-  onAutoBidClick: () => void;
-  paymentVariant: 'CardNotYet' | 'AccountCheck' | 'CardPayment' | 'CertificationNotYet';
+  onBidClick: (e: React.MouseEvent) => void;
+  onAutoBidClick: (e: React.MouseEvent) => void;
+  paymentVariant:
+    | 'CardNotYet'
+    | 'AccountCheck'
+    | 'CardPayment'
+    | 'CertificationNotYet'
+    | 'NeedLogin';
   shouldFail: boolean;
+  isPaymentModalOpen?: boolean;
+  onPaymentModalOpenChange?: (open: boolean) => void;
 }
 
 const AuctionRoom = ({
   auctionId,
   price,
   bidUnit,
+  onBidClick,
   onAutoBidClick,
   paymentVariant,
   shouldFail,
+  isPaymentModalOpen,
+  onPaymentModalOpenChange,
 }: AuctionRoomProps) => {
   const { status, subscribe, onChannelMessage, sendMessage } = useSockJS();
   const [messages, setMessages] = useState<
@@ -129,17 +140,25 @@ const AuctionRoom = ({
               <Button className='h-[60px] flex-1' variant='white' onClick={onAutoBidClick}>
                 자동입찰
               </Button>
-              {/* <CardPayment
-                variant={paymentVariant}
-                trigger={
-                  
-                }
-                shouldFail={shouldFail}
-              /> */}
-              <Button className='flex h-[60px] w-[200px] flex-col' onClick={handleBidDirect}>
-                <span>{(currentPrice + bidUnit).toLocaleString()}원</span>
-                <span> 입찰하기</span>
-              </Button>
+              {paymentVariant === 'CardPayment' ? (
+                <CardPayment
+                  variant={paymentVariant}
+                  trigger={
+                    <Button className='flex h-[60px] w-[200px] flex-col' onClick={onBidClick}>
+                      <span>{(currentPrice + bidUnit).toLocaleString()}원</span>
+                      <span> 입찰하기</span>
+                    </Button>
+                  }
+                  shouldFail={shouldFail}
+                  isOpen={isPaymentModalOpen}
+                  onOpenChange={onPaymentModalOpenChange}
+                />
+              ) : (
+                <Button className='flex h-[60px] w-[200px] flex-col' onClick={handleBidDirect}>
+                  <span>{(currentPrice + bidUnit).toLocaleString()}원</span>
+                  <span> 입찰하기</span>
+                </Button>
+              )}
             </div>
           </DrawerFooter>
         </div>

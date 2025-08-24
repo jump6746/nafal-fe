@@ -4,7 +4,7 @@ import getUserApi from '../api/getUserApi';
 const useGetUserQuery = () => {
   // 토큰이 있는지 확인
   const hasToken = () => {
-    const token = sessionStorage.getItem('nefal-access');
+    const token = sessionStorage.getItem('nafal-access');
     return !!token;
   };
 
