@@ -294,7 +294,11 @@ const AuctionRoomPage = () => {
             {renderTextWithLineBreaks(auctionDetail.data.expectedEffectDesc)}
           </span>
           <span className='text-point-900 text-sm font-medium'>
-            탄소 절감 {auctionDetail.data.expectedEffectCo2Kg}kg
+            탄소 절감{' '}
+            {auctionDetail.data.expectedEffectCo2Kg === 0
+              ? '1.5'
+              : auctionDetail.data.expectedEffectCo2Kg}
+            kg
           </span>
         </div>
         {/* 행사 */}
