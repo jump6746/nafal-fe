@@ -8,7 +8,6 @@ import {
   DrawerDescription,
 } from '@/shared/ui/Drawer/Drawer';
 import type { EventItem } from '@/entities/auction/type/types';
-import { useEffect } from 'react';
 
 interface EventFilterProps {
   eventList: EventItem[];
@@ -25,10 +24,6 @@ const EventFilter = ({ eventList, event, addEvent, removeEvent }: EventFilterPro
       addEvent(eventName);
     }
   };
-
-  useEffect(() => {
-    console.log(eventList);
-  }, [eventList]);
 
   return (
     <Drawer>

@@ -1,5 +1,6 @@
 import { Button } from '@/shared/ui/Button/Button';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import PASS from '@/features/auth/PASS';
 import CardRegistration from '@/features/auth/CardRegistration';
 import { updateCardRegisteredAPI, updateIdentityVerifiedAPI } from '@/entities/auth/api/authApi';
@@ -9,6 +10,8 @@ interface CardPaymentProps {
   trigger?: React.ReactNode;
   Loadertime?: number;
   shouldFail?: boolean;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const CardPaymentHeader = (variant: CardPaymentProps['variant']) => {
@@ -49,8 +52,28 @@ const CardPaymentHeader = (variant: CardPaymentProps['variant']) => {
   }
 };
 
-const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+const CardPayment = ({
+  variant,
+  trigger,
+  Loadertime,
+  shouldFail,
+  isOpen: externalIsOpen,
+  onOpenChange,
+}: CardPaymentProps) => {
+  const queryClient = useQueryClient();
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+
+  const setIsOpen = useCallback(
+    (open: boolean) => {
+      if (onOpenChange) {
+        onOpenChange(open);
+      } else {
+        setInternalIsOpen(open);
+      }
+    },
+    [onOpenChange]
+  );
   const [showCardNotYetModal, setShowCardNotYetModal] = useState(false);
   const [showPassModal, setShowPassModal] = useState(false);
   const [showCancelMessage, setShowCancelMessage] = useState(false);
@@ -61,13 +84,12 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
   const [showAccountCheckFailure, setShowAccountCheckFailure] = useState(false);
   const progressTimerRef = useRef<number | null>(null);
   const percentRef = useRef(0);
+  const successTimerRef = useRef<number | null>(null);
   const header = CardPaymentHeader(variant) || {
     Maintitle: '',
     Subtitle: '',
     Buttontext: '',
   };
-
-  console.log(shouldFail);
   // PASS 모달 닫기 함수
   const handleClosePassModal = () => {
     setShowPassModal(false);
@@ -83,11 +105,14 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
   // PASS 인증 완료 처리 함수
   const handlePassSuccess = () => {
     updateIdentityVerifiedAPI('true').then(() => {
+      // 사용자 정보 캐시 무효화하여 최신 데이터 다시 fetch
+      queryClient.invalidateQueries({ queryKey: ['user-info'] });
+
       setShowPassModal(false);
       setShowSuccessMessage(true);
 
       // 3초 후에 성공 메시지와 메인 모달을 모두 닫기
-      setTimeout(() => {
+      successTimerRef.current = window.setTimeout(() => {
         setShowSuccessMessage(false);
         setIsOpen(false);
       }, 3000);
@@ -97,16 +122,30 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
   // 카드 등록 완료 처리 함수
   const handleCardSuccess = () => {
     updateCardRegisteredAPI('true').then(() => {
+      // 사용자 정보 캐시 무효화하여 최신 데이터 다시 fetch
+      queryClient.invalidateQueries({ queryKey: ['user-info'] });
+
       setShowCardNotYetModal(false);
       setShowCardSuccessMessage(true);
 
       // 3초 후에 성공 메시지와 메인 모달을 모두 닫기
-      setTimeout(() => {
+      successTimerRef.current = window.setTimeout(() => {
         setShowCardSuccessMessage(false);
         setIsOpen(false);
       }, 3000);
     });
   };
+
+  // 모달이 열릴 때 이전 타이머들 정리
+  useEffect(() => {
+    if (isOpen) {
+      // 이전 성공 타이머 정리
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
+        successTimerRef.current = null;
+      }
+    }
+  }, [isOpen]);
 
   // AccountCheck 진행률 시뮬레이션 (자연스러운 증가)
   useEffect(() => {
@@ -162,7 +201,7 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
           } else {
             setShowAccountCheckSuccess(true);
             // 성공 모달 2.2초 후 닫힘
-            window.setTimeout(() => {
+            successTimerRef.current = window.setTimeout(() => {
               setShowAccountCheckSuccess(false);
               setIsOpen(false);
             }, 2200);
@@ -184,14 +223,15 @@ const CardPayment = ({ variant, trigger, Loadertime, shouldFail }: CardPaymentPr
         clearTimeout(progressTimerRef.current);
         progressTimerRef.current = null;
       }
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
+        successTimerRef.current = null;
+      }
     };
-  }, [isOpen, variant, Loadertime, shouldFail]);
+  }, [isOpen, variant, Loadertime, shouldFail, setIsOpen]);
 
   if (!isOpen) {
-    if (variant === 'NeedLogin') {
-      return <div>{trigger}</div>;
-    }
-    return <div onClick={() => setIsOpen(true)}>{trigger}</div>;
+    return <div>{trigger}</div>;
   }
 
   // 본인인증 성공 메시지
