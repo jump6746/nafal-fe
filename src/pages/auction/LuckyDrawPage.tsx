@@ -1,26 +1,42 @@
-import { getLuckDrawListAPI } from '@/entities/luckDraw/api/luckDrawApi';
 import { useTopNavigationStore } from '@/shared/stores';
 import { LuckyDrawProductCarousel } from '@/widgets/luckydraw/ui';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 const LuckyDrawPage = () => {
   const setText = useTopNavigationStore(state => state.setText);
-  const { auctionId } = useParams();
   const [LuckyDrawInfo, setLuckyDrawInfo] = useState<number>(0);
+
+  // 하드코딩된 럭키드로우 데이터
+  const luckDrawList = {
+    data: [
+      {
+        productName: '카누 팝업스토어 원두 에디션 텀블러 세트',
+        amount: 2,
+        progress: 5,
+        limit: 100,
+      },
+      {
+        productName: 'iPad Air 11인치',
+        amount: 1,
+        progress: 8,
+        limit: 15,
+      },
+      {
+        productName: '스타벅스 아메리카노',
+        amount: 10,
+        progress: 3,
+        limit: 20,
+      },
+    ],
+  };
 
   useEffect(() => {
     setText('럭키드로우');
-  }, []);
+  }, [setText]);
 
   const setLuckyDrawindex = (index: number) => {
     setLuckyDrawInfo(index);
   };
-  const { data: luckDrawList } = useSuspenseQuery({
-    queryKey: ['luckDrawList', auctionId],
-    queryFn: () => getLuckDrawListAPI(auctionId ?? ''),
-  });
 
   return (
     <div
@@ -38,16 +54,14 @@ const LuckyDrawPage = () => {
           <br />
           증정품을 드려요!
         </span>
-        <span className='font-semibold text-gray-400'>총 {10}개 중 추첨</span>
+        <span className='font-semibold text-gray-400'>총 {luckDrawList.data.length}개 중 추첨</span>
       </div>
       <LuckyDrawProductCarousel setLuckyDrawindex={setLuckyDrawindex} />
       <div className='flex flex-col gap-4.5 px-5 pt-7.5'>
         <span className='text-lg font-bold text-gray-900'>
-          {LuckyDrawInfo < luckDrawList.data.length
-            ? luckDrawList.data[LuckyDrawInfo].productName
-            : '미공개 증정품'}
+          {LuckyDrawInfo === 0 ? luckDrawList.data[LuckyDrawInfo].productName : '미공개 증정품'}
         </span>
-        {LuckyDrawInfo < luckDrawList.data.length ? (
+        {LuckyDrawInfo === 0 ? (
           <>
             <div className='flex flex-col'>
               <span className='text-sm font-medium text-gray-600'>총 증정 개수</span>
@@ -58,7 +72,7 @@ const LuckyDrawPage = () => {
             <div className='flex flex-col pt-1.5'>
               <span className='text-sm font-medium text-gray-600'>현황</span>
               <span className='font-semibold text-gray-900'>
-                {luckDrawList.data[LuckyDrawInfo].progress}/{' '}
+                {luckDrawList.data[LuckyDrawInfo].progress} /{' '}
                 {luckDrawList.data[LuckyDrawInfo].limit}
               </span>
             </div>
