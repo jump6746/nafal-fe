@@ -6,11 +6,12 @@ import { Button, FilterTags } from '@/shared/ui';
 import SortCategory from '@/features/main/ui/SortCategory';
 import AuctionListSkeleton from '@/features/main/skleton/AuctionListSkeleton';
 import AuctionList from '@/widgets/auction/ui/AuctionList';
-import { isUserRoleAdmin } from '@/shared/lib';
 import { useNavigate } from 'react-router-dom';
+import useUserInfo from '@/entities/user/hooks/useUserInfo';
 
 const MainPage = () => {
   const navigate = useNavigate();
+  const { userInfo } = useUserInfo();
   const containerRef = useRef<HTMLDivElement>(null);
   const [section, setSection] = useState('진행중');
   const [category, setCategory] = useState<string[]>([]);
@@ -121,7 +122,7 @@ const MainPage = () => {
           />
         </Suspense>
       </section>
-      {isUserRoleAdmin() ? (
+      {userInfo && (userInfo.role == 'ADMIN' || userInfo.role == 'SELLER') ? (
         <div className='sticky bottom-0 w-full bg-gradient-to-b from-transparent to-white px-5 py-9 pb-6'>
           <Button
             className='w-full'

@@ -1,13 +1,14 @@
 const isUserRoleAdmin = (): boolean => {
-  const storage = JSON.parse(sessionStorage.getItem('nefal-access') || '{}');
+  // const storage = sessionStorage.getItem('nefal-access');
 
-  if (!storage.role) {
-    return false;
-  }
+  // if (!storage.role) {
+  //   return false;
+  // }
 
-  const userRole = storage.role;
+  // const userRole = storage.role;
 
-  return userRole === 'ADMIN' || userRole === 'SELLER';
+  // return userRole === 'ADMIN' || userRole === 'SELLER';
+  return false;
 };
 
 export default isUserRoleAdmin;
