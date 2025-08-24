@@ -12,6 +12,7 @@ interface CardPaymentProps {
   shouldFail?: boolean;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  onAccountCheckSuccess?: () => void;
 }
 
 const CardPaymentHeader = (variant: CardPaymentProps['variant']) => {
@@ -59,6 +60,7 @@ const CardPayment = ({
   shouldFail,
   isOpen: externalIsOpen,
   onOpenChange,
+  onAccountCheckSuccess,
 }: CardPaymentProps) => {
   const queryClient = useQueryClient();
   const [internalIsOpen, setInternalIsOpen] = useState(false);
@@ -200,6 +202,10 @@ const CardPayment = ({
             setShowAccountCheckFailure(true);
           } else {
             setShowAccountCheckSuccess(true);
+            // 성공 시 콜백 호출
+            if (onAccountCheckSuccess) {
+              onAccountCheckSuccess();
+            }
             // 성공 모달 2.2초 후 닫힘
             successTimerRef.current = window.setTimeout(() => {
               setShowAccountCheckSuccess(false);
@@ -228,7 +234,7 @@ const CardPayment = ({
         successTimerRef.current = null;
       }
     };
-  }, [isOpen, variant, Loadertime, shouldFail, setIsOpen]);
+  }, [isOpen, variant, Loadertime, shouldFail, setIsOpen, onAccountCheckSuccess]);
 
   if (!isOpen) {
     return <div>{trigger}</div>;

@@ -11,19 +11,28 @@ interface OrderProductData {
   amount: number;
 }
 
+interface LocationState {
+  orderProductData: OrderProductData;
+}
+
 const PaidSuccess = () => {
   const setText = useTopNavigationStore(state => state.setText);
   const location = useLocation();
-  const orderData = location.state as OrderProductData;
+  const locationState = location.state as LocationState;
+
+  // 안전한 기본값 제공
+  const orderData = locationState?.orderProductData || {
+    imageUrl: '/images/mockup/image_kanu.png',
+    productName: '카누 팝업스토어 원두 에디션 텀블러 세트',
+    sellerName: 'KANU',
+    amount: 10000,
+  };
+
   const navigate = useNavigate();
 
   useEffect(() => {
     setText('결제 완료');
   }, [setText]);
-
-  if (!orderData) {
-    return <div>뭘 봐</div>;
-  }
 
   return (
     <div

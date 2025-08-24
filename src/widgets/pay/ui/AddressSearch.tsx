@@ -112,7 +112,7 @@ const AddressSearch = ({ initialAddress, onAddressChange }: AddressSearchProps) 
           value={address.recipientName}
           onChange={e => handleInputChange('recipientName', e.target.value)}
           placeholder='이름을 입력하세요'
-          className='h-12 border-gray-300 text-base'
+          className='h-12 w-full border-gray-300 text-base'
         />
       </div>
       <div className='flex flex-col gap-2'>
@@ -121,7 +121,7 @@ const AddressSearch = ({ initialAddress, onAddressChange }: AddressSearchProps) 
           value={address.recipientPhone}
           onChange={e => handlePhoneChange(e.target.value)}
           placeholder='010-1234-5678'
-          className='h-12 border-gray-300 text-base'
+          className='h-12 w-full border-gray-300 text-base'
           type='tel'
           maxLength={13}
         />
@@ -155,7 +155,7 @@ const AddressSearch = ({ initialAddress, onAddressChange }: AddressSearchProps) 
             value={address.address}
             readOnly
             placeholder='주소검색 버튼을 클릭하여 주소를 선택하세요'
-            className='h-12 border-gray-300 bg-gray-50 text-base'
+            className='h-12 w-full border-gray-300 bg-gray-50 text-base'
             onClick={handleAddressSearch}
           />
         </div>
@@ -166,7 +166,7 @@ const AddressSearch = ({ initialAddress, onAddressChange }: AddressSearchProps) 
             value={address.detailAddress}
             onChange={e => handleInputChange('detailAddress', e.target.value)}
             placeholder='상세주소를 입력하세요 (동, 호수 등)'
-            className='h-12 border-gray-300 text-base'
+            className='h-12 w-full border-gray-300 text-base'
           />
         </div>
       </div>

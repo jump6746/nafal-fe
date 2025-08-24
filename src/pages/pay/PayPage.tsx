@@ -5,15 +5,16 @@ import type { DeliveryAddress } from '@/features/pay/type/address';
 import OrderProduct from '@/widgets/pay/ui/OrderProduct';
 import PaymentMethod from '@/widgets/pay/ui/PaymentMethod';
 import { Button } from '@/shared/ui/Button/Button';
+import { Link } from 'react-router-dom';
 
 const PayPage = () => {
   const setText = useTopNavigationStore(state => state.setText);
   const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddress>({
-    recipientName: '',
-    recipientPhone: '',
-    zipcode: '',
-    address: '',
-    detailAddress: '',
+    recipientName: '박성문',
+    recipientPhone: '010-1599-5488',
+    zipcode: '08379',
+    address: '서울특별시 구로구 디지털로34길 10',
+    detailAddress: '101동 101호',
     shippingMethod: '일반 택배',
   });
 
@@ -53,12 +54,14 @@ const PayPage = () => {
         onPaymentMethodChange={handlePaymentMethodChange}
         paymentAmount={10000}
       />
-      <Button
-        variant='default'
-        className='text-point-900 mt-[100px] h-15 w-full text-xl font-semibold'
-      >
-        10,000원 결제하기
-      </Button>
+      <Link to='/pay/success' state={{ orderProductData }}>
+        <Button
+          variant='default'
+          className='text-point-900 mt-[100px] h-15 w-full text-xl font-semibold'
+        >
+          10,000원 결제하기
+        </Button>
+      </Link>
     </div>
   );
 };
