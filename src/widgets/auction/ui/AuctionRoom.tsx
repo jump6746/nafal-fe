@@ -8,8 +8,13 @@ import {
 } from '@/shared/ui/Drawer/Drawer';
 import AuctionChatWindow from '@/entities/auction/ui/AuctionChatWindow';
 import CardPayment from '@/widgets/pay/ui/CardPayment';
+import { useSockJS } from '@/shared/hooks';
+import { useEffect, useState } from 'react';
 
 interface AuctionRoomProps {
+  auctionId: string;
+  price: number;
+  bidUnit: number;
   onBidClick: (e: React.MouseEvent) => void;
   onAutoBidClick: (e: React.MouseEvent) => void;
   paymentVariant:
@@ -24,6 +29,9 @@ interface AuctionRoomProps {
 }
 
 const AuctionRoom = ({
+  auctionId,
+  price,
+  bidUnit,
   onBidClick,
   onAutoBidClick,
   paymentVariant,
@@ -31,15 +39,74 @@ const AuctionRoom = ({
   isPaymentModalOpen,
   onPaymentModalOpenChange,
 }: AuctionRoomProps) => {
+  const { status, subscribe, onChannelMessage, sendMessage } = useSockJS();
+  const [messages, setMessages] = useState<
+    {
+      username: string;
+      message: string;
+      placedAt: string;
+    }[]
+  >([]);
+  const [currentPrice, setCurrentPrice] = useState<number>(price);
+
+  const handleConnectAuctionRoom = () => {
+    console.log('클릭!');
+    if (status === 'connected') {
+      console.log('📺 알림 채널 구독...');
+      subscribe(`/sub/auctions/${auctionId}`);
+      subscribe(`/sub/auctions/${auctionId}/price`);
+    }
+  };
+
+  const handleBidDirect = () => {
+    const bidData = {
+      destination: `/pub/bid`, // 서버의 입찰 처리 엔드포인트
+      body: JSON.stringify({
+        auctionId: auctionId,
+        amount: currentPrice + bidUnit,
+      }),
+    };
+
+    sendMessage(bidData);
+  };
+
+  // 알림 메시지 처리
+  useEffect(() => {
+    const unsubscribe = onChannelMessage(message => {
+      if (message.channel === `/sub/auctions/${auctionId}`) {
+        const item = message.message as {
+          username: string;
+          message: string;
+          placedAt: string;
+        };
+
+        setMessages(prevMessages => {
+          console.log('이전 메시지 수:', prevMessages.length);
+          const newMessages = [...prevMessages, item];
+          console.log('새 메시지 수:', newMessages.length);
+          return newMessages;
+        });
+      } else if (message.channel === `/sub/auctions/${auctionId}/price`) {
+        const item = message.message as {
+          currentPrice: number;
+        };
+
+        setCurrentPrice(item.currentPrice);
+      }
+    });
+
+    return unsubscribe;
+  }, [onChannelMessage]);
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant='default' className='w-full'>
+        <Button variant='default' className='w-full' onClick={handleConnectAuctionRoom}>
           입찰하기
         </Button>
       </DrawerTrigger>
       <DrawerContent
-        className='!fixed !right-0 !bottom-0 !left-0 !z-[9999] !mx-auto !w-full !max-w-[450px] !min-w-[320px] data-[vaul-drawer-direction=bottom]:!h-[72vh]'
+        className='!fixed !right-0 !bottom-0 !left-0 !z-[60] !mx-auto !w-full !max-w-[450px] !min-w-[320px] data-[vaul-drawer-direction=bottom]:!h-[72vh]'
         style={{
           position: 'fixed',
           backgroundImage: 'url(/images/BackGround/ChatBackground.webp)',
@@ -62,7 +129,7 @@ const AuctionRoom = ({
             </div>
           </DrawerHeader>
           <div className='flex min-h-0 flex-1 flex-col'>
-            <AuctionChatWindow />
+            <AuctionChatWindow messages={messages} />
           </div>
           <DrawerFooter className='flex h-[21.6vh] w-full flex-col justify-end gap-2 bg-gradient-to-t from-[#E8FCF9] to-transparent px-5 pb-12'>
             <button className='flex w-full flex-row items-center gap-2'>
@@ -73,17 +140,25 @@ const AuctionRoom = ({
               <Button className='h-[60px] flex-1' variant='white' onClick={onAutoBidClick}>
                 자동입찰
               </Button>
-              <CardPayment
-                variant={paymentVariant}
-                trigger={
-                  <Button className='h-[60px] w-[200px]' onClick={onBidClick}>
-                    10,000원 입찰하기
-                  </Button>
-                }
-                shouldFail={shouldFail}
-                isOpen={isPaymentModalOpen}
-                onOpenChange={onPaymentModalOpenChange}
-              />
+              {paymentVariant === 'CardPayment' ? (
+                <CardPayment
+                  variant={paymentVariant}
+                  trigger={
+                    <Button className='flex h-[60px] w-[200px] flex-col' onClick={onBidClick}>
+                      <span>{(currentPrice + bidUnit).toLocaleString()}원</span>
+                      <span> 입찰하기</span>
+                    </Button>
+                  }
+                  shouldFail={shouldFail}
+                  isOpen={isPaymentModalOpen}
+                  onOpenChange={onPaymentModalOpenChange}
+                />
+              ) : (
+                <Button className='flex h-[60px] w-[200px] flex-col' onClick={handleBidDirect}>
+                  <span>{(currentPrice + bidUnit).toLocaleString()}원</span>
+                  <span> 입찰하기</span>
+                </Button>
+              )}
             </div>
           </DrawerFooter>
         </div>

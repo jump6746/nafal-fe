@@ -13,7 +13,8 @@ const useGetUserQuery = () => {
     queryFn: getUserApi,
     enabled: hasToken(), // 토큰이 있을 때만 쿼리 실행
     retry: 1, // 실패 시 1번 재시도
-    staleTime: 1000 * 60 * 5, // 5분간 캐시 유지
+    staleTime: 0, // 항상 fresh하지 않은 상태로 만들어 재검증 유도
+    gcTime: 1000 * 60 * 5, // 5분간 가비지 컬렉션 방지 (기본값과 동일)
   });
 };
 

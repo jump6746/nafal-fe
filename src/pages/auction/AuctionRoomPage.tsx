@@ -2,7 +2,7 @@ import { getAuctionDetailAPI } from '@/entities/auction/api/auctionApi';
 import CountdownTimer from '@/features/auction/CountdownTimer';
 import { useTopNavigationStore } from '@/shared/stores';
 import Tooltip from '@/shared/ui/Tooltip/Tooltip';
-import { AuctionProductCarousel, AuctionRoom } from '@/widgets/auction/ui';
+import { AuctionProductCarousel, AuctionRoom, BidPlace } from '@/widgets/auction/ui';
 import SuccessConfetti from '@/widgets/auction/ui/SuccessConfetti';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
@@ -14,9 +14,13 @@ import { useLoginModal } from '@/shared/hooks';
 
 const AuctionRoomPage = () => {
   const [showOverlay, setShowOverlay] = useState<boolean>(true);
-  const setText = useTopNavigationStore(state => state.setText);
+  const [openBid, setOpenBid] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const setText = useTopNavigationStore(state => state.setText);
+  const setOnClick = useTopNavigationStore(state => state.setOnClick);
+
   const [shouldFail, setShouldFail] = useState<boolean>(false);
   // CardPayment 관련 상태
   const [paymentVariant, setPaymentVariant] = useState<
@@ -40,6 +44,16 @@ const AuctionRoomPage = () => {
       clearTimeout(timer);
     };
   }, [showConfetti]);
+
+  useEffect(() => {
+    if (openBid) {
+      setOnClick(() => {
+        setOpenBid(false);
+      });
+    } else {
+      setOnClick(null);
+    }
+  }, [openBid]);
 
   useEffect(() => {
     setText('제품');
@@ -74,10 +88,6 @@ const AuctionRoomPage = () => {
 
   // 입찰 처리 함수
   const handlePay = () => {
-    console.log('handlePay 실행됨');
-    console.log('userInfo:', userInfo);
-    console.log('isLoading:', isLoading);
-
     // 로딩 중인 경우 처리하지 않음
     if (isLoading) {
       console.log('사용자 정보 로딩 중...');
@@ -130,6 +140,12 @@ const AuctionRoomPage = () => {
     e.preventDefault();
     e.stopPropagation();
     handlePay(); // 입찰하기 버튼 클릭 시 handlePay 호출
+
+    if (paymentVariant !== 'AccountCheck') {
+      return;
+    }
+
+    setOpenBid(true);
   };
 
   const handleAutoBidClick = (e: React.MouseEvent) => {
@@ -139,7 +155,10 @@ const AuctionRoomPage = () => {
   };
 
   return (
-    <div className='relative h-full w-full' ref={containerRef}>
+    <div
+      className={`relative h-full w-full ${openBid ? 'overflow-hidden' : 'overflow-auto'}`}
+      ref={containerRef}
+    >
       {showConfetti && <SuccessConfetti container={containerRef} />}
       {/* 사진 공간  */}
       <div className='relative'>
@@ -152,7 +171,7 @@ const AuctionRoomPage = () => {
           setShowOverlay={setShowOverlay}
         />
         <div
-          className={`absolute top-0 aspect-[3/2] w-full transition-opacity duration-1000 ${
+          className={`absolute top-0 aspect-[3/2] w-full overflow-hidden transition-opacity duration-1000 ${
             showOverlay ? 'opacity-100' : 'pointer-events-none opacity-0'
           }`}
         >
@@ -161,7 +180,7 @@ const AuctionRoomPage = () => {
             alt='스토리텔링 카드'
             className='h-full w-full object-cover'
           />
-          <p className='absolute top-0 px-5 py-7.5 text-sm font-semibold text-gray-800'>
+          <p className='absolute top-0 px-5 py-7.5 text-sm font-semibold whitespace-pre-wrap text-gray-800'>
             {auctionDetail.data.story}
           </p>
         </div>
@@ -285,7 +304,7 @@ const AuctionRoomPage = () => {
           </div>
           <div className='flex flex-col'>
             <span className='text-sm font-medium text-gray-600'>행사소개</span>
-            <p className='text-sm font-medium text-gray-900'>
+            <p className='text-sm font-medium whitespace-pre-wrap text-gray-900'>
               {auctionDetail.data.event.eventDescription}
             </p>
           </div>
@@ -366,16 +385,22 @@ const AuctionRoomPage = () => {
           )}
         </div>
         <div className='sticky right-0 bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-white py-9'>
-          <AuctionRoom
-            onBidClick={handleBidClick}
-            onAutoBidClick={handleAutoBidClick}
-            paymentVariant={paymentVariant}
-            shouldFail={shouldFail}
-            isPaymentModalOpen={isPaymentModalOpen}
-            onPaymentModalOpenChange={setIsPaymentModalOpen}
-          />
+          {auctionId && (
+            <AuctionRoom
+              auctionId={auctionId}
+              price={auctionDetail.data.currentPrice}
+              bidUnit={auctionDetail.data.bidUnit}
+              onBidClick={handleBidClick}
+              onAutoBidClick={handleAutoBidClick}
+              paymentVariant={paymentVariant}
+              shouldFail={shouldFail}
+              isPaymentModalOpen={isPaymentModalOpen}
+              onPaymentModalOpenChange={setIsPaymentModalOpen}
+            />
+          )}
         </div>
       </div>
+      {openBid && <BidPlace />}
     </div>
   );
 };
