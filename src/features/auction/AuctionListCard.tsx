@@ -4,7 +4,7 @@ import CountdownTimer from './CountdownTimer';
 
 interface AuctionListCardProps {
   auctionId: string;
-  productId: string;
+  eventId: string;
   immediatelyPurchasePrice?: number;
   currentPrice: number;
   productName: string;
@@ -17,7 +17,7 @@ interface AuctionListCardProps {
 
 const AuctionListCard = ({
   auctionId,
-  productId,
+  eventId,
   immediatelyPurchasePrice,
   currentPrice,
   productName,
@@ -33,7 +33,7 @@ const AuctionListCard = ({
     <div
       className='flex h-fit w-full cursor-pointer flex-col gap-[6px] bg-white'
       onClick={() => {
-        navigate(`/auction/${auctionId}/${productId}`);
+        navigate(`/auction/${eventId}/${auctionId}`);
       }}
     >
       {isImminent && (

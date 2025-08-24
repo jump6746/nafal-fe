@@ -16,6 +16,7 @@ export type DeliveryMethod = z.infer<typeof DeliveryMethodSchema>;
 
 export interface AuctionListItem {
   auctionId: string;
+  eventId: string;
   productId: string;
   userId: string;
   sellerName: string;

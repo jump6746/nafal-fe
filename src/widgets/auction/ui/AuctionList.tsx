@@ -108,8 +108,8 @@ const AuctionList = ({
         {auctions.map((item: AuctionListItem) => (
           <AuctionListCard
             auctionId={item.auctionId}
-            key={item.productId}
-            productId={item.productId}
+            eventId={item.eventId}
+            key={item.auctionId}
             immediatelyPurchasePrice={item.immediatelyPurchasePrice}
             currentPrice={item.currentPrice}
             productName={item.productName}

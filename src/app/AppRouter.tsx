@@ -51,7 +51,7 @@ const AppRouter = createBrowserRouter([
             <AuctionRoomPage />
           </Suspense>
         ),
-        path: '/auction/:auctionId/:productId',
+        path: '/auction/:eventId/:auctionId',
       },
       {
         element: <BidPlace />,
