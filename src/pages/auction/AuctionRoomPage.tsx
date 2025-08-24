@@ -14,7 +14,6 @@ import { useLoginModal } from '@/shared/hooks';
 
 const AuctionRoomPage = () => {
   const [showOverlay, setShowOverlay] = useState<boolean>(true);
-  const [shouldFail, setShouldFail] = useState<boolean>(false);
   const [openBid, setOpenBid] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
