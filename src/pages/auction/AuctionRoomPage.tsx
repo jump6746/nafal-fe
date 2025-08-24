@@ -144,8 +144,6 @@ const AuctionRoomPage = () => {
     if (paymentVariant !== 'AccountCheck') {
       return;
     }
-
-    setOpenBid(true);
   };
 
   const handleAutoBidClick = (e: React.MouseEvent) => {
