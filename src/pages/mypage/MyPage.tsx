@@ -6,14 +6,14 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const MyPage = () => {
   const setText = useTopNavigationStore(state => state.setText);
-  const { userInfo } = useUserInfo();
+  const { userInfo, isLoading } = useUserInfo();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userInfo) {
+    if (!isLoading && !userInfo) {
       navigate('/login');
     }
-  }, [userInfo, navigate]);
+  }, [userInfo, isLoading, navigate]);
 
   useEffect(() => {
     setText('마이페이지');
