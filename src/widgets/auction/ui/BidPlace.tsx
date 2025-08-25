@@ -1,6 +1,6 @@
 import { useSockJS } from '@/shared/hooks';
 import { useTopNavigationStore } from '@/shared/stores';
-import { Button } from '@/shared/ui';
+import { Button, customToast } from '@/shared/ui';
 import TextField from '@/shared/ui/TextField/TextField';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, type ChangeEvent } from 'react';
@@ -35,7 +35,7 @@ const BidPlace = () => {
   };
 
   const handleBid = () => {
-    console.log('입찰!');
+    customToast.warning('준비중입니다.');
     // 유효성 검사
     if (!value.trim()) {
       setError(true);

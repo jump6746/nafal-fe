@@ -1,5 +1,5 @@
 import { useTopNavigationStore } from '@/shared/stores';
-import { Button } from '@/shared/ui';
+import { Button, customToast } from '@/shared/ui';
 import TextField from '@/shared/ui/TextField/TextField';
 import { useEffect, useState, type ChangeEvent } from 'react';
 
@@ -24,6 +24,10 @@ const DirectBuyPlace = () => {
     console.log(setError);
 
     setValue(inputValue);
+  };
+
+  const handleDirectBuy = () => {
+    customToast.warning('준비중입니다.');
   };
 
   return (
@@ -60,7 +64,7 @@ const DirectBuyPlace = () => {
         </p>
       </div>
       <div className='z-10 mt-auto px-5 pb-9'>
-        <Button variant={'default'} className='w-full'>
+        <Button variant={'default'} className='w-full' onClick={handleDirectBuy}>
           즉시 구매하기
         </Button>
       </div>
