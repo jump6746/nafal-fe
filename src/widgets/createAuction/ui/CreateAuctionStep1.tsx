@@ -223,7 +223,7 @@ const CreateAuctionStep1 = ({ formData, updateProductCoreInfo, onNext, container
                 <img
                   src={imageFile.preview}
                   alt={`미리보기 ${index + 1}`}
-                  className='aspect-[335/180] w-full rounded-xl bg-gray-200 object-contain object-center'
+                  className='aspect-[335/180] w-full rounded-xl bg-gray-200 object-cover object-center'
                 />
               </div>
               <button
