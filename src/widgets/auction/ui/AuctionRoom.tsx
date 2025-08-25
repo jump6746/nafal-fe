@@ -11,8 +11,10 @@ import CardPayment from '@/widgets/pay/ui/CardPayment';
 import { useSockJS } from '@/shared/hooks';
 import { useEffect, useState } from 'react';
 import CountdownTimer from '@/features/auction/CountdownTimer';
+import { useNavigate } from 'react-router-dom';
 
 interface AuctionRoomProps {
+  eventId: string;
   participantCount: number;
   timeLeft: string;
   auctionId: string;
@@ -33,6 +35,7 @@ interface AuctionRoomProps {
 }
 
 const AuctionRoom = ({
+  eventId,
   timeLeft,
   participantCount,
   auctionId,
@@ -47,6 +50,7 @@ const AuctionRoom = ({
   onAccountCheckSuccess,
 }: AuctionRoomProps) => {
   const { status, subscribe, onChannelMessage, sendMessage } = useSockJS();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<
     {
       username: string;
@@ -141,10 +145,26 @@ const AuctionRoom = ({
             <AuctionChatWindow messages={messages} />
           </div>
           <DrawerFooter className='flex h-[21.6vh] w-full flex-col justify-end gap-2 bg-gradient-to-t from-[#E8FCF9] to-transparent px-5 pb-12'>
-            <button className='flex w-full flex-row items-center gap-2'>
-              <img src='/images/Icons/check.svg' alt='write' className='h-6 w-6' />
-              <span className='text-xs font-medium text-gray-800'>직접 입력하기</span>
-            </button>
+            <div className='flex flex-row gap-2'>
+              <button
+                className='flex w-fit flex-row items-center gap-2'
+                onClick={() => {
+                  navigate(`/auction/${eventId}/${auctionId}/bid`);
+                }}
+              >
+                <img src='/images/Icons/check.svg' alt='write' className='h-6 w-6' />
+                <span className='text-xs font-medium text-gray-800'>직접 입력하기</span>
+              </button>
+              <button
+                className='flex w-fit flex-row items-center gap-2'
+                onClick={() => {
+                  navigate(`/auction/${eventId}/${auctionId}/directbuy`);
+                }}
+              >
+                <img src='/images/Icons/check.svg' alt='write' className='h-6 w-6' />
+                <span className='text-xs font-medium text-gray-800'>즉시 구매하기</span>
+              </button>
+            </div>
             <div className='flex w-full flex-row items-center justify-between gap-2'>
               <Button className='h-[60px] flex-1' variant='white' onClick={onAutoBidClick}>
                 자동입찰

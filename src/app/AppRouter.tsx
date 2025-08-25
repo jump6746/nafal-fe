@@ -55,7 +55,7 @@ const AppRouter = createBrowserRouter([
       },
       {
         element: <BidPlace />,
-        path: '/bid',
+        path: '/auction/:eventId/:auctionId/bid',
       },
       {
         element: <AutoBidPlace />,
@@ -63,7 +63,7 @@ const AppRouter = createBrowserRouter([
       },
       {
         element: <DirectBuyPlace />,
-        path: '/directbuy',
+        path: '/auction/:eventId/:auctionId/directbuy',
       },
       {
         element: (
