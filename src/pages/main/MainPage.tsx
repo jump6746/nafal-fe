@@ -70,17 +70,6 @@ const MainPage = () => {
     queryFn: getEventListAPI,
   });
 
-  // // socket
-  // const { isReady, connect, status } = useSockJS();
-
-  // useEffect(() => {
-  //   const accessToken = sessionStorage.getItem('nafal-access');
-
-  //   if (accessToken && isReady && status === 'disconnected') {
-  //     connect(`https://api.nafal.site/ws?token=${accessToken}`);
-  //   }
-  // }, [isReady, status]);
-
   return (
     <div className='relative'>
       <MainPageNav section={section} setSection={setSection} updateSort={updateSort} />

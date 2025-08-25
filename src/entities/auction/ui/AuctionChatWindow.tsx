@@ -82,7 +82,7 @@ const AuctionChatWindow = ({ messages }: Props) => {
   useEffect(() => {
     let maxBid = 0;
     [...allMessages, ...messages].forEach(item => {
-      if (item.username === userInfo?.username) {
+      if (item.username && item.username === userInfo?.username) {
         const text = item.message;
         const itemPrice = parseInt((text.match(/[\d,]+/) || ['0'])[0].replace(/,/g, ''));
         if (itemPrice > maxBid) {
@@ -99,8 +99,13 @@ const AuctionChatWindow = ({ messages }: Props) => {
 
     messageList.forEach((item, index) => {
       const text = item.message;
-      const itemPrice = parseInt((text.match(/[\d,]+/) || ['0'])[0].replace(/,/g, ''));
-      const isMyMessage = item.username === userInfo?.username;
+      // 메시지가 문자열이고 숫자 패턴이 있는 경우만 가격 추출
+      const itemPrice =
+        typeof text === 'string' && text.match(/[\d,]+/)
+          ? parseInt((text.match(/[\d,]+/) || ['0'])[0].replace(/,/g, ''))
+          : 0;
+      // username이 있는 경우만 내 메시지 여부 확인
+      const isMyMessage = !!item.username && item.username === userInfo?.username;
 
       // 메시지 렌더링
       elements.push(
@@ -111,16 +116,22 @@ const AuctionChatWindow = ({ messages }: Props) => {
         />
       );
 
-      // 내 메시지이고, 다른 사람이 나보다 높은 가격으로 입찰했을 때 알림 표시
-      if (isMyMessage && itemPrice < myHighestBid) {
+      // 입찰 메시지인 경우만 추가 로직 처리
+      if (isMyMessage && itemPrice > 0 && itemPrice < myHighestBid) {
         // 내 이후 메시지들 중에서 더 높은 입찰이 있는지 확인
         const laterMessages = messageList.slice(index + 1);
         const hasHigherBid = laterMessages.some(laterItem => {
-          if (laterItem.username === userInfo?.username) return false; // 내 메시지는 제외
-          const laterPrice = parseInt(
-            (laterItem.message.match(/[\d,]+/) || ['0'])[0].replace(/,/g, '')
-          );
-          return laterPrice > itemPrice;
+          // username이 없거나 내 메시지면 제외
+          if (!laterItem.username || laterItem.username === userInfo?.username) return false;
+
+          // 메시지가 문자열이고 숫자 패턴이 있는 경우만 처리
+          if (typeof laterItem.message === 'string' && laterItem.message.match(/[\d,]+/)) {
+            const laterPrice = parseInt(
+              (laterItem.message.match(/[\d,]+/) || ['0'])[0].replace(/,/g, '')
+            );
+            return laterPrice > itemPrice;
+          }
+          return false;
         });
 
         if (hasHigherBid) {
