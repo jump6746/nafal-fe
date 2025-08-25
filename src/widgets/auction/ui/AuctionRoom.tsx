@@ -10,8 +10,11 @@ import AuctionChatWindow from '@/entities/auction/ui/AuctionChatWindow';
 import CardPayment from '@/widgets/pay/ui/CardPayment';
 import { useSockJS } from '@/shared/hooks';
 import { useEffect, useState } from 'react';
+import CountdownTimer from '@/features/auction/CountdownTimer';
 
 interface AuctionRoomProps {
+  participantCount: number;
+  timeLeft: string;
   auctionId: string;
   price: number;
   bidUnit: number;
@@ -30,6 +33,8 @@ interface AuctionRoomProps {
 }
 
 const AuctionRoom = ({
+  timeLeft,
+  participantCount,
   auctionId,
   price,
   bidUnit,
@@ -50,7 +55,7 @@ const AuctionRoom = ({
     }[]
   >([]);
   const [currentPrice, setCurrentPrice] = useState<number>(price);
-
+  console.log(timeLeft);
   const handleConnectAuctionRoom = () => {
     console.log('클릭!');
     if (status === 'connected') {
@@ -121,12 +126,14 @@ const AuctionRoom = ({
           <DrawerHeader>
             {/* 남은 시간, 00명 참여중 */}
             <div className='flex flex-row items-center justify-between gap-0.5 px-1'>
-              <span className='text-sub-a-500 font-semibold'>남은 시간 {'00:00:00'}</span>
+              <span className='text-sub-a-500 font-semibold'>
+                남은 시간 <CountdownTimer endDate={timeLeft} />
+              </span>
               <div className='flex items-center gap-1'>
                 <div className='bg-sub-a-200 flex h-4.5 w-4.5 items-center justify-center rounded-full'>
                   <div className='bg-sub-a-500 h-3 w-3 animate-pulse rounded-full'></div>
                 </div>
-                <span className='font-semibold text-gray-800'>{12}명 참여중</span>
+                <span className='font-semibold text-gray-800'>{participantCount}명 참여중</span>
               </div>
             </div>
           </DrawerHeader>
