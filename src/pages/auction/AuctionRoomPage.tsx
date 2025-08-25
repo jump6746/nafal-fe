@@ -395,6 +395,8 @@ const AuctionRoomPage = () => {
         <div className='sticky right-0 bottom-0 left-0 w-full bg-gradient-to-b from-transparent to-white py-9'>
           {auctionId && (
             <AuctionRoom
+              participantCount={auctionDetail.data.participantCount}
+              timeLeft={auctionDetail.data.endAt}
               auctionId={auctionId}
               price={auctionDetail.data.currentPrice}
               bidUnit={auctionDetail.data.bidUnit}
