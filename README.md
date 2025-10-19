@@ -1,69 +1,39 @@
-# React + TypeScript + Vite
+# Nafal - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+블레이버스 해커톤 프로젝트의 프론트엔드 레포지토리입니다.
 
-Currently, two official plugins are available:
+## 프로젝트 소개
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Nafal은 블레이버스 해커톤에서 개발한 경매 서비스 플랫폼입니다. 사용자 간 실시간 경매를 통해 상품을 거래할 수 있는 웹 애플리케이션으로 빠르고 직관적인 경매 경험을 제공합니다.
 
-## Expanding the ESLint configuration
+## 기술 스택
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React**
+- **Vite**
+- **TypeScript**
+- **ESLint**
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 주요 기능
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- 실시간 경매 입찰 시스템
+- 경매 상품 등록 및 관리
+- 사용자 인증 및 프로필 관리
+- 입찰 내역 조회
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 프로젝트 구조
+
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+nafal-fe/
+├── src/              # 소스 코드
+  ├── app/
+  ├── pages/
+  ├── widgets/
+  ├── features/
+  ├── entites/
+  ├── shared/
+├── public/           # 정적 파일
+  ├── images/
+  ├── sockjs-worker.js
+├── dist/             # 빌드 결과물
+└── package.json      # 프로젝트 설정
 ```
